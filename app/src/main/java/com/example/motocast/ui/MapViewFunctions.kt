@@ -2,7 +2,7 @@ package com.example.motocast.ui
 
 import android.content.Context
 import android.content.pm.PackageManager
-
+import android.graphics.Color
 
 
 import androidx.core.app.ComponentActivity
@@ -12,6 +12,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Polyline
 
 
 object MapViewFunctions : DefaultLifecycleObserver{
@@ -77,6 +78,18 @@ object MapViewFunctions : DefaultLifecycleObserver{
             }
         }
         return true
+    }
+
+    fun displayPolyline(points: List<GeoPoint>){
+        val polyline = Polyline().apply{
+            points.forEach{
+                addPoint(it)
+            }
+            outlinePaint.color = Color.RED
+            outlinePaint.strokeWidth = 5f
+        }
+        mapView?.overlayManager?.add(polyline)
+        mapView?.invalidate()
     }
 }
 
