@@ -9,6 +9,7 @@ import com.example.motocast.ui.MapViewFunctions
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import org.osmdroid.util.GeoPoint
 
 @Composable
 fun MapScreen() {

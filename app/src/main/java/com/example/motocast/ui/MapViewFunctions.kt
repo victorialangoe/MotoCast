@@ -18,6 +18,15 @@ import org.osmdroid.views.overlay.Polyline
 object MapViewFunctions : DefaultLifecycleObserver{
 
     private var mapView: MapView? = null
+    val testPoints = listOf(
+        GeoPoint(59.943709982525775, 10.718339250322309),
+        GeoPoint(59.943124473928115, 10.716092471366107),
+        GeoPoint(59.94738871931273, 10.71856273091623),
+        GeoPoint(59.9473772811635, 10.720215413624377),
+        GeoPoint(59.94869783761205, 10.723426888704854),
+        GeoPoint(59.94834431238808, 10.723614621991718)
+    )
+
 
     fun initMapView(context: Context, mapView: MapView) {
         val sharedPref = context.getSharedPreferences(
@@ -43,6 +52,7 @@ object MapViewFunctions : DefaultLifecycleObserver{
 
     override fun onResume(owner: LifecycleOwner) {
         mapView?.onResume()
+        displayPolyline(testPoints)
     }
 
     override fun onPause(owner: LifecycleOwner) {
