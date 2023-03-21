@@ -3,11 +3,16 @@ package com.example.motocast.ui
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.util.Log
 
 
 import androidx.core.app.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.example.motocast.api.RetrofitHelper
+import com.example.motocast.navigation.createGeoPoints
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -52,8 +57,27 @@ object MapViewFunctions : DefaultLifecycleObserver{
 
     override fun onResume(owner: LifecycleOwner) {
         mapView?.onResume()
-        displayPolyline(testPoints)
-    }
+        val retrofitHelper = RetrofitHelper()
+        val directionApi = retrofitHelper.getDirectionApi()
+
+        owner.lifecycleScope.launch() {
+            try {
+                // get list of GeoPoints
+                val points = directionApi.getDirection(
+                    "",
+                    "10.717283277305567,59.942850342734545",
+                    "10.733564274268417,59.9137501230344,"
+                )
+                val geoList = createGeoPoints(points)
+
+                // display polyline on the map
+                displayPolyline(geoList)
+
+            } catch (e: Exception) {
+                Log.e("MapViewFunctions", "Error getting directions", e)
+            }
+        }
+}
 
     override fun onPause(owner: LifecycleOwner) {
         mapView?.onPause()
