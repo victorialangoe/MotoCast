@@ -10,6 +10,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
 
@@ -23,6 +24,7 @@ object MapViewFunctions : DefaultLifecycleObserver{
             Context.MODE_PRIVATE
         )
 
+
         // Handle permissions first, before map is created
 
         // Load/initialize the osmdroid configuration
@@ -33,7 +35,9 @@ object MapViewFunctions : DefaultLifecycleObserver{
 
         // Set the tile source and zoom level
         mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.controller.setZoom(10.0)
+        mapView.controller.setZoom(15.0)
+        val startPoint = GeoPoint(59.943709982525775, 10.718339250322309) // Oslo, OJD
+        mapView.controller.setCenter(startPoint)
     }
 
     override fun onResume(owner: LifecycleOwner) {
