@@ -1,3 +1,3 @@
-# IN2000_gruppe24
+# MotoCast
 
 Dette er vår app MotoCast
