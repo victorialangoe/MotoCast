@@ -10,14 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.motocast.data.api.MetRetrofitHelper
-import com.example.motocast.data.datasource.WeatherDataSource
+import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.ui.theme.MotoCastTheme
-import android.util.Log
-import kotlin.math.log
+import com.example.motocast.ui.view.MetAlertsScreen
 
 
 class MainActivity : ComponentActivity() {
+    //val viewModel = MetAlertsDataSource()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +30,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Sander")
+                    //MetAlertsScreen(viewModel = viewModel)
+                    //Remove check on line 33 and 19 to see preview.
                 }
             }
         }

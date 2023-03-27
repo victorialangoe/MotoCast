@@ -1,12 +1,12 @@
-package com.example.motocast.data.api
+package com.example.motocast.data.api.location_forecast
 
 import com.example.motocast.BuildConfig
+import com.example.motocast.data.api.LongTermWeatherDataAPI
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MetRetrofitHelper {
-
 
     fun createLongTermWeatherDataAPI(): LongTermWeatherDataAPI {
         val client = OkHttpClient.Builder()
