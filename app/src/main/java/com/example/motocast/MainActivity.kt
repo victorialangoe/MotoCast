@@ -24,13 +24,6 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        val weatherDataSource = WeatherDataSource()
-        weatherDataSource.getLongTermWeatherData(59.9139, 10.7522, onSuccess = {
-            Log.d("WeatherDataSource", "Weather data: $it")
-        }, onError = {
-            Log.d("WeatherDataSource", "Error: $it")
-        })
-
         setContent {
             MotoCastTheme {
                 // A surface container using the 'background' color from the theme
