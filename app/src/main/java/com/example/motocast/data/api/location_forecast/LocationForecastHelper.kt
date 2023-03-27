@@ -1,26 +1,13 @@
-package com.example.motocast.data.api
+package com.example.motocast.data.api.location_forecast
 
 import com.example.motocast.BuildConfig
+import com.example.motocast.data.api.LongTermWeatherDataAPI
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/**
- * Helper class for creating a Retrofit instance for the Met API.
- * This makes handling the JSON data easier.
- * @see [Retrofit]
- * @see [GsonConverterFactory]
- * @see [OkHttpClient]
- * @see [LongTermWeatherDataAPI]
- */
-class MetRetrofitHelper {
+class LocationForecastHelper {
 
-
-    /**
-     * Creates a Retrofit instance for the Met API.
-     * This instance is used to create a [LongTermWeatherDataAPI] instance.
-     * @see [LongTermWeatherDataAPI]
-     */
     fun createLongTermWeatherDataAPI(): LongTermWeatherDataAPI {
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
