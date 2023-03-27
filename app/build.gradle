@@ -24,6 +24,7 @@ android {
         // This is for easy access to the API key in the code
         buildConfigField("String", "MET_API_KEY", "\"" + localProperties['met_api_key'] + "\"")
         buildConfigField("String", "MET_API_BASE_URL", "\"" + localProperties['met_api_base_url'] + "\"")
+        buildConfigField("String", "TEST_KEYSTORE_PASSWORD", "\"" + localProperties['test_keystore_password'] + "\"")
     }
 
     buildTypes {
