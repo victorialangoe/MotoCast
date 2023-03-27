@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MetRetrofitHelper {
+class LocationForecastHelper {
 
     fun createLongTermWeatherDataAPI(): LongTermWeatherDataAPI {
         val client = OkHttpClient.Builder()

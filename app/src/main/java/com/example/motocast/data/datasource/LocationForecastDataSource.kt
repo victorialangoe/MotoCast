@@ -3,14 +3,14 @@ package com.example.motocast.data.datasource
 import LongTermWeatherData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.motocast.data.api.location_forecast.MetRetrofitHelper
+import com.example.motocast.data.api.location_forecast.LocationForecastHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class WeatherDataSource : ViewModel() {
-    private val metRetrofitService = MetRetrofitHelper().createLongTermWeatherDataAPI()
+class LocationForecastDataSource : ViewModel() {
+    private val metRetrofitService = LocationForecastHelper().createLongTermWeatherDataAPI()
 
     fun getLongTermWeatherData(
         latitude: Double,
