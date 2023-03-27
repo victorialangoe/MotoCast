@@ -10,11 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.motocast.data.api.MetRetrofitHelper
+import com.example.motocast.data.datasource.WeatherDataSource
 import com.example.motocast.ui.theme.MotoCastTheme
+import android.util.Log
+import kotlin.math.log
+
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         setContent {
             MotoCastTheme {
                 // A surface container using the 'background' color from the theme

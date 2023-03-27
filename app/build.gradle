@@ -3,6 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// This is for loading the local.properties file which contains the API key
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     namespace 'com.example.motocast'
     compileSdk 33
@@ -13,11 +17,13 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        // This is for easy access to the API key in the code
+        buildConfigField("String", "MET_API_KEY", "\"" + localProperties['met_api_key'] + "\"")
+        buildConfigField("String", "MET_API_BASE_URL", "\"" + localProperties['met_api_base_url'] + "\"")
     }
 
     buildTypes {
@@ -60,4 +66,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
 }
