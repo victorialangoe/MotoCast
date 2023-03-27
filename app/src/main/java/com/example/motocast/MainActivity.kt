@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
+import com.example.motocast.ui.view.WordAnimation
 
 
 class MainActivity : ComponentActivity() {
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MetAlertsScreen(viewModel = viewModel)
                     //Remove check on line 33 and 19 to see preview.
+                    WordAnimation()
                 }
             }
         }
