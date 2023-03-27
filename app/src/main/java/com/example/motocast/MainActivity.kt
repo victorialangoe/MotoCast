@@ -3,21 +3,26 @@ package com.example.motocast
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.motocast.data.api.MetRetrofitHelper
-import com.example.motocast.data.datasource.WeatherDataSource
+import androidx.compose.ui.unit.dp
+import com.example.motocast.data.datasource.MetAlertsDataSource
+import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.ui.theme.MotoCastTheme
-import android.util.Log
-import kotlin.math.log
+import com.example.motocast.ui.view.MetAlertsScreen
 
 
 class MainActivity : ComponentActivity() {
+    //val viewModel = MetAlertsDataSource()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +36,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Sander")
+                    //MetAlertsScreen(viewModel = viewModel)
+                    // if you want to see how the API works just uncheck on line 24 and 39
                 }
             }
         }
@@ -50,3 +56,6 @@ fun DefaultPreview() {
         Greeting("Android")
     }
 }
+
+
+
