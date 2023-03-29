@@ -1,15 +1,12 @@
-package com.example.motocast.data.api.location_forecast
-
+package com.example.motocast.data.api.nowcast
 
 import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.LongTermWeatherDataAPI
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class LocationForecastHelper {
-
-    fun createLongTermWeatherDataAPI(): LongTermWeatherDataAPI {
+class NowCastHelper {
+    fun createNowCastAPI(): NowCastAPI {
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request()
@@ -26,6 +23,6 @@ class LocationForecastHelper {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        return retrofit.create(LongTermWeatherDataAPI::class.java)
+        return retrofit.create(NowCastAPI::class.java)
     }
 }
