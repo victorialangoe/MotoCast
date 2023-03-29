@@ -25,6 +25,7 @@ android {
         buildConfigField("String", "MET_API_KEY", "\"" + localProperties['met_api_key'] + "\"")
         buildConfigField("String", "MET_API_BASE_URL", "\"" + localProperties['met_api_base_url'] + "\"")
         buildConfigField("String", "TEST_KEYSTORE_PASSWORD", "\"" + localProperties['test_keystore_password'] + "\"")
+        buildConfigField("String", "MAPBOX_DOWNLOADS_TOKEN", "\"" + localProperties['mapbox_downloads_token'] + "\"")
     }
 
     buildTypes {
@@ -69,4 +70,5 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.mapbox.maps:android:10.12.0"
 }
