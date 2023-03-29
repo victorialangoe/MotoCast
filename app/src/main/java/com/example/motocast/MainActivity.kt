@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
 
         val NowCastDataSource = NowCastDataSource()
         NowCastDataSource.getNowCastData(
-            longitude = 59.9333,
-            latitude = 10.7166,
+            latitude = 59.9333,
+            longitude = 10.7166,
             onSuccess = {
                 Log.d("NowCast", it.toString())
             },

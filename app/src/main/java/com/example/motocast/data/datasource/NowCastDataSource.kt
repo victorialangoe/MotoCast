@@ -2,9 +2,7 @@ package com.example.motocast.data.datasource
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.motocast.data.api.metalerts.MetAlertsHelper
 import com.example.motocast.data.api.nowcast.NowCastHelper
-import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -2,8 +2,18 @@ package com.example.motocast.data.model
 
 data class NowCastDataModel(
     val type: String,
-    val geometry: Geometry,
-    val properties: Properties
+    val geometry: GeometryNowCast,
+    val properties: PropertiesNowCast
+)
+
+data class GeometryNowCast(
+    val type: String,
+    val coordinates: List<Double>
+)
+
+data class PropertiesNowCast(
+    val meta: Meta,
+    val timeseries: List<Timeseries>
 )
 
 data class Meta(

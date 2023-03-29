@@ -1,6 +1,5 @@
 package com.example.motocast.data.api.nowcast
 
-import LongTermWeatherData
 import com.example.motocast.data.model.NowCastDataModel
 import retrofit2.Call
 import retrofit2.http.GET
