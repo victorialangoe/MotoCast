@@ -22,6 +22,7 @@ import com.example.motocast.R
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
+import com.mapbox.mapboxsdk.Mapbox
 
 
 @Composable
