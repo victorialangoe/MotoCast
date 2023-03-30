@@ -1,3 +1,7 @@
+/**
+ * Data class for the location forecast data from the Met API.
+ * This data class is used to parse the JSON data from the Met API.
+ */
 data class LongTermWeatherData(
     val type: String,
     val geometry: Geometry,

@@ -1,26 +1,23 @@
 package com.example.motocast.data.datasource
 
-import LongTermWeatherData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.motocast.data.api.MetRetrofitHelper
+import com.example.motocast.data.api.metalerts.MetAlertsHelper
+import com.example.motocast.data.model.MetAlertsDataModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+class MetAlertsDataSource: ViewModel() {
+    private val metRetrofitService = MetAlertsHelper().createMetAlertsAPI()
 
-class WeatherDataSource : ViewModel() {
-    private val metRetrofitService = MetRetrofitHelper().createLongTermWeatherDataAPI()
-
-    fun getLongTermWeatherData(
-        latitude: Double,
-        longitude: Double,
-        onSuccess: (LongTermWeatherData) -> Unit,
+    fun getMetAlertsData(
+        onSuccess: (MetAlertsDataModel) -> Unit,
         onError: (String) -> Unit
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val response = metRetrofitService.getWeatherData(latitude, longitude).execute()
+                val response = metRetrofitService.getMetAlertsData().execute()
                 if (response.isSuccessful) {
                     val weatherData = response.body()
                     if (weatherData != null) {
@@ -37,4 +34,3 @@ class WeatherDataSource : ViewModel() {
     }
 
 }
-
