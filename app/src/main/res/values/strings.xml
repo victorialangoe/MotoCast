@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MotoCast</string>
+    <string name="title_activity_locate_user_badge">LocateUserBadge</string>
 </resources>

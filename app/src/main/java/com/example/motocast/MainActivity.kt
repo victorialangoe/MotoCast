@@ -1,5 +1,6 @@
 package com.example.motocast
 
+import HomeBottomScaffoldView
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -47,7 +48,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MetAlertsScreen(viewModel = viewModel)
                     //Remove check on line 33 and 19 to see preview.
-                    WordAnimation()
+                    //WordAnimation()
+                    HomeBottomScaffoldView()
+
                 }
             }
         }
