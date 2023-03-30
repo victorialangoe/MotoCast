@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
+import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
 import com.example.motocast.ui.view.WordAnimation
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MotoCastTheme {
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -49,7 +51,9 @@ class MainActivity : ComponentActivity() {
                     MetAlertsScreen(viewModel = viewModel)
                     //Remove check on line 33 and 19 to see preview.
                     //WordAnimation()
-                    HomeBottomScaffoldView()
+                    HomeBottomScaffoldView(content = {
+                        MapWrapper()
+                    })
 
                 }
             }
