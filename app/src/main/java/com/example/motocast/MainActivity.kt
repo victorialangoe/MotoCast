@@ -14,31 +14,21 @@ import com.example.motocast.data.api.MetRetrofitHelper
 import com.example.motocast.data.datasource.WeatherDataSource
 import com.example.motocast.ui.theme.MotoCastTheme
 import android.util.Log
+import com.example.motocast.ui.map.MapBoxComposable
 import kotlin.math.log
 
 
 class MainActivity : ComponentActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
         setContent {
-            MotoCastTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Sander")
-                }
-            }
+            MapBoxComposable(modifier = Modifier.fillMaxSize())
         }
-    }
+
 }
 
-@Composable
+
+    @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }

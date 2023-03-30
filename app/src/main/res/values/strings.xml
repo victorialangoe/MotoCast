@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MotoCast</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiZ29ybXJzIiwiYSI6ImNsZnF0Zm5yMzAxemszc3AxOWFhZmgxc2EifQ.YKiYebPJ36iN7NO5dGPqqw</string>
 </resources>
