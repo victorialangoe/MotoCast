@@ -14,4 +14,10 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun getKeyFromLocal(){
+        print(BuildConfig.TEST_KEYSTORE_PASSWORD)
+        assertEquals("123456", BuildConfig.TEST_KEYSTORE_PASSWORD)
+    }
 }

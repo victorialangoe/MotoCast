@@ -1,5 +1,6 @@
 package com.example.motocast.data.datasource
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.nowcast.NowCastHelper
@@ -29,7 +30,8 @@ class NowCastDataSource : ViewModel() {
 
                     }
                 } else {
-                    onError("Error: ${response.errorBody()}")
+                    Log.d("NowCastDataSource", "Error: ${response}")
+                    onError("Error: ${response.code()} ${response.message()} ")
                 }
             }
         }
