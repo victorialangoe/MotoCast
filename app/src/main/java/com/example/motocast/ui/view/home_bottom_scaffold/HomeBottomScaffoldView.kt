@@ -9,8 +9,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,8 +32,6 @@ fun HomeBottomScaffoldView(
         }
     }
 ) {
-    val nowCastState by nowCastViewModel.uiState.collectAsState()
-
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
 
@@ -54,8 +50,7 @@ fun HomeBottomScaffoldView(
             ) {
                 CurrentWeatherRow(
                     context = context,
-                    temperature = nowCastState.temperature ?: 0.0,
-                    symbolCode = nowCastState.symbolCode ?: ""
+                    viewModel = nowCastViewModel
                 )
                 ContentColumn()
             }
@@ -73,14 +68,14 @@ fun HomeBottomScaffoldView(
 }
 
 @Composable
-fun CurrentWeatherRow(context: Context, temperature: Double, symbolCode: String) {
+fun CurrentWeatherRow(context: Context, viewModel: NowCastViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CurrentWeatherBadge(context = context, temperature = temperature, symbolCode = symbolCode)
+        CurrentWeatherBadge(context = context, viewModel = viewModel)
         Spacer(modifier = Modifier.weight(1f))
         LocateUserBadge()
     }

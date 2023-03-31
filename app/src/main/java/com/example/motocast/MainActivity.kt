@@ -15,10 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var nowCastViewModel: NowCastViewModel
+    private lateinit var routePlannerViewModel: RoutePlannerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,8 @@ class MainActivity : ComponentActivity() {
                     HomeBottomScaffoldView(
                         this.applicationContext,
                         nowCastViewModel = nowCastViewModel,
-                        content =
-                        {MapWrapper()}
+                       // content = Null
+                        //{MapWrapper()}
                     )
                 }
             }
@@ -40,6 +42,8 @@ class MainActivity : ComponentActivity() {
 
         nowCastViewModel = ViewModelProvider(this)[NowCastViewModel::class.java]
         nowCastViewModel.startFetchingNowCastData(this)
+
+        routePlannerViewModel = ViewModelProvider(this)[RoutePlannerViewModel::class.java]
     }
 
     override fun onResume() {
