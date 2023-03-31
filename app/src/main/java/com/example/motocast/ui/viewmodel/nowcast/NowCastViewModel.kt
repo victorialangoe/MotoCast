@@ -21,7 +21,13 @@ class NowCastViewModel: ViewModel() {
     /**
      * Start fetching the data every 5 minutes, and update the UI.
      * The data is fetched every 5 minutes because the API is updated every 5 minutes.
-     */
+     *
+     * We only want to fetch the data if the user is in the area where the API (Scandinavia) is valid.
+     *  Maximum Latitude: 71.18°N (Nordkinn Peninsula, Norway)
+     *  Minimum Latitude: 54.50°N (Kattegat, Denmark/Sweden)
+     *  Maximum Longitude: 31.10°E (Varangerfjord, Norway)
+     *  Minimum Longitude: 0.10°E (Skagen, Denmark)
+    */
     fun startFetchingNowCastData(activity: MainActivity) {
 
         job = CoroutineScope(Dispatchers.IO).launch {
@@ -31,7 +37,13 @@ class NowCastViewModel: ViewModel() {
                     activity = activity,
                     context = activity.applicationContext,
                     onSuccess = { location ->
-                        fetchNowCastData(location.latitude, location.longitude)
+                        // Check if the user is in Scandinavia
+                        if (location.latitude in 54.50..71.18 && location.longitude in 0.10..31.10) {
+                            fetchNowCastData(location.latitude, location.longitude)
+                        } else {
+                            Log.e("NowCastViewModel", "User is not in Scandinavia")
+                        }
+
                     },
                     onError = { error ->
                         Log.e("NowCastViewModel", "Error fetching the user location: $error")
@@ -46,6 +58,9 @@ class NowCastViewModel: ViewModel() {
     /**
      * Stop fetching the data.
      * This method should be called when the user leaves the app or the screen.
+     * - Removed userViewModel, because we dont need it.
+    - Updated the nowCastViewModel. Now it fetches correct data and does not crash on error.
+    - Updated the user
      */
     fun stopFetchingNowCastData() {
         job?.cancel() // Cancel the job to stop fetching the data
