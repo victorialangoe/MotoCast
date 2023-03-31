@@ -1,13 +1,10 @@
 package com.example.motocast.ui.viewmodel.nowcast
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.motocast.MainActivity
 import com.example.motocast.data.datasource.NowCastDataSource
-import com.example.motocast.ui.viewmodel.user.UserViewModel
-
+import com.example.motocast.util.getCurrentLocation
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -15,30 +12,32 @@ import kotlinx.coroutines.flow.*
  * Provides the data to the NowCastScreen via the uiState variable.
  * The data is fetched every 5 minutes.
  */
-class NowCastViewModel(private val userViewModel: UserViewModel) : ViewModel() {
-
+class NowCastViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(NowCastUiState())
-    val uiState: StateFlow<NowCastUiState> = _uiState
-
     private var job: Job? = null
 
-    init {
-        // Observe the state flow in userViewModel
-        userViewModel.uiState
-            .distinctUntilChangedBy { it.latitude to it.longitude }
-            .onEach { fetchNowCastData() }
-            .launchIn(viewModelScope)
-    }
-
+    val uiState: StateFlow<NowCastUiState> = _uiState
 
     /**
      * Start fetching the data every 5 minutes, and update the UI.
      * The data is fetched every 5 minutes because the API is updated every 5 minutes.
      */
-    fun startFetchingNowCastData() {
+    fun startFetchingNowCastData(activity: MainActivity) {
+
         job = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) { // Use a loop to keep fetching the data every 5 minutes
-                fetchNowCastData()
+                // Wait for the user location to be fetched
+                getCurrentLocation(
+                    activity = activity,
+                    context = activity.applicationContext,
+                    onSuccess = { location ->
+                        fetchNowCastData(location.latitude, location.longitude)
+                    },
+                    onError = { error ->
+                        Log.e("NowCastViewModel", "Error fetching the user location: $error")
+                    }
+                )
+
                 delay(5 * 60 * 1000) // Wait for 5 minutes before fetching again
             }
         }
@@ -56,16 +55,19 @@ class NowCastViewModel(private val userViewModel: UserViewModel) : ViewModel() {
     /**
      * Fetch the data from the API and update the UI.
      */
-    private fun fetchNowCastData() {
+    private fun fetchNowCastData(latitude: Double, longitude: Double) {
         val currentUiState = _uiState.value
         if (currentUiState.isLoading) return // Do not fetch data while loading
 
         _uiState.value = currentUiState.copy(isLoading = true)
-        NowCastDataSource().getNowCastData(userViewModel.uiState.value.latitude, userViewModel.uiState.value.longitude, onSuccess = {
+        NowCastDataSource().getNowCastData(latitude, longitude, onSuccess = {
             _uiState.value = currentUiState.copy(
-                weatherData = it,
-                updatedAt = it.properties.meta.updated_at,
-                isLoading = false
+                isLoading = false,
+                symbolCode = it.properties.timeseries.first().data.next_1_hours.summary.symbol_code,
+                temperature = it.properties.timeseries.first().data.instant.details.air_temperature,
+                windSpeed = it.properties.timeseries.first().data.instant.details.wind_speed,
+                windDirection = it.properties.timeseries.first().data.instant.details.wind_from_direction,
+                updatedAt = it.properties.meta.updated_at
             )
             Log.d("NowCastViewModel", "Fetched NowCast data ${it.properties}")
         }, onError = {

@@ -1,3 +1,6 @@
+package com.example.motocast.ui.view.home_bottom_scaffold
+
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -6,6 +9,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,20 +18,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.home_bottom_scaffold.AddNewRouteButton
-import com.example.motocast.ui.view.home_bottom_scaffold.CurrentWeatherBadge
-import com.example.motocast.ui.view.home_bottom_scaffold.LocateUserBadge
+import com.example.motocast.ui.view.home_bottom_scaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeBottomScaffoldView(
+    context: Context,
+    nowCastViewModel: NowCastViewModel,
     content: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier) {
             Text("Scaffold Content")
         }
     }
 ) {
+    val nowCastState by nowCastViewModel.uiState.collectAsState()
+
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
 
@@ -43,7 +52,11 @@ fun HomeBottomScaffoldView(
                     .clip(cornerShape),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CurrentWeatherRow()
+                CurrentWeatherRow(
+                    context = context,
+                    temperature = nowCastState.temperature ?: 0.0,
+                    symbolCode = nowCastState.symbolCode ?: ""
+                )
                 ContentColumn()
             }
         },
@@ -60,14 +73,14 @@ fun HomeBottomScaffoldView(
 }
 
 @Composable
-fun CurrentWeatherRow() {
+fun CurrentWeatherRow(context: Context, temperature: Double, symbolCode: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CurrentWeatherBadge()
+        CurrentWeatherBadge(context = context, temperature = temperature, symbolCode = symbolCode)
         Spacer(modifier = Modifier.weight(1f))
         LocateUserBadge()
     }
@@ -107,6 +120,11 @@ private val minHeight = 190.dp
 @ExperimentalMaterial3Api
 @Preview(showBackground = true)
 @Composable
-fun HomeBottomScaffoldViewPreview() {
-    HomeBottomScaffoldView()
+fun HomeBottomScaffoldViewPreview(
+    context: Context = androidx.compose.ui.platform.LocalContext.current) {
+    HomeBottomScaffoldView(context = context, nowCastViewModel = NowCastViewModel()) { modifier ->
+        Box(modifier) {
+            Text("Scaffold Content")
+        }
+    }
 }
