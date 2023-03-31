@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
+import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
 import com.example.motocast.ui.view.WordAnimation
@@ -35,7 +36,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeBottomScaffoldView()
+                    HomeBottomScaffoldView(content =
+                        {MapWrapper()}
+                    )
                 }
             }
         }
