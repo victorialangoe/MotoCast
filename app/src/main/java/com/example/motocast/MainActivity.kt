@@ -12,52 +12,65 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
 import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
 import com.example.motocast.ui.view.WordAnimation
+import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.user.UserViewModel
 
 
 class MainActivity : ComponentActivity() {
-    val viewModel = MetAlertsDataSource()
 
+    private lateinit var nowCastViewModel: NowCastViewModel
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
-        val NowCastDataSource = NowCastDataSource()
-        NowCastDataSource.getNowCastData(
-            latitude = 59.9333,
-            longitude = 10.7166,
-            onSuccess = {
-                Log.d("NowCast", it.toString())
-            },
-            onError = {
-                Log.d("NowCast Error", it.toString())
-            }
-        )
-
         setContent {
             MotoCastTheme {
-
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MetAlertsScreen(viewModel = viewModel)
-                    //Remove check on line 33 and 19 to see preview.
-                    //WordAnimation()
-                    HomeBottomScaffoldView(content = {
-                        MapWrapper()
-                    })
-
+                    HomeBottomScaffoldView(content =
+                        {MapWrapper()}
+                    )
                 }
             }
         }
+
+
+        // Initialize the UserViewModel and start fetching data
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel.startFetchingUserData(this)
+
+        // Initialize the NowCastViewModel and start fetching data
+        nowCastViewModel = NowCastViewModel(userViewModel = userViewModel)
+        nowCastViewModel.startFetchingNowCastData()
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Start fetching data when the user resumes the activity
+        userViewModel.startFetchingUserData(this)
+        nowCastViewModel.startFetchingNowCastData()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Stop fetching data when the user pauses the activity
+        userViewModel.stopFetchingUserData()
+        nowCastViewModel.stopFetchingNowCastData()
     }
 }
 
