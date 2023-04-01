@@ -37,12 +37,14 @@ fun getCurrentLocation(
     // Define a LocationListener to receive location updates
     val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            // Remove the listener to save battery
+            // Remove the listener to save battery and not receive more updates than needed (we only need one)
             locationManager.removeUpdates(this)
             onSuccess(location)
         }
 
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+        }
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {}
 

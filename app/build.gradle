@@ -79,6 +79,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.mapbox.maps:android:10.12.1"
+    implementation "com.mapbox.search:place-autocomplete:1.0.0-rc.2"
+    implementation "com.mapbox.search:mapbox-search-android:1.0.0-rc.2"
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha09") {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
     }

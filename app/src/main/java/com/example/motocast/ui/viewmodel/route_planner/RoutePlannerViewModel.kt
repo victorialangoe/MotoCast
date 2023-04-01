@@ -9,7 +9,7 @@ class RoutePlannerViewModel: ViewModel() {
 
     val uiState = _uiState
 
-    // This method is only used for debugging purposes
+    /* This method is only used for debugging purposes */
     private fun printDestinations() {
         val currentUiState = _uiState.value
         // create a string with - between each destination
@@ -20,7 +20,19 @@ class RoutePlannerViewModel: ViewModel() {
     fun addDestination() {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
-        newDestinations.add(Destination("Destination ${newDestinations.size + 1}", 0.0, 0.0, 0))
+        // max 5 destinations
+        if (newDestinations.size < 5) {
+            newDestinations.add(Destination("New", 0.0, 0.0, 0))
+            _uiState.value = currentUiState.copy(destinations = newDestinations)
+            printDestinations()
+        }
+    }
+
+    fun updateDestinationName(index: Int, name: String) {
+        val currentUiState = _uiState.value
+        val newDestinations = currentUiState.destinations.toMutableList()
+        val destination = newDestinations[index]
+        newDestinations[index] = destination.copy(name = name)
         _uiState.value = currentUiState.copy(destinations = newDestinations)
         printDestinations()
     }
@@ -28,12 +40,15 @@ class RoutePlannerViewModel: ViewModel() {
     fun removeDestination(index: Int) {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
-        newDestinations.removeAt(index)
-        _uiState.value = currentUiState.copy(destinations = newDestinations)
-        printDestinations()
+        // min 2 destinations
+        if (newDestinations.size > 2) {
+            newDestinations.removeAt(index)
+            _uiState.value = currentUiState.copy(destinations = newDestinations)
+            printDestinations()
+        }
     }
 
-    fun updateDestination(oldIndex: Int, newIndex: Int) {
+    fun updateDestinationIndex(oldIndex: Int, newIndex: Int) {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
         val destination = newDestinations.removeAt(oldIndex)

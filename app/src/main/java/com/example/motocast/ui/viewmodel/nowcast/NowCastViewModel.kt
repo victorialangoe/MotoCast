@@ -58,9 +58,6 @@ class NowCastViewModel: ViewModel() {
     /**
      * Stop fetching the data.
      * This method should be called when the user leaves the app or the screen.
-     * - Removed userViewModel, because we dont need it.
-    - Updated the nowCastViewModel. Now it fetches correct data and does not crash on error.
-    - Updated the user
      */
     fun stopFetchingNowCastData() {
         job?.cancel() // Cancel the job to stop fetching the data

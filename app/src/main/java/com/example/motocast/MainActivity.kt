@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
-import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
+import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.mapbox.search.autocomplete.PlaceAutocomplete
 
 
 class MainActivity : ComponentActivity() {
@@ -34,8 +35,10 @@ class MainActivity : ComponentActivity() {
                         this.applicationContext,
                         nowCastViewModel = nowCastViewModel,
                        // content = Null
-                        //{MapWrapper()}
+                        //{MapWrapper(context = this.applicationContext, nowCastViewModel = nowCastViewModel)}
                     )
+                    RoutePlannerView(routePlannerViewModel)
+
                 }
             }
         }

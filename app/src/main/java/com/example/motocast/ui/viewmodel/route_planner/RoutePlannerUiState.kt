@@ -2,7 +2,10 @@ package com.example.motocast.ui.viewmodel.route_planner
 
 data class RoutePlannerUiState (
     val isLoading: Boolean = false,
-    val destinations: List<Destination> = emptyList(),
+    // Every route must have at least two destinations
+    val destinations: List<Destination> = List(2) { index ->
+        Destination("Destination ${index + 1}", 0.0, 0.0, 0)
+    },
     val startTimestamp: Long? = null,
 )
 
