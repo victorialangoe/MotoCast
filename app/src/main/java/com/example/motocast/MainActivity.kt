@@ -36,9 +36,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeBottomScaffoldView(content =
-                        {MapWrapper()}
-                    )
+                    HomeBottomScaffoldView(content = { MapWrapper(this) })
+
                 }
             }
         }
