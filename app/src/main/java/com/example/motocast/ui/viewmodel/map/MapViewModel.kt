@@ -3,24 +3,19 @@ package com.example.motocast.ui.viewmodel.map
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import com.example.motocast.MainActivity
-import com.example.motocast.ui.viewmodel.nowcast.NowCastUiState
 import com.example.motocast.util.getCurrentLocation
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 
-@SuppressLint("StaticFieldLeak") // This is fine for a ViewModel
-class MapViewModel: ViewModel() {
+@SuppressLint("StaticFieldLeak")
+class MapViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState
 
@@ -32,7 +27,7 @@ class MapViewModel: ViewModel() {
         _uiState.value = _uiState.value.copy(mapView = mapView)
     }
 
-    fun cameraToUserLocation( activity: Activity) {
+    fun cameraToUserLocation(activity: Activity) {
         if (_uiState.value.mapView != null) {
             val mapboxMap = _uiState.value.mapView!!.getMapboxMap()
             Log.d("MapActivity", "Camera to user location")

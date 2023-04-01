@@ -1,6 +1,5 @@
 package com.example.motocast.ui.view.map
 
-import android.app.Activity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,7 +27,6 @@ import com.example.motocast.ui.viewmodel.map.MapViewModel
 @Composable
 fun MapView(viewModel: MapViewModel, activity: MainActivity) {
     val mapUiState: MapUiState by viewModel.uiState.collectAsState()
-
     viewModel.addMapView(createMap(viewModel = viewModel, activity = activity))
     viewModel.cameraToUserLocation(activity)
 
