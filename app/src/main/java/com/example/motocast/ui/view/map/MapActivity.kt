@@ -1,4 +1,4 @@
-package com.example.motocast.ui.map
+package com.example.motocast.ui.view.map
 
 import android.app.Activity
 import android.content.Context
