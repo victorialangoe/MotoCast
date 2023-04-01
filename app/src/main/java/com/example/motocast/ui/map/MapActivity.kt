@@ -35,7 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
+// TODO: We need to delete this, but it's a good reference for now
 @Composable
 fun MapWrapper(activity: Activity) {
     val context = LocalContext.current
