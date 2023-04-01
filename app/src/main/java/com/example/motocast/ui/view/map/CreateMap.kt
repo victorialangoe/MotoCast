@@ -20,17 +20,13 @@ fun createMap(viewModel: MapViewModel, activity: MainActivity): MapView {
     val mapView = remember {
         MapView(activity.applicationContext).apply {
             val mapView = this
-            mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) { style ->
+            mapView.getMapboxMap().loadStyleUri("mapbox://styles/mapbox/navigation-day-v1") { style ->
                 val mapboxMap = mapView.getMapboxMap()
                 mapView.location.apply {
                     enabled = true
                     pulsingEnabled = true
                 }
-                val cameraOptions = CameraOptions.Builder()
-                    .center(Point.fromLngLat(10.0, 10.0))
-                    .zoom(15.0)
-                    .build()
-                mapboxMap.setCamera(cameraOptions)
+
             }
         }
     }
