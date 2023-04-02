@@ -19,6 +19,8 @@ import com.example.motocast.ui.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
 import com.example.motocast.ui.view.WordAnimation
+import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
+import com.example.motocast.ui.view.route_scaffold.RouteScaffoldViewPreview
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.user.UserViewModel
 
@@ -36,9 +38,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeBottomScaffoldView(content =
-                        {MapWrapper()}
-                    )
+                    //HomeBottomScaffoldView(content =
+                    //    {MapWrapper()}
+                    //)
+
+                    RouteScaffoldView(content =
+                    {MapWrapper()})
                 }
             }
         }
