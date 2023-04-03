@@ -1,8 +1,6 @@
 package com.example.motocast
 
-import HomeBottomScaffoldView
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,21 +8,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
-import com.example.motocast.data.datasource.MetAlertsDataSource
-import com.example.motocast.data.datasource.NowCastDataSource
-import com.example.motocast.ui.view.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
-import com.example.motocast.ui.view.MetAlertsScreen
-import com.example.motocast.ui.view.WordAnimation
-import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
-import com.example.motocast.ui.view.route_scaffold.RouteScaffoldViewPreview
 import com.example.motocast.ui.view.map.MapView
-import com.example.motocast.ui.viewmodel.map.MapUiState
+import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
 import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.user.UserViewModel
@@ -44,13 +33,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //HomeBottomScaffoldView(content =
-                    //    {MapWrapper()}
-                    //)
+                    //HomeBottomScaffoldView(content = {
+                    //                        MapView(
+                    //                            viewModel = mapViewModel, activity = this
+                    //                        )
+                    //                    })
 
-                    RouteScaffoldView(content =
-                    {MapWrapper()})
-                    MapView(viewModel = mapViewModel, activity = this)
+                    RouteScaffoldView(content = {
+                        MapView(
+                            viewModel = mapViewModel, activity = this
+                        )
+                    })
+
+
                 }
             }
         }
@@ -64,7 +59,6 @@ class MainActivity : ComponentActivity() {
         // Initialize the NowCastViewModel and start fetching data
         nowCastViewModel = NowCastViewModel(userViewModel = userViewModel)
         nowCastViewModel.startFetchingNowCastData()
-
 
 
     }
