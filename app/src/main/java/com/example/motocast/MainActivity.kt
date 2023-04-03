@@ -1,6 +1,5 @@
 package com.example.motocast
 
-import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,15 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.ui.theme.MotoCastTheme
-import com.example.motocast.ui.view.route_planner.RoutePlannerView
+import com.example.motocast.ui.view.map.MapView
+import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
+import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
-import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
-import com.mapbox.search.autocomplete.PlaceAutocomplete
+import com.example.motocast.ui.viewmodel.user.UserViewModel
 
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var nowCastViewModel: NowCastViewModel
-    private lateinit var routePlannerViewModel: RoutePlannerViewModel
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var mapViewModel: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,34 +33,50 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeBottomScaffoldView(
-                        this.applicationContext,
-                        nowCastViewModel = nowCastViewModel,
-                       // content = Null
-                        //{MapWrapper(context = this.applicationContext, nowCastViewModel = nowCastViewModel)}
-                    )
-                    RoutePlannerView(routePlannerViewModel)
+                    //HomeBottomScaffoldView(content = {
+                    //                        MapView(
+                    //                            viewModel = mapViewModel, activity = this
+                    //                        )
+                    //                    })
+
+                    RouteScaffoldView(content = {
+                        MapView(
+                            viewModel = mapViewModel, activity = this
+                        )
+                    })
+
 
                 }
             }
         }
 
-        nowCastViewModel = ViewModelProvider(this)[NowCastViewModel::class.java]
-        nowCastViewModel.startFetchingNowCastData(this)
+        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
 
-        routePlannerViewModel = ViewModelProvider(this)[RoutePlannerViewModel::class.java]
+        // Initialize the UserViewModel and start fetching data
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel.startFetchingUserData(this)
+
+        // Initialize the NowCastViewModel and start fetching data
+        nowCastViewModel = NowCastViewModel(userViewModel = userViewModel)
+        nowCastViewModel.startFetchingNowCastData()
+
+
     }
 
     override fun onResume() {
         super.onResume()
 
-        nowCastViewModel.startFetchingNowCastData(this)
+        // Start fetching data when the user resumes the activity
+        userViewModel.startFetchingUserData(this)
+        nowCastViewModel.startFetchingNowCastData()
 
     }
 
     override fun onPause() {
         super.onPause()
 
+        // Stop fetching data when the user pauses the activity
+        userViewModel.stopFetchingUserData()
         nowCastViewModel.stopFetchingNowCastData()
     }
 }
