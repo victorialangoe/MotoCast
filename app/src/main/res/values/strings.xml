@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MotoCast</string>
     <string name="title_activity_locate_user_badge">MotoCast</string>
-    <string name="mapbox_access_token">pk.eyJ1IjoiZ29ybXJzIiwiYSI6ImNsZnF0Zm5yMzAxemszc3AxOWFhZmgxc2EifQ.YKiYebPJ36iN7NO5dGPqqw</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiZXNwZW5vcmUiLCJhIjoiY2xmdzl0cnk4MDRpaDNudGFsbnZ4dGJyNyJ9.WPjnzuOjeSWUyHebgEe9bw</string>
 </resources>
