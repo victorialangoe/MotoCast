@@ -16,13 +16,11 @@ import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
 import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
-import com.example.motocast.ui.viewmodel.user.UserViewModel
 
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
-    private lateinit var userViewModel: UserViewModel
     private lateinit var mapViewModel: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,13 +50,11 @@ class MainActivity : ComponentActivity() {
 
         mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
 
-        // Initialize the UserViewModel and start fetching data
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        userViewModel.startFetchingUserData(this)
+
 
         // Initialize the NowCastViewModel and start fetching data
-        nowCastViewModel = NowCastViewModel(userViewModel = userViewModel)
-        nowCastViewModel.startFetchingNowCastData()
+        nowCastViewModel = ViewModelProvider(this)[NowCastViewModel::class.java]
+        nowCastViewModel.startFetchingNowCastData(this)
 
 
     }
@@ -67,8 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
 
         // Start fetching data when the user resumes the activity
-        userViewModel.startFetchingUserData(this)
-        nowCastViewModel.startFetchingNowCastData()
+        nowCastViewModel.startFetchingNowCastData(this)
 
     }
 
@@ -76,7 +71,6 @@ class MainActivity : ComponentActivity() {
         super.onPause()
 
         // Stop fetching data when the user pauses the activity
-        userViewModel.stopFetchingUserData()
         nowCastViewModel.stopFetchingNowCastData()
     }
 }
