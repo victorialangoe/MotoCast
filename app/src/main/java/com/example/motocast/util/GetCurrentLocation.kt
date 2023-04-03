@@ -8,7 +8,9 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
 
 /**
  * Get the current location of the user
@@ -24,41 +26,23 @@ fun getCurrentLocation(
     onSuccess: (location: Location) -> Unit,
     onError: (exception: Exception) -> Unit
 ) {
-    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-    // Check if the user has granted location permission
     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
         ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        // If not, request the permission
         ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 6969)
         return
     }
 
-    // Define a LocationListener to receive location updates
-    val locationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            // Remove the listener to save battery
-            locationManager.removeUpdates(this)
-            onSuccess(location)
+    fusedLocationClient.lastLocation
+        .addOnSuccessListener { location: Location? ->
+            location?.let {
+                onSuccess(it)
+            } ?: run {
+                onError(Exception("No location found"))
+            }
         }
-
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {}
-
-    }
-
-    // Request location updates, run on the UI thread to avoid errors
-    activity.runOnUiThread {
-        try {
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0L,
-                0f,
-                locationListener
-            )
-        } catch (exception: SecurityException) {
+        .addOnFailureListener { exception ->
             onError(exception)
         }
-    }
 }

@@ -17,6 +17,7 @@ import com.example.motocast.ui.view.home_bottom_scaffold.AddNewRouteButton
 import com.example.motocast.ui.view.home_bottom_scaffold.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.LocateUserBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.mapbox.maps.MapView
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +62,7 @@ fun HomeBottomScaffoldView(
 
 @Composable
 fun CurrentWeatherRow() {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

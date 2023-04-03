@@ -10,15 +10,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
-import com.example.motocast.ui.map.MapWrapper
+import com.example.motocast.ui.view.map.MapWrapper
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.MetAlertsScreen
 import com.example.motocast.ui.view.WordAnimation
+import com.example.motocast.ui.view.map.MapView
+import com.example.motocast.ui.viewmodel.map.MapUiState
+import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.user.UserViewModel
 
@@ -27,6 +32,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
     private lateinit var userViewModel: UserViewModel
+    private lateinit var mapViewModel: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +42,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeBottomScaffoldView(content =
-                        {MapWrapper()}
-                    )
+                    MapView(viewModel = mapViewModel, activity = this)
                 }
             }
         }
 
+        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
 
         // Initialize the UserViewModel and start fetching data
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
