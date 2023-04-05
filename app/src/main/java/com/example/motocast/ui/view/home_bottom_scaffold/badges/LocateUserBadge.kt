@@ -1,5 +1,4 @@
 package com.example.motocast.ui.view.home_bottom_scaffold
-import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,22 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
-import com.example.motocast.ui.view.map.cameraToUserLocation
-
+import com.example.motocast.ui.viewmodel.map.MapViewModel
+import com.example.motocast.ui.viewmodel.location.LocationViewModel
 
 
 @Composable
-fun LocateUserBadge(){
-    val context = LocalContext.current
+fun LocateUserBadge(
+    mapViewModel: MapViewModel,
+    locationViewModel: LocationViewModel
+){
     Button(
     onClick = {
-
-        },
+        mapViewModel.cameraToUserLocation(locationViewModel)
+    },
     shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
@@ -42,10 +41,3 @@ fun LocateUserBadge(){
         )
     }
 }
-
-@Preview
-@Composable
-fun LocateUserBadgePreview() {
-    LocateUserBadge()
-}
-

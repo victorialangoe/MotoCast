@@ -23,12 +23,13 @@ import com.example.motocast.MainActivity
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.map.MapUiState
 import com.example.motocast.ui.viewmodel.map.MapViewModel
+import com.example.motocast.ui.viewmodel.location.LocationViewModel
 
 @Composable
-fun MapView(viewModel: MapViewModel, activity: MainActivity) {
+fun MapView(viewModel: MapViewModel, locationViewModel: LocationViewModel, activity: MainActivity) {
     val mapUiState: MapUiState by viewModel.uiState.collectAsState()
     viewModel.addMapView(createMap(viewModel = viewModel, activity = activity))
-    viewModel.cameraToUserLocation(activity)
+    viewModel.cameraToUserLocation(locationViewModel)
 
     if (mapUiState.mapView != null) {
 
@@ -48,7 +49,7 @@ fun MapView(viewModel: MapViewModel, activity: MainActivity) {
 
             FloatingActionButton(
                 onClick = {
-                    viewModel.cameraToUserLocation(activity)
+                    viewModel.cameraToUserLocation(locationViewModel)
                 },
                 modifier = Modifier
                     .padding(25.dp)

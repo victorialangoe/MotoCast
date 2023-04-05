@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.ui.theme.MotoCastTheme
+import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
 import com.example.motocast.ui.view.map.MapView
-import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
+import com.example.motocast.ui.viewmodel.location.LocationViewModel
 import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
     private lateinit var mapViewModel: MapViewModel
+    private lateinit var locationViewModel: LocationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,26 +33,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //HomeBottomScaffoldView(content = {
-                    //                        MapView(
-                    //                            viewModel = mapViewModel, activity = this
-                    //                        )
-                    //                    })
-
-                    RouteScaffoldView(content = {
-                        MapView(
-                            viewModel = mapViewModel, activity = this
-                        )
-                    })
-
-
+                    HomeBottomScaffoldView(context = this.applicationContext,
+                        nowCastViewModel = nowCastViewModel,
+                        mapViewModel = mapViewModel,
+                        locationViewModel = locationViewModel,
+                        content = {
+                            MapView(
+                                viewModel = mapViewModel,
+                                locationViewModel = locationViewModel,
+                                activity = this,
+                            )
+                        })
                 }
             }
         }
 
+
+
+        // Initialize the map
         mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
 
-
+        // Initialize the LocationManager
+        locationViewModel = LocationViewModel(
+            activity = this,
+            timeInterval = 5000,
+            minimalDistance = 0f,
+            mapViewModel = mapViewModel
+        )
+        locationViewModel.startLocationTracking()
 
         // Initialize the NowCastViewModel and start fetching data
         nowCastViewModel = ViewModelProvider(this)[NowCastViewModel::class.java]
@@ -65,6 +75,8 @@ class MainActivity : ComponentActivity() {
         // Start fetching data when the user resumes the activity
         nowCastViewModel.startFetchingNowCastData(this)
 
+        locationViewModel.startLocationTracking()
+
     }
 
     override fun onPause() {
@@ -72,6 +84,7 @@ class MainActivity : ComponentActivity() {
 
         // Stop fetching data when the user pauses the activity
         nowCastViewModel.stopFetchingNowCastData()
+        locationViewModel.stopLocationTracking()
     }
 }
 
