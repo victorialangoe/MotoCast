@@ -17,9 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.home_bottom_scaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
-import com.example.motocast.ui.viewmodel.map.MapViewModel
+import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
-import com.example.motocast.ui.viewmodel.location.LocationViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -27,8 +26,7 @@ import com.example.motocast.ui.viewmodel.location.LocationViewModel
 fun HomeBottomScaffoldView(
     context: Context,
     nowCastViewModel: NowCastViewModel,
-    mapViewModel: MapViewModel,
-    locationViewModel: LocationViewModel,
+    mapLocationViewModel: MapLocationViewModel,
     content: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier) {
             Text("Scaffold Content")
@@ -53,10 +51,10 @@ fun HomeBottomScaffoldView(
             ) {
                 CurrentWeatherRow(
                     context = context,
-                    nowCastViewModel = nowCastViewModel,
-                    mapViewModel = mapViewModel,
-                    locationViewModel = locationViewModel
-                )
+                    nowCastViewModel = nowCastViewModel
+                ) {
+                    mapLocationViewModel.cameraToUserLocation()
+                }
                 ContentColumn()
             }
         },
@@ -76,8 +74,7 @@ fun HomeBottomScaffoldView(
 fun CurrentWeatherRow(
     context: Context,
     nowCastViewModel: NowCastViewModel,
-    mapViewModel: MapViewModel,
-    locationViewModel: LocationViewModel
+    cameraToUserLocation: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -87,7 +84,7 @@ fun CurrentWeatherRow(
     ) {
         CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
         Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge(mapViewModel = mapViewModel, locationViewModel = locationViewModel)
+        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
     }
 }
 

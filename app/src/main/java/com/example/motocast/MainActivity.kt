@@ -10,20 +10,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelProvider
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
 import com.example.motocast.ui.view.map.MapView
-import com.example.motocast.ui.viewmodel.location.LocationViewModel
-import com.example.motocast.ui.viewmodel.map.MapViewModel
+import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
-    private lateinit var mapViewModel: MapViewModel
-    private lateinit var locationViewModel: LocationViewModel
+    private lateinit var mapLocationViewModel: MapLocationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +32,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     HomeBottomScaffoldView(context = this.applicationContext,
                         nowCastViewModel = nowCastViewModel,
-                        mapViewModel = mapViewModel,
-                        locationViewModel = locationViewModel,
+                        mapLocationViewModel = mapLocationViewModel,
                         content = {
                             MapView(
-                                viewModel = mapViewModel,
-                                locationViewModel = locationViewModel,
+                                mapLocationViewModel = mapLocationViewModel,
                                 activity = this,
                             )
                         })
@@ -49,23 +44,16 @@ class MainActivity : ComponentActivity() {
         }
 
 
-
-        // Initialize the map
-        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
-
-        // Initialize the LocationManager
-        locationViewModel = LocationViewModel(
+        nowCastViewModel = NowCastViewModel()
+        mapLocationViewModel = MapLocationViewModel(
             activity = this,
-            timeInterval = 5000,
-            minimalDistance = 0f,
-            mapViewModel = mapViewModel
+            timeInterval = 5000, // 5 seconds
+            minimalDistance = 100f, // 100 m
+            bigDistanceChange = 100_000f, // 100 km
+            nowCastViewModel = nowCastViewModel
         )
-        locationViewModel.startLocationTracking()
-
-        // Initialize the NowCastViewModel and start fetching data
-        nowCastViewModel = ViewModelProvider(this)[NowCastViewModel::class.java]
-        nowCastViewModel.startFetchingNowCastData(this)
-
+        mapLocationViewModel.startLocationTracking()
+        nowCastViewModel.startFetchingNowCastData(mapLocationViewModel)
 
     }
 
@@ -73,10 +61,8 @@ class MainActivity : ComponentActivity() {
         super.onResume()
 
         // Start fetching data when the user resumes the activity
-        nowCastViewModel.startFetchingNowCastData(this)
-
-        locationViewModel.startLocationTracking()
-
+        nowCastViewModel.startFetchingNowCastData( mapLocationViewModel)
+        mapLocationViewModel.startLocationTracking()
     }
 
     override fun onPause() {
@@ -84,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
         // Stop fetching data when the user pauses the activity
         nowCastViewModel.stopFetchingNowCastData()
-        locationViewModel.stopLocationTracking()
+        mapLocationViewModel.stopLocationTracking()
     }
 }
 
