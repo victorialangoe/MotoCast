@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.route_scaffold.Card
 
 @Composable
 fun CardsColumn () {
@@ -23,7 +22,7 @@ fun CardsColumn () {
         }
 
         item{
-            Card(12, "Gjerstad", 22, 0, true)
+            Card(12, "Gjerstad", 22, 0)
         }
 
         item{
@@ -31,7 +30,7 @@ fun CardsColumn () {
         }
 
         item{
-            Card(12, "Gjerstad", 10, 0, true)
+            Card(12, "Gjerstad", 10, 0)
         }
     }
 }

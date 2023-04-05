@@ -1,13 +1,10 @@
 package com.example.motocast.ui.view.route_scaffold
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.Text
@@ -22,12 +19,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.motocast.R
-import com.example.motocast.ui.view.home_bottom_scaffold.CurrentWeatherBadge
-import com.example.motocast.ui.view.home_bottom_scaffold.LocateUserBadge
 import com.example.motocast.ui.view.route_scaffold.cards.CardsColumn
-import java.sql.Time
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

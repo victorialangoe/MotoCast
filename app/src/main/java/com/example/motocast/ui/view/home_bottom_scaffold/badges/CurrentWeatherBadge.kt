@@ -31,7 +31,7 @@ fun CurrentWeatherBadge() {
     ) {
         Text(text = "20°C")
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_wb_sunny_24),
+            imageVector = ImageVector.vectorResource(id = R.drawable.icon_warning_avalanches_orange),
             contentDescription = "Sunny icon",
 
             )

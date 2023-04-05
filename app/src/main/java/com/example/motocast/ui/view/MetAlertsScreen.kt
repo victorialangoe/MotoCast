@@ -23,7 +23,7 @@ fun MetAlertsScreen(viewModel: MetAlertsDataSource) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getMetAlertsData(
-            onSuccess = { data -> metAlertsData = data },
+            onSuccess = { data, _ -> metAlertsData = data },
             onError = { errorMessage -> error = errorMessage }
         )
     }

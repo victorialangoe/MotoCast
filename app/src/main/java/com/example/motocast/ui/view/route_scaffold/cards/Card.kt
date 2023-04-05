@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.route_scaffold
+package com.example.motocast.ui.view.route_scaffold.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.route_scaffold.cards.CardWeather
+import com.example.motocast.ui.view.route_scaffold.CardTimePlace
 
 @Composable
-fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false) {
+fun Card (temperature: Int, location: String, hours: Int, minutes: Int, event: String, awarenessLevel: String) {
 
     Box(modifier = Modifier
         .clip(RoundedCornerShape(16.dp))
@@ -27,7 +27,7 @@ fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Bo
 
             Spacer(modifier = Modifier.weight(1f))
 
-            CardWeather(temperature, fare)
+            CardWeather(temperature, event, awarenessLevel)
         }
     }
 }
