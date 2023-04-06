@@ -13,14 +13,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
 import com.example.motocast.ui.view.map.MapView
+import com.example.motocast.ui.view.route_planner.RoutePlannerView
+import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
     private lateinit var mapLocationViewModel: MapLocationViewModel
+    private lateinit var routePlannerViewModel: RoutePlannerViewModel
+    private lateinit var addressDataViewModel: AddressDataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     HomeBottomScaffoldView(context = this.applicationContext,
                         nowCastViewModel = nowCastViewModel,
                         mapLocationViewModel = mapLocationViewModel,
@@ -39,12 +45,16 @@ class MainActivity : ComponentActivity() {
                                 activity = this,
                             )
                         })
+
                 }
             }
         }
 
+        addressDataViewModel = AddressDataViewModel()
+
 
         nowCastViewModel = NowCastViewModel()
+        routePlannerViewModel = RoutePlannerViewModel()
         mapLocationViewModel = MapLocationViewModel(
             activity = this,
             timeInterval = 5000, // 5 seconds
@@ -52,6 +62,7 @@ class MainActivity : ComponentActivity() {
             bigDistanceChange = 100_000f, // 100 km
             nowCastViewModel = nowCastViewModel
         )
+
         mapLocationViewModel.startLocationTracking()
         nowCastViewModel.startFetchingNowCastData(mapLocationViewModel)
 
@@ -61,7 +72,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
 
         // Start fetching data when the user resumes the activity
-        nowCastViewModel.startFetchingNowCastData( mapLocationViewModel)
+        nowCastViewModel.startFetchingNowCastData(mapLocationViewModel)
         mapLocationViewModel.startLocationTracking()
     }
 
