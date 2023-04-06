@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun EditRouteButton() {
+fun EditRouteButton(onNavigateToScreen: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,7 +26,7 @@ fun EditRouteButton() {
         verticalAlignment = Alignment.CenterVertically
     ){
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onNavigateToScreen,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
@@ -46,5 +46,5 @@ fun EditRouteButton() {
 @Preview
 @Composable
 fun EditRouteButtonPreview() {
-    EditRouteButton()
+    EditRouteButton() {}
 }

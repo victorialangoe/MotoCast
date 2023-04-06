@@ -30,7 +30,8 @@ fun HomeBottomScaffoldView(
         Box(modifier) {
             Text("Scaffold Content")
         }
-    }
+    },
+    onNavigateToScreen: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -52,7 +53,7 @@ fun HomeBottomScaffoldView(
                     context = context,
                     viewModel = nowCastViewModel
                 )
-                ContentColumn()
+                ContentColumn(onNavigateToScreen)
             }
         },
         content = {
@@ -82,7 +83,7 @@ fun CurrentWeatherRow(context: Context, viewModel: NowCastViewModel) {
 }
 
 @Composable
-fun ContentColumn() {
+fun ContentColumn(onNavigateToScreen: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(cornerShape)
@@ -100,7 +101,7 @@ fun ContentColumn() {
                 .align(Alignment.CenterHorizontally)
         )
 
-        AddNewRouteButton()
+        AddNewRouteButton(onNavigateToScreen)
 
         FavoritesSection()
     }
@@ -117,9 +118,10 @@ private val minHeight = 190.dp
 @Composable
 fun HomeBottomScaffoldViewPreview(
     context: Context = androidx.compose.ui.platform.LocalContext.current) {
-    HomeBottomScaffoldView(context = context, nowCastViewModel = NowCastViewModel()) { modifier ->
+    HomeBottomScaffoldView(context = context, nowCastViewModel = NowCastViewModel()) {
+            /*modifier ->
         Box(modifier) {
             Text("Scaffold Content")
-        }
+        }*/
     }
 }
