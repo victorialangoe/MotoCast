@@ -1,7 +1,7 @@
 package com.example.motocast.ui.viewmodel.nowcast
 
 data class NowCastUiState (
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val symbolCode: String? = null,
     val temperature: Double? = null,
     val windSpeed: Double? = null,

@@ -18,9 +18,13 @@ class NowCastDataSource : ViewModel() {
         onSuccess: (NowCastDataModel) -> Unit,
         onError: (String) -> Unit
     ) {
+        Log.d("NowCastDataSource", "Fetching the data")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+
                 val response = metRetrofitService.getNowCastData(latitude, longitude).execute()
+                Log.d("NowCastDataSource", "Success: ${response}")
+
                 if (response.isSuccessful) {
                     val weatherData = response.body()
                     if (weatherData != null) {
@@ -29,6 +33,7 @@ class NowCastDataSource : ViewModel() {
                         onError("Empty response")
 
                     }
+                    Log.d("NowCastDataSource", "Success: ${response}")
                 } else {
                     Log.d("NowCastDataSource", "Error: ${response}")
                     onError("Error: ${response.code()} ${response.message()} ")

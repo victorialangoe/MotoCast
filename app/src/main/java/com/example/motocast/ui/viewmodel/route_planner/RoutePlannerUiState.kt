@@ -4,7 +4,7 @@ data class RoutePlannerUiState (
     val isLoading: Boolean = false,
     // Every route must have at least two destinations
     val destinations: List<Destination> = List(2) { index ->
-        Destination("Destination ${index + 1}", 0.0, 0.0, 0)
+        Destination("", 0.0, 0.0, 0)
     },
     val startTimestamp: Long? = null,
 )
