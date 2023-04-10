@@ -26,6 +26,7 @@ android {
         buildConfigField("String", "MET_API_BASE_URL", "\"" + localProperties['met_api_base_url'] + "\"")
         buildConfigField("String", "TEST_KEYSTORE_PASSWORD", "\"" + localProperties['test_keystore_password'] + "\"")
         buildConfigField("String", "MAPBOX_DOWNLOADS_TOKEN", "\"" + localProperties['mapbox_downloads_token'] + "\"")
+        buildConfigField("String", "ADDRESS_API_BASE_URL", "\"" + localProperties['address_api_base_url'] + "\"")
     }
 
     buildTypes {

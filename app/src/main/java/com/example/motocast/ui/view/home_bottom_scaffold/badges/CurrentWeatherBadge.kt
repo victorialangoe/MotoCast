@@ -25,10 +25,10 @@ import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
 @Composable
 fun CurrentWeatherBadge(
-    viewModel: NowCastViewModel,
+    nowCastViewModel: NowCastViewModel,
     context: Context
 ) {
-    val nowCastUiState by viewModel.uiState.collectAsState()
+    val nowCastUiState by nowCastViewModel.uiState.collectAsState()
 
     // We don´t want to show anything if we don't have the data.
     if (nowCastUiState.temperature != null && nowCastUiState.symbolCode != null) {
@@ -76,5 +76,5 @@ fun CurrentWeatherBadge(
 @Preview
 @Composable
 fun CurrentWeatherBadgePreview() {
-    CurrentWeatherBadge(context = MainActivity(), viewModel = NowCastViewModel())
+    CurrentWeatherBadge(context = MainActivity(), nowCastViewModel = NowCastViewModel())
 }

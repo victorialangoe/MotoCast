@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.home_bottom_scaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
 
@@ -26,6 +27,7 @@ import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 fun HomeBottomScaffoldView(
     context: Context,
     nowCastViewModel: NowCastViewModel,
+    mapLocationViewModel: MapLocationViewModel,
     content: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier) {
             Text("Scaffold Content")
@@ -51,8 +53,10 @@ fun HomeBottomScaffoldView(
             ) {
                 CurrentWeatherRow(
                     context = context,
-                    viewModel = nowCastViewModel
-                )
+                    nowCastViewModel = nowCastViewModel
+                ) {
+                    mapLocationViewModel.cameraToUserLocation()
+                }
                 ContentColumn(onNavigateToScreen)
             }
         },
@@ -69,16 +73,20 @@ fun HomeBottomScaffoldView(
 }
 
 @Composable
-fun CurrentWeatherRow(context: Context, viewModel: NowCastViewModel) {
+fun CurrentWeatherRow(
+    context: Context,
+    nowCastViewModel: NowCastViewModel,
+    cameraToUserLocation: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CurrentWeatherBadge(context = context, viewModel = viewModel)
+        CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
         Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge()
+        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
     }
 }
 
@@ -111,17 +119,3 @@ fun ContentColumn(onNavigateToScreen: () -> Unit) {
 private val cornerShape = RoundedCornerShape(16.dp)
 private val maxHeight = 500.dp
 private val minHeight = 190.dp
-
-// Preview
-@ExperimentalMaterial3Api
-@Preview(showBackground = true)
-@Composable
-fun HomeBottomScaffoldViewPreview(
-    context: Context = androidx.compose.ui.platform.LocalContext.current) {
-    HomeBottomScaffoldView(context = context, nowCastViewModel = NowCastViewModel()) {
-            /*modifier ->
-        Box(modifier) {
-            Text("Scaffold Content")
-        }*/
-    }
-}
