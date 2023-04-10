@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 
 @Composable
-fun AddNewRouteButton() {
+fun AddNewRouteButton(onNavigateToScreen: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -27,7 +27,7 @@ fun AddNewRouteButton() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onNavigateToScreen,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
@@ -53,5 +53,5 @@ fun AddNewRouteButton() {
 @Preview
 @Composable
 fun AddNewRouteButtonPreview() {
-    AddNewRouteButton()
+    AddNewRouteButton() {}
 }

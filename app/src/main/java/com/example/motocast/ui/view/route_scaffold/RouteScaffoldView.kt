@@ -29,7 +29,8 @@ fun RouteScaffoldView(
         Box(modifier) {
             Text("Scaffold Content")
         }
-    }
+    },
+    onNavigateToScreen: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -48,7 +49,7 @@ fun RouteScaffoldView(
                     .clip(cornerShape),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ){
-                ContentColumn()
+                ContentColumn(onNavigateToScreen)
             }
         },
         content = {
@@ -62,7 +63,7 @@ fun RouteScaffoldView(
 }
 
 @Composable
-fun ContentColumn(){
+fun ContentColumn(onNavigateToScreen: () -> Unit){
     Column(
         modifier = Modifier
             .clip(cornerShape)
@@ -88,7 +89,7 @@ fun ContentColumn(){
 
         DateAndTimeRow()
 
-        EditRouteButton()
+        EditRouteButton(onNavigateToScreen)
 
         CardsColumn()
     }
@@ -116,5 +117,5 @@ private val minHeight = 190.dp
 @Preview
 @Composable
 fun RouteScaffoldViewPreview(){
-    RouteScaffoldView()
+    RouteScaffoldView() {}
 }

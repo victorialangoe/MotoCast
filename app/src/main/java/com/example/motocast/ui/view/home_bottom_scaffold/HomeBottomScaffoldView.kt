@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.home_bottom_scaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
@@ -31,7 +32,8 @@ fun HomeBottomScaffoldView(
         Box(modifier) {
             Text("Scaffold Content")
         }
-    }
+    },
+    onNavigateToScreen: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -55,7 +57,7 @@ fun HomeBottomScaffoldView(
                 ) {
                     mapLocationViewModel.cameraToUserLocation()
                 }
-                ContentColumn()
+                ContentColumn(onNavigateToScreen)
             }
         },
         content = {
@@ -89,7 +91,7 @@ fun CurrentWeatherRow(
 }
 
 @Composable
-fun ContentColumn() {
+fun ContentColumn(onNavigateToScreen: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(cornerShape)
@@ -107,7 +109,7 @@ fun ContentColumn() {
                 .align(Alignment.CenterHorizontally)
         )
 
-        AddNewRouteButton()
+        AddNewRouteButton(onNavigateToScreen)
 
         FavoritesSection()
     }
