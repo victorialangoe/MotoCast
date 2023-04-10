@@ -44,7 +44,6 @@ class MapLocationViewModel(
     private val _uiState = MutableStateFlow(MapUiState())
 
     val uiState = _uiState.asStateFlow()
-
     /**
      * This function creates the map view and loads the map style.
      */
@@ -239,7 +238,6 @@ class MapLocationViewModel(
             }
         }
     }
-
 
     /**
      * This function is called when the location availability changes. If the location is not
