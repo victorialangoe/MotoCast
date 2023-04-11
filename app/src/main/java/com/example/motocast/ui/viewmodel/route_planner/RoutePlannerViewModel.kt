@@ -29,6 +29,19 @@ class RoutePlannerViewModel : ViewModel() {
         return _uiState.value.destinations.size
     }
 
+    fun getDestinationNamesAsString(): String {
+        val currentUiState = _uiState.value
+        var destinationsString = ""
+        currentUiState.destinations.forEachIndexed { index, destination ->
+            if (index == 0) {
+                destinationsString += destination.name
+            } else {
+                destinationsString += " - ${destination.name}"
+            }
+        }
+        return destinationsString
+    }
+
     fun addDestination() {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()

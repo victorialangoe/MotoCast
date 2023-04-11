@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.motocast.ui.theme.MotoCastTheme
-import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
+import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.inputs.InputScreen
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.AddDestinationScreen
@@ -100,10 +100,11 @@ fun MotoCastApp(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeBottomScaffoldView(
+            DynamicScaffoldView(
                 context = context,
                 nowCastViewModel = nowCastViewModel,
                 mapLocationViewModel = mapLocationViewModel,
+                routePlannerViewModel = routePlannerViewModel,
                 content = {
                     MapView(
                         mapLocationViewModel = mapLocationViewModel,
