@@ -16,18 +16,21 @@ import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.home_bottom_scaffold.HomeBottomScaffoldView
 import com.example.motocast.ui.view.inputs.InputScreen
 import com.example.motocast.ui.view.map.MapView
+import com.example.motocast.ui.view.route_planner.AddDestinationScreen
+import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.inputs.InputViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var nowCastViewModel: NowCastViewModel
     private lateinit var mapLocationViewModel: MapLocationViewModel
-    private lateinit var inputViewModel: InputViewModel
+    private lateinit var routePlannerViewModel: RoutePlannerViewModel
     private lateinit var addressDataViewModel: AddressDataViewModel
 
 
@@ -42,17 +45,17 @@ class MainActivity : ComponentActivity() {
                     MotoCastApp(
                         mapLocationViewModel = mapLocationViewModel,
                         nowCastViewModel = nowCastViewModel,
-                        inputViewModel = inputViewModel,
+                        routePlannerViewModel = routePlannerViewModel,
+                        addressDataViewModel = addressDataViewModel,
                         activity = this,
-                        context = this.applicationContext
-                    )
-
+                        context = this
+                        )
                 }
             }
         }
 
         addressDataViewModel = AddressDataViewModel()
-        inputViewModel = InputViewModel()
+        routePlannerViewModel = RoutePlannerViewModel()
 
         nowCastViewModel = NowCastViewModel()
         mapLocationViewModel = MapLocationViewModel(
@@ -89,13 +92,14 @@ class MainActivity : ComponentActivity() {
 fun MotoCastApp(
     mapLocationViewModel: MapLocationViewModel,
     nowCastViewModel: NowCastViewModel,
-    inputViewModel: InputViewModel,
+    routePlannerViewModel: RoutePlannerViewModel,
+    addressDataViewModel: AddressDataViewModel,
     activity: MainActivity,
     context: Context
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home_bottom_scaffold_view") {
-        composable("home_bottom_scaffold_view") {
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
             HomeBottomScaffoldView(
                 context = context,
                 nowCastViewModel = nowCastViewModel,
@@ -107,14 +111,20 @@ fun MotoCastApp(
                     )
                 },
                 onNavigateToScreen = {
-                    navController.navigate("input_screen")
-                })        }
-        composable("input_screen") {
-            InputScreen(
-                inputViewModel = inputViewModel,
-                onNavigateToScreen = {
-                    navController.navigate("route_scaffold")
-                }
+                    navController.navigate("route_planner")
+                })
+        }
+        composable("route_planner") {
+            RoutePlannerView(
+                routePlannerViewModel = routePlannerViewModel,
+                navController = navController
+            )
+        }
+        composable("add_destination_screen") {
+            AddDestinationScreen(
+                addressDataViewModel = addressDataViewModel,
+                routePlannerViewModel = routePlannerViewModel,
+                navController = navController
             )
         }
         composable("route_scaffold") {

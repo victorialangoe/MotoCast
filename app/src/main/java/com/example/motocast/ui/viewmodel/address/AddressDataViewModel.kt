@@ -16,8 +16,8 @@ class AddressDataViewModel : ViewModel() {
      * @param query The query to search for.
      * @return A list of addresses, limited to 50
      */
-    fun fetchAddressData(query: String): List<Addresses> {
-        if (query.length <= 6) {
+    fun fetchAddressData(query: String): List<Address> {
+        if (query.length < 0) {
             return emptyList()
         }
 
@@ -28,9 +28,11 @@ class AddressDataViewModel : ViewModel() {
             onSuccess = { addressSearchResult ->
                 val addresses = addressSearchResult.adresser.take(50).map { address ->
                     Log.d("AddressDataViewModel", "Success: ${address.adressetekst}")
-                    Addresses(
+                    Address(
                         addressText = address.adressetekst,
-                        municipality = address.kommunenavn
+                        municipality = address.kommunenavn,
+                        latitude = address.representasjonspunkt.lat,
+                        longitude = address.representasjonspunkt.lon
                     )
                 }
                 _uiState.value = _uiState.value.copy(
@@ -44,6 +46,10 @@ class AddressDataViewModel : ViewModel() {
         )
 
         return uiState.value.addresses.take(50)
+    }
+
+    fun clearResults() {
+        _uiState.value = _uiState.value.copy(addresses = emptyList())
     }
 }
 
