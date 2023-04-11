@@ -25,7 +25,6 @@ import com.example.motocast.ui.view.getWeatherIcon
 @Composable
 fun CardWeather(temperature: Int, event: String, awarenessLevel: String) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) } // Add a state variable to control the dialog
-    val getMapIcons = getWeatherIcon(event, awarenessLevel)
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -36,7 +35,7 @@ fun CardWeather(temperature: Int, event: String, awarenessLevel: String) {
         Spacer(modifier = Modifier.size(10.dp))
 
         ClickableImage(
-            resourceName = getMapIcons,
+            resourceName = "getMapIcons",
             contentDescription = "My Image",
             showDialog = showDialog,
             onDismiss = { setShowDialog(false) },

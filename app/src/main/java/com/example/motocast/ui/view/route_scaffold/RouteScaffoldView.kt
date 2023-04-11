@@ -20,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.ui.view.getWeatherIcon
 import com.example.motocast.ui.view.route_scaffold.cards.CardsColumn
 
 
