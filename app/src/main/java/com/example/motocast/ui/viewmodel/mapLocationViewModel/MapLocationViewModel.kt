@@ -12,21 +12,34 @@ import androidx.core.content.ContextCompat
 import com.example.motocast.data.datasource.NowCastDataSource
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.google.android.gms.location.*
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.LineLayer
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.json.JSONObject
+import java.io.IOException
+import java.io.InputStream
+import java.lang.System.setProperties
 import kotlin.math.min
 
 /**
  * ViewModel for MapLocationViewModel. Map and Location related functions are here,
  * they are merged together because they are closely related and need to be used together.
  */
-class MapLocationViewModel(
+class  MapLocationViewModel(
     private val activity: Activity,
     private var timeInterval: Long,
     private var minimalDistance: Float,
@@ -58,6 +71,8 @@ class MapLocationViewModel(
                                 enabled = true
                                 pulsingEnabled = true
                             }
+                            drawGeoJson()
+
                             _uiState.value = _uiState.value.copy(isLoading = false)
                         }
                 }
@@ -120,6 +135,53 @@ class MapLocationViewModel(
                 }
             )
         }
+    }
+
+    private fun drawGeoJson() {
+        val mapView = _uiState.value.mapView
+        mapView?.getMapboxMap()?.getStyle { style ->
+            val jsonString = readGeoJsonFile(activity.applicationContext, "test_geojson.json")
+            val geoJSONString = convertToGeoJSON(jsonString)
+
+            val geoJsonSource = geoJsonSource("geojson-source") {
+                data(geoJSONString)
+            }
+            style.addSource(geoJsonSource)
+            style.addLayer(
+                lineLayer("geojson-layer", "geojson-source") {
+                    lineColor("#FF0000")
+                    lineWidth(5.0)
+                }
+            )
+        }
+    }
+
+    private fun convertToGeoJSON(jsonData: String): String {
+        val jsonObject = JSONObject(jsonData)
+        val routesArray = jsonObject.getJSONArray("routes")
+        val firstRoute = routesArray.getJSONObject(0)
+        val legsArray = firstRoute.getJSONArray("legs")
+        val firstLeg = legsArray.getJSONObject(0)
+        val stepsArray = firstLeg.getJSONArray("steps")
+
+        val features = mutableListOf<Feature>()
+
+        for (i in 0 until stepsArray.length()) {
+            val step = stepsArray.getJSONObject(i)
+            val geometry = step.getJSONObject("geometry")
+            val lineString = LineString.fromJson(geometry.toString())
+
+            features.add(Feature.fromGeometry(lineString))
+        }
+
+        val featureCollection = FeatureCollection.fromFeatures(features)
+        return featureCollection.toJson()
+    }
+
+
+    private fun readGeoJsonFile(context: Context, fileName: String): String {
+        val inputStream = context.assets.open(fileName)
+        return inputStream.bufferedReader().use { it.readText() }
     }
 
     /**
