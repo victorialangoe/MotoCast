@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.home_bottom_scaffold.badges
+package com.example.motocast.ui.view.dynamicScaffold.badges
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -76,8 +76,5 @@ fun CurrentWeatherBadge(
 @Preview
 @Composable
 fun CurrentWeatherBadgePreview() {
-    com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge(
-        context = MainActivity(),
-        nowCastViewModel = NowCastViewModel()
-    )
+    CurrentWeatherBadge(context = MainActivity(), nowCastViewModel = NowCastViewModel())
 }

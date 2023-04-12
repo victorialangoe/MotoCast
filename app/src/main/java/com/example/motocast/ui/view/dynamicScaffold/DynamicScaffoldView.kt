@@ -1,31 +1,40 @@
-package com.example.motocast.ui.view.home_bottom_scaffold
+package com.example.motocast.ui.view.dynamicScaffold
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge
-import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.HomeScaffoldContent
+import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.RouteScaffoldContent
+import com.example.motocast.ui.view.home_bottom_scaffold.*
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
-
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeBottomScaffoldView(
+fun DynamicScaffoldView(
     context: Context,
     nowCastViewModel: NowCastViewModel,
+    routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
     content: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier) {
@@ -34,8 +43,8 @@ fun HomeBottomScaffoldView(
     },
     onNavigateToScreen: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val scope = rememberCoroutineScope() // TODO: Remove this
+    val scaffoldState = rememberBottomSheetScaffoldState() // Endre etterpå
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -50,13 +59,13 @@ fun HomeBottomScaffoldView(
                     .clip(cornerShape),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CurrentWeatherRow(
+                DynamicScaffoldViewTopBar(
                     context = context,
                     nowCastViewModel = nowCastViewModel
                 ) {
                     mapLocationViewModel.cameraToUserLocation()
                 }
-                ContentColumn(onNavigateToScreen)
+                ContentColumn(onNavigateToScreen, routePlannerViewModel)
             }
         },
         content = {
@@ -72,7 +81,7 @@ fun HomeBottomScaffoldView(
 }
 
 @Composable
-fun CurrentWeatherRow(
+fun DynamicScaffoldViewTopBar(
     context: Context,
     nowCastViewModel: NowCastViewModel,
     cameraToUserLocation: () -> Unit,
@@ -85,36 +94,48 @@ fun CurrentWeatherRow(
     ) {
         CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
         Spacer(modifier = Modifier.weight(1f))
-        com.example.motocast.ui.view.dynamicScaffold.badges.LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
+        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
     }
 }
 
 @Composable
-fun ContentColumn(onNavigateToScreen: () -> Unit) {
+fun ContentColumn(
+    onNavigateToScreen: () -> Unit,
+    routePlannerViewModel: RoutePlannerViewModel)
+{
+
     Column(
         modifier = Modifier
             .clip(cornerShape)
             .background(Color.White)
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.scaffold_dragbar),
+            contentDescription = "Bar to drag scaffold up",
+        )
         Box(
             modifier = Modifier
-                .width(32.dp)
+                .fillMaxWidth()
                 .height(4.dp)
                 .clip(RoundedCornerShape(2.dp))
-                .background(Color.Black)
                 .align(Alignment.CenterHorizontally)
         )
-
-        AddNewRouteButton(onNavigateToScreen)
-
-        FavoritesSection()
+        if (routePlannerViewModel.checkIfAllDestinationsHaveNames()) {
+            RouteScaffoldContent(onNavigateToScreen, routePlannerViewModel)
+            }
+        else {
+            HomeScaffoldContent(onNavigateToScreen)
+        }
     }
 }
 
+
+
 // Constants
 private val cornerShape = RoundedCornerShape(16.dp)
-private val maxHeight = 500.dp
-private val minHeight = 190.dp
+private val maxHeight = 700.dp
+private val minHeight = 300.dp
