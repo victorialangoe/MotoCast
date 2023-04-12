@@ -1,7 +1,6 @@
 package com.example.motocast.ui.view
 
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 
 @Composable
