@@ -9,7 +9,8 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.motocast.data.datasource.NowCastDataSource
+import com.example.motocast.BuildConfig
+import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.google.android.gms.location.*
 import com.mapbox.geojson.Feature
@@ -18,21 +19,20 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.LineLayer
+import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import okhttp3.ResponseBody
 import org.json.JSONObject
-import java.io.IOException
-import java.io.InputStream
-import java.lang.System.setProperties
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.math.min
 
 /**
@@ -71,7 +71,10 @@ class  MapLocationViewModel(
                                 enabled = true
                                 pulsingEnabled = true
                             }
-                            drawGeoJson()
+                            val origin = Point.fromLngLat(10.717983,59.942730)
+                            val destination = Point.fromLngLat(10.447102, 61.114927)
+                            val accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
+                            getRoute(context, origin, destination, accessToken)
 
                             _uiState.value = _uiState.value.copy(isLoading = false)
                         }
@@ -137,25 +140,85 @@ class  MapLocationViewModel(
         }
     }
 
-    private fun drawGeoJson() {
+    private fun getRoute(context: Context, origin: Point, destination: Point, accessToken: String) {
+        val coordinates = "${origin.longitude()},${origin.latitude()};" +
+                "${destination.longitude()},${destination.latitude()}"
+
+
+
+
+        val directionsHelper = DirectionsHelper()
+        val service = directionsHelper.createDirectionsAPI()
+        val call = service.getDirections(
+            coordinates = coordinates,
+            accessToken = accessToken,
+            alternatives = false,
+            geometries = "geojson",
+            language = "en",
+            overview = "simplified",
+            steps = true
+        )
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { responseBody ->
+                        val jsonResponse = responseBody.string()
+                        drawGeoJson(jsonResponse)
+                    }
+                } else {
+                    Log.e("MapActivity", "Error getting route: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("MapActivity", "Error getting route: ${t.message}")
+            }
+        })
+    }
+
+    /**
+     * This function draws the route on the map.
+     * Uses convert to geoJSON to convert the JSON response from the Mapbox Directions API to a GeoJSON string.
+     * @param jsonString the JSON response from the Mapbox Directions API
+     */
+    private fun drawGeoJson(jsonString: String) {
         val mapView = _uiState.value.mapView
         mapView?.getMapboxMap()?.getStyle { style ->
-            val jsonString = readGeoJsonFile(activity.applicationContext, "test_geojson.json")
+
             val geoJSONString = convertToGeoJSON(jsonString)
 
             val geoJsonSource = geoJsonSource("geojson-source") {
                 data(geoJSONString)
             }
             style.addSource(geoJsonSource)
-            style.addLayer(
+            style.addLayerBelow(
                 lineLayer("geojson-layer", "geojson-source") {
-                    lineColor("#FF0000")
+                    lineColor("#00b4d8")
                     lineWidth(5.0)
                 }
+                , "road-intersection"
             )
         }
     }
 
+    /**
+     * This function removes the route from the map.
+     */
+    private fun removeRoute() {
+        val mapView = _uiState.value.mapView
+        mapView?.getMapboxMap()?.getStyle { style ->
+            style.removeStyleLayer("geojson-layer")
+            style.removeStyleSource("geojson-source")
+        }
+    }
+
+    /**
+     * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
+     *
+     * @param jsonData the JSON response from the Mapbox Directions API
+     * @return a GeoJSON
+     */
     private fun convertToGeoJSON(jsonData: String): String {
         val jsonObject = JSONObject(jsonData)
         val routesArray = jsonObject.getJSONArray("routes")
