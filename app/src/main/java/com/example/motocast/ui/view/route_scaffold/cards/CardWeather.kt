@@ -14,11 +14,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.ui.view.route_scaffold.cards.CardInfoDialog
 import com.example.motocast.ui.view.route_scaffold.cards.ClickableImage
 
 @Composable
 fun CardWeather(temperature: Int, fare: Boolean) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
+    val image = ImageVector.vectorResource(id = R.drawable.baseline_wb_sunny_24) // this will be from api call
     Row(horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically) {
 
@@ -26,7 +28,13 @@ fun CardWeather(temperature: Int, fare: Boolean) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        ClickableImage(showDialog = showDialog, onDismiss = { setShowDialog(false) }, onClick = { setShowDialog(true) }, event = "", awarenessLevel = "")
+        ClickableImage(showDialog = showDialog,
+            onDismiss = { setShowDialog(false) },
+            onClick = { setShowDialog(true) },
+            event = "",
+            awarenessLevel = "",
+            image = image
+        )
 
         
 
@@ -39,4 +47,11 @@ fun CardWeather(temperature: Int, fare: Boolean) {
             )
         }
     }
+
+    CardInfoDialog(
+        showDialog = showDialog,
+        onDismiss = { setShowDialog(false) },
+        event = "",
+        awarenessLevel = ""
+    )
 }

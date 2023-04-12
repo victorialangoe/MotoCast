@@ -17,14 +17,15 @@ fun ClickableImage(
     onDismiss: () -> Unit,
     onClick: () -> Unit,
     event: String, // Add the event parameter
-    awarenessLevel: String // Add the awarenessLevel parameter
+    awarenessLevel: String, // Add the awarenessLevel parameter
+    image: ImageVector
 ) {
     //val context = LocalContext.current
     //val resourceId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
     //val painter = painterResource(resourceId)
 
     Image(
-        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_wb_sunny_24),
+        imageVector = image,
         contentDescription = "Sunny icon",
         modifier = Modifier.clickable(onClick = onClick)
     )
