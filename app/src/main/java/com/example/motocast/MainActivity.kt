@@ -4,6 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,8 +17,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.motocast.ui.theme.MotoCastTheme
+import com.example.motocast.ui.view.WordAnimation
 import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.map.MapView
+import com.example.motocast.ui.view.rememberAnimationState
 import com.example.motocast.ui.view.route_planner.AddDestinationScreen
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
@@ -36,21 +42,33 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MotoCastTheme {
+                val animationState = rememberAnimationState()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MotoCastApp(
-                        mapLocationViewModel = mapLocationViewModel,
-                        nowCastViewModel = nowCastViewModel,
-                        routePlannerViewModel = routePlannerViewModel,
-                        addressDataViewModel = addressDataViewModel,
-                        activity = this,
-                        context = this
-                        )
+                    AnimatedVisibility(
+                        visible = !animationState.value,
+                        exit = fadeOut(animationSpec = tween(durationMillis = 500))
+                    ) {
+                        WordAnimation()
+                    }
+                    Crossfade(targetState = animationState.value, animationSpec = tween(durationMillis = 500)) { isAnimationComplete ->
+                        if (isAnimationComplete) {
+                            MotoCastApp(
+                                mapLocationViewModel = mapLocationViewModel,
+                                nowCastViewModel = nowCastViewModel,
+                                routePlannerViewModel = routePlannerViewModel,
+                                addressDataViewModel = addressDataViewModel,
+                                activity = this,
+                                context = this
+                            )
+                        }
+                    }
                 }
             }
         }
+
 
         addressDataViewModel = AddressDataViewModel()
         routePlannerViewModel = RoutePlannerViewModel()
