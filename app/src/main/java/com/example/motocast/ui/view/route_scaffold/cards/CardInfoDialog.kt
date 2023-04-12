@@ -29,6 +29,8 @@ fun CardInfoDialog(
                     Text("Event: $event")
                     Text("Awareness Level: $awarenessLevel")
                     // Here we will props need description....
+                    Text("Here is some info title (event)")
+                    Text("Here is some description that we get from metAlerts (val information = properties.description)")
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End

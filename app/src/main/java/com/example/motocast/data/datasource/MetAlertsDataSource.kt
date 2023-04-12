@@ -28,6 +28,7 @@ class MetAlertsDataSource: ViewModel() {
                             val event = properties.event
                             val awarenessLevel = properties.awareness_level
                             val icon = getWeatherIcon(event, awarenessLevel)
+                            val information = properties.description
                             weatherIconMap[event] = icon
                             // data and icon created
                         }
