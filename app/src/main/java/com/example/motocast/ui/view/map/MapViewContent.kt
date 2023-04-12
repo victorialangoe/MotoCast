@@ -37,27 +37,6 @@ fun MapViewContent(
                 end.linkTo(parent.end)
             })
 
-        FloatingActionButton(
-            onClick = {
-                cameraToUserLocation()
-            },
-            modifier = Modifier
-                .padding(25.dp)
-                .width(50.dp)
-                .height(50.dp)
-                .zIndex(1f)
-                .constrainAs(fab) {
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(parent.end)
-                },
-            containerColor = Color.White,
-            shape = CircleShape,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
-                contentDescription = "Location icon",
-                tint = Color.Black
-            )
-        }
+
     }
 }
