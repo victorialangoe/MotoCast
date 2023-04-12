@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.route_planner.buttons
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +28,8 @@ fun ClearAllButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(height = 55.dp)
+            .border(1.dp, Color.Black, RoundedCornerShape(8.dp)),
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

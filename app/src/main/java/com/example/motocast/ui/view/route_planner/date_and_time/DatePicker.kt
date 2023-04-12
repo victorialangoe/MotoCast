@@ -1,6 +1,7 @@
 package com.example.motocast.ui.view.route_planner.date_and_time
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,27 +19,36 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.motocast.ui.viewmodel.route_planner.DatePickerUiState
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import java.util.*
 
 @Composable
-fun DatePicker() {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
+fun DatePicker(
+    routePlannerViewModel: RoutePlannerViewModel,
+    context: Context = LocalContext.current
+) {
 
-    var selectedDateText by remember { mutableStateOf("") }
+    val routePlannerUiState by routePlannerViewModel.uiState.collectAsState()
 
 // Fetching current year, month and day
-    val year = calendar[Calendar.YEAR]
-    val month = calendar[Calendar.MONTH]
-    val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
+    val year = routePlannerUiState.startTime.datePickerUiState.year
+    val month = routePlannerUiState.startTime.datePickerUiState.month
+    val dayOfMonth = routePlannerUiState.startTime.datePickerUiState.day
 
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            selectedDateText = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
+            routePlannerViewModel.updateDateUiState(
+                DatePickerUiState(
+                    selectedYear,
+                    selectedMonth,
+                    selectedDayOfMonth
+                )
+            )
         }, year, month, dayOfMonth
     )
-    datePicker.datePicker.minDate = calendar.timeInMillis
+    datePicker.datePicker.minDate = Calendar.getInstance().timeInMillis
 
     Button(
         onClick = {
@@ -57,6 +67,9 @@ fun DatePicker() {
         ) {
 
             Image(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
                 imageVector = ImageVector.vectorResource(id = com.example.motocast.R.drawable.calendar),
                 contentDescription = "Calendar icon",
             )
@@ -64,11 +77,9 @@ fun DatePicker() {
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                text = selectedDateText.ifEmpty {
-                    "$dayOfMonth.$month.$year"
-                },
+                text = "${routePlannerUiState.startTime.datePickerUiState.day}. ${routePlannerUiState.startTime.datePickerUiState.month}. ${routePlannerUiState.startTime.datePickerUiState.year}",
                 color = Color.Black)
         }
     }

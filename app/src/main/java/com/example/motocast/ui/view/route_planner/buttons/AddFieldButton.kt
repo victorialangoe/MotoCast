@@ -1,6 +1,7 @@
 package com.example.motocast.ui.view.route_planner.buttons
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedButton
@@ -34,6 +35,7 @@ fun AddFieldButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(height = 55.dp)
+            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

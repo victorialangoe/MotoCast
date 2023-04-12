@@ -96,14 +96,14 @@ fun RoutePlannerView(
                     .fillMaxWidth(0.48f)
                     .padding(8.dp)
             ) {
-                DatePicker()
+                DatePicker(routePlannerViewModel)
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.98f)
                     .padding(8.dp)
             ) {
-                TimePicker()
+                TimePicker(routePlannerViewModel)
             }
         }
 

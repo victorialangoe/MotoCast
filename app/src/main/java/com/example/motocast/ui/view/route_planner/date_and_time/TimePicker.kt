@@ -1,6 +1,7 @@
 package com.example.motocast.ui.view.route_planner.date_and_time
 
 import android.app.TimePickerDialog
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,24 +20,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.motocast.R
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerUiState
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.viewmodel.route_planner.TimePickerUiState
 
 
 @Composable
-fun TimePicker() {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
+fun TimePicker(
+    routePlannerViewModel: RoutePlannerViewModel,
+    context: Context = LocalContext.current
+) {
 
-    var selectedTimeText by remember { mutableStateOf("") }
+    val routePlannerUiState by routePlannerViewModel.uiState.collectAsState()
+
 
 // Fetching current hour, and minute
-    val hour = calendar[Calendar.HOUR_OF_DAY]
-    val minute = calendar[Calendar.MINUTE]
+    val hour = routePlannerUiState.startTime.timePickerUiState.hour
+    val minute = routePlannerUiState.startTime.timePickerUiState.minute
 
     val timePicker = TimePickerDialog(
         context,
         { _, selectedHour: Int, selectedMinute: Int ->
-            selectedTimeText = "$selectedHour:$selectedMinute"
-        }, hour, minute, false
+            routePlannerViewModel.updateTimeUiState(
+                TimePickerUiState(
+                    selectedHour,
+                    selectedMinute
+                )
+            )
+        }, hour, minute, true
     )
 
     Button(
@@ -63,11 +74,9 @@ fun TimePicker() {
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                text = selectedTimeText.ifEmpty {
-                    "$hour:$minute"
-                },
+                text = "${routePlannerUiState.startTime.timePickerUiState.hour} : ${routePlannerUiState.startTime.timePickerUiState.minute}",
                 color = Color.Black)
         }
     }
