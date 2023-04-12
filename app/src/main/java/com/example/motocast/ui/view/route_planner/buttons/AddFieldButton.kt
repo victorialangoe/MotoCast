@@ -17,40 +17,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.motocast.R
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.util.buttons.BasicButton
 
 @Composable
 fun AddFieldButton(
-    routePlannerViewModel: RoutePlannerViewModel,
-    navController: NavController,
-
+    addDestination: () -> Unit,
 ) {
-    OutlinedButton(
-        onClick = {
-            routePlannerViewModel.addDestination()
-            routePlannerViewModel.setActiveDestinationIndex(routePlannerViewModel.getTotalDestinations() - 1)
-            navController.navigate("add_destination_screen")
-        },
-        shape = RoundedCornerShape(size = 8.dp),
+    BasicButton(
         modifier = Modifier
             .fillMaxWidth()
-            .height(height = 55.dp)
-            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Legg til stopp",
-                fontSize = 22.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-            Spacer(modifier = Modifier.width(20.dp))
+        .height(height = 55.dp),
+        text = "Legg til stopp",
+        outlined = true,
+        onClick = {
+            addDestination()
+        },
+        trailingIcon = {
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.plus),
-                contentDescription = "Add a stop button"
+                contentDescription = "Legg til stopp"
             )
         }
-    }
+    )
 }

@@ -1,13 +1,14 @@
 package com.example.motocast.ui.viewmodel.address
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.AddressDataSource
-import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
-import com.example.motocast.ui.viewmodel.route_planner.Destination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.*
+import kotlin.reflect.KFunction2
+import kotlin.reflect.KFunction3
 
 class AddressDataViewModel : ViewModel() {
     private val addressDataSource = AddressDataSource()
@@ -20,12 +21,14 @@ class AddressDataViewModel : ViewModel() {
      * @return A list of addresses, limited to 50
      */
 
-    private fun updateCurrentUserLocation(mapLocationViewModel: MapLocationViewModel) {
-        mapLocationViewModel.getCurrentLocation(
-            onSuccess = { location ->
+    private fun updateCurrentUserLocation(
+        getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>
+    )
+    {
+        getCurrentLocation(
+            { location ->
                 _uiState.value = _uiState.value.copy(currentUserLocation = location)
-            },
-            onError = {
+            }, {
                 Log.d("AddressDataViewModel", "Error: $it")
             }
         )
@@ -40,12 +43,21 @@ class AddressDataViewModel : ViewModel() {
         Log.d("AddressDataViewModel", "Added former address: ${address.addressText}")
     }
 
-    fun fetchAddressData(query: String, mapLocationViewModel: MapLocationViewModel): List<Address> {
+    fun clearQuery() {
+        _uiState.value = _uiState.value.copy(query = "")
+    }
+
+    fun fetchAddressData(
+        query: String,
+        getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>,
+        getAirDistanceFromPosToPos: KFunction3<Double, Double, Location, Int>
+
+    ): List<Address> {
         if (query.length < 0) {
             return emptyList()
         }
 
-        updateCurrentUserLocation(mapLocationViewModel)
+        updateCurrentUserLocation(getCurrentLocation)
 
         _uiState.value = _uiState.value.copy(isLoading = true, query = query)
 
@@ -57,7 +69,7 @@ class AddressDataViewModel : ViewModel() {
                     Log.d("AddressDataViewModel", "Success: ${address.adressetekst}")
 
                     var distanceFromUser = if (_uiState.value.currentUserLocation != null) {
-                        mapLocationViewModel.getAirDistanceFromPosToPos(
+                        getAirDistanceFromPosToPos(
                             address.representasjonspunkt.lat,
                             address.representasjonspunkt.lon,
                             _uiState.value.currentUserLocation!!
@@ -71,7 +83,7 @@ class AddressDataViewModel : ViewModel() {
                         municipality = address.kommunenavn,
                         latitude = address.representasjonspunkt.lat,
                         longitude = address.representasjonspunkt.lon,
-                        distanceFromUser = distanceFromUser
+                        distanceFromUser = distanceFromUser?.toInt() ?: null
                     )
                 }
                 _uiState.value = _uiState.value.copy(
@@ -87,7 +99,7 @@ class AddressDataViewModel : ViewModel() {
         return _uiState.value.addresses
     }
 
-        fun clearResults() {
+    fun clearResults() {
         _uiState.value = _uiState.value.copy(addresses = emptyList())
     }
 }
