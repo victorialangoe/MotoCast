@@ -22,7 +22,7 @@ import com.example.motocast.R
 import com.mapbox.maps.extension.style.expressions.dsl.generated.image
 
 @Composable
-fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false) {
+fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false, event: String, awarenessLevel: String) {
 
     Box(modifier = Modifier
         .clip(RoundedCornerShape(16.dp))
