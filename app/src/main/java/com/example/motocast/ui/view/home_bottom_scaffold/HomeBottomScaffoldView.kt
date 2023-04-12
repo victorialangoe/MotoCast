@@ -14,9 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.home_bottom_scaffold.badges.CurrentWeatherBadge
+import com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
@@ -86,7 +85,7 @@ fun CurrentWeatherRow(
     ) {
         CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
         Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
+        com.example.motocast.ui.view.dynamicScaffold.badges.LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
     }
 }
 

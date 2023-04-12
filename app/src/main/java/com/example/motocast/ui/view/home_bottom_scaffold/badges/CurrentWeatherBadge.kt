@@ -76,5 +76,8 @@ fun CurrentWeatherBadge(
 @Preview
 @Composable
 fun CurrentWeatherBadgePreview() {
-    CurrentWeatherBadge(context = MainActivity(), nowCastViewModel = NowCastViewModel())
+    com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge(
+        context = MainActivity(),
+        nowCastViewModel = NowCastViewModel()
+    )
 }

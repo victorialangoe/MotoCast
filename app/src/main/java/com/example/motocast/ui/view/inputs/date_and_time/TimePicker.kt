@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.inputs
+package com.example.motocast.ui.view.inputs.date_and_time
 
 import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
@@ -6,29 +6,32 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import java.util.*
-import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.motocast.R
+import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import java.util.*
 
 
 @Composable
-fun TimePicker() {
+fun TimePicker(
+    routePlannerViewModel: RoutePlannerViewModel) {
+
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
     var selectedTimeText by remember { mutableStateOf("") }
 
-// Fetching current hour, and minute
+    // Fetching current hour, and minute
     val hour = calendar[Calendar.HOUR_OF_DAY]
     val minute = calendar[Calendar.MINUTE]
 
@@ -41,8 +44,8 @@ fun TimePicker() {
 
     Button(
         onClick = {
-        timePicker.show()
-    },
+            timePicker.show()
+        },
         shape = RoundedCornerShape(size = 8.dp),
         colors = ButtonDefaults.buttonColors(Color(0xfff7f7f7)),
         modifier = Modifier
@@ -68,7 +71,8 @@ fun TimePicker() {
                 text = selectedTimeText.ifEmpty {
                     "$hour:$minute"
                 },
-                color = Color.Black)
+                color = Color.Black
+            )
         }
     }
 }

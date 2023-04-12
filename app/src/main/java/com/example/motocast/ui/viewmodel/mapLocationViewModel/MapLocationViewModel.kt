@@ -34,6 +34,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.math.min
+import kotlin.math.*
+
 
 /**
  * ViewModel for MapLocationViewModel. Map and Location related functions are here,
@@ -46,7 +48,7 @@ class  MapLocationViewModel(
     private val bigDistanceChange: Float = 100_000f, // 100 km
     private val nowCastViewModel: NowCastViewModel,
 
-) : LocationCallback() {
+    ) : LocationCallback() {
 
     private val locationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(activity.applicationContext)
@@ -57,6 +59,7 @@ class  MapLocationViewModel(
     private val _uiState = MutableStateFlow(MapUiState())
 
     val uiState = _uiState.asStateFlow()
+
     /**
      * This function creates the map view and loads the map style.
      */
@@ -324,6 +327,32 @@ class  MapLocationViewModel(
     }
 
     /**
+     * Returns the distance between the user's location and the given location.
+     * @param lat1 latitude of the given location
+     * @param lon1 longitude of the given location
+     * @param location user's location
+     * @return returns distance in meters
+     */
+    fun getAirDistanceFromPosToPos(lat1: Double, lon1: Double, location: Location): Int {
+
+        val lat2 = location.latitude
+        val lon2 = location.longitude
+
+        val earthRadius = 6371 // kilometers
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val lat1Rad = Math.toRadians(lat1)
+        val lat2Rad = Math.toRadians(lat2)
+
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                sin(dLon / 2) * sin(dLon / 2) * cos(lat1Rad) * cos(lat2Rad)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = earthRadius * c * 1000 // meters
+
+        return distance.toInt()
+    }
+
+    /**
      * This function is called when the location is updated. It checks if the new location is
      * different enough from the last location to update the map.
      */
@@ -343,15 +372,24 @@ class  MapLocationViewModel(
         when {
             lastLocation == null -> {
                 _uiState.value = _uiState.value.copy(lastLocation = currentLocation)
-                nowCastViewModel.fetchNowCastData(currentLocation.latitude, currentLocation.longitude)
+                nowCastViewModel.fetchNowCastData(
+                    currentLocation.latitude,
+                    currentLocation.longitude
+                )
                 cameraToUserLocation()
                 Log.d("MapViewModel", "Location updated, last location was null")
             }
             distanceToLastLocation > bigDistanceChange -> {
                 _uiState.value = _uiState.value.copy(lastLocation = currentLocation)
-                nowCastViewModel.fetchNowCastData(currentLocation.latitude, currentLocation.longitude)
+                nowCastViewModel.fetchNowCastData(
+                    currentLocation.latitude,
+                    currentLocation.longitude
+                )
                 cameraToUserLocation()
-                Log.d("MapViewModel", "Location updated, distance big enough and big distance change")
+                Log.d(
+                    "MapViewModel",
+                    "Location updated, distance big enough and big distance change"
+                )
             }
             distanceToLastLocation > minimalDistance -> {
                 _uiState.value = _uiState.value.copy(lastLocation = currentLocation)
