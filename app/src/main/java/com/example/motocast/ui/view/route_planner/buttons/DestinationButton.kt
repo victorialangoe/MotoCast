@@ -39,21 +39,23 @@ fun DestinationButton(
             Text(
                 text = header,
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 modifier = Modifier.weight(0.12f, fill = true)
             )
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .border(
-                        0.5.dp,
+                        1.dp,
                         color = Color.Black,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
                     .padding(16.dp)
                     .weight(0.88f, fill = true)
                     .clickable(onClick = editAddress),
             ) {
                 Icon(
+                    modifier = Modifier.size(20.dp),
                     imageVector = ImageVector.vectorResource(id = icon),
                     contentDescription = description
                 )

@@ -14,10 +14,27 @@ data class RoutePlannerUiState (
         )
     },
     // TODO: USE api level 33 ?
-    val startTime: Calendar? = null,
+    val startTime: TimeAndDateUiState = TimeAndDateUiState(),
     val activeDestinationIndex : Int = 0,
-    val error: String? = null
+    val error: String? = null,
 )
+
+data class TimeAndDateUiState (
+    val timePickerUiState: TimePickerUiState = TimePickerUiState(),
+    val datePickerUiState: DatePickerUiState = DatePickerUiState()
+)
+data class TimePickerUiState (
+    val hour: Int = 0,
+    val minute: Int = 0,
+    val is24Hour: Boolean = false
+)
+
+data class DatePickerUiState (
+    val year: Int = 0,
+    val month: Int = 0,
+    val day: Int = 0
+)
+
 data class Destination (
     val name: String?,
     val latitude: Double?,
