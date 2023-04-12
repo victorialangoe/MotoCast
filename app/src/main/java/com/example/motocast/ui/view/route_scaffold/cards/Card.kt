@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false) {
+fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false, event: String, awarenessLevel: String) {
 
     Box(modifier = Modifier
         .clip(RoundedCornerShape(16.dp))

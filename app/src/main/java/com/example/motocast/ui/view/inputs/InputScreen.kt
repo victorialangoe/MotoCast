@@ -52,9 +52,9 @@ fun InputScreen(
         Row(
             horizontalArrangement = Arrangement.Center
         ){
-            com.example.motocast.ui.view.route_planner.date_and_time.TimePicker()
+            // com.example.motocast.ui.view.route_planner.date_and_time.TimePicker()
             Spacer(modifier = Modifier.width(20.dp))
-            com.example.motocast.ui.view.route_planner.date_and_time.DatePicker()
+           // com.example.motocast.ui.view.route_planner.date_and_time.DatePicker(
         }
 
         Spacer(modifier = Modifier.height(20.dp))

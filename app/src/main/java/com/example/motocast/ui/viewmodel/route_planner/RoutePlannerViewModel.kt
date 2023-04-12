@@ -4,11 +4,37 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.ui.viewmodel.address.Address
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.*
+import kotlin.math.atan2
+import kotlin.math.roundToInt
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
 
     val uiState = _uiState
+
+    init {
+        setCurrentTimeAndDate()
+    }
+
+    private fun setCurrentTimeAndDate(){
+        // get time and date from system
+        val calendar = Calendar.getInstance()
+        val year = calendar[Calendar.YEAR]
+        val month = calendar[Calendar.MONTH]
+        val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
+        val hour = calendar[Calendar.HOUR_OF_DAY]
+        val minute = calendar[Calendar.MINUTE]
+        // update ui state
+        _uiState.value = _uiState.value.copy(
+            startTime = TimeAndDateUiState(
+                TimePickerUiState(hour, minute, false),
+                DatePickerUiState(year, month, dayOfMonth)
+            )
+        )
+    }
 
     /* This method is only used for debugging purposes */
     private fun printDestinations() {
@@ -24,7 +50,6 @@ class RoutePlannerViewModel : ViewModel() {
             )
         }
     }
-
     fun getTotalDestinations(): Int {
         return _uiState.value.destinations.size
     }
@@ -86,11 +111,30 @@ class RoutePlannerViewModel : ViewModel() {
         }
     }
 
+    fun updateDateUiState(datePickerUiState: DatePickerUiState) {
+        val currentUiState = _uiState.value
+        val newTimeAndDateUiState = currentUiState.startTime.copy(
+            datePickerUiState = datePickerUiState
+        )
+        _uiState.value = currentUiState.copy(startTime = newTimeAndDateUiState)
+        printDestinations()
+    }
+
+    fun updateTimeUiState(timePickerUiState: TimePickerUiState) {
+        val currentUiState = _uiState.value
+        val newTimeAndDateUiState = currentUiState.startTime.copy(
+            timePickerUiState = timePickerUiState
+        )
+        _uiState.value = currentUiState.copy(startTime = newTimeAndDateUiState)
+        printDestinations()
+    }
+
     /**
      * Clears all destinations and resets the start timestamp
      */
     fun clear() {
         _uiState.value = RoutePlannerUiState()
+        setCurrentTimeAndDate()
         printDestinations()
 
     }

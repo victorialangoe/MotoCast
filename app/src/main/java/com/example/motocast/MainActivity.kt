@@ -14,13 +14,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
-import com.example.motocast.ui.view.inputs.InputScreen
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.AddDestinationScreen
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_scaffold.RouteScaffoldView
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
-import com.example.motocast.ui.viewmodel.inputs.InputViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
@@ -124,8 +122,10 @@ fun MotoCastApp(
         composable("add_destination_screen") {
             AddDestinationScreen(
                 addressDataViewModel = addressDataViewModel,
+
                 routePlannerViewModel = routePlannerViewModel,
-                navController = navController
+                navController = navController,
+                mapLocationViewModel = mapLocationViewModel,
             )
         }
         composable("route_scaffold") {
