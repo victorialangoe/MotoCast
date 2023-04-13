@@ -256,7 +256,7 @@ class RoutePlannerViewModel : ViewModel() {
     /**
      * Starts the route planning
      */
-    fun start(navigateTo: () -> Unit) {
+    fun start(navigateTo: () -> Unit, fitCameraToRouteAndWaypoints: ()->Unit) {
         val currentUiState = _uiState.value
         if (!checkIfAllDestinationsHaveNames()) {
             _uiState.value = currentUiState.copy(error = "All destinations must have a name")
@@ -270,6 +270,7 @@ class RoutePlannerViewModel : ViewModel() {
         if (destinations.size >= 2) {
             viewModelScope.launch {
                 getRoute(destinations, BuildConfig.MAPBOX_ACCESS_TOKEN)
+                fitCameraToRouteAndWaypoints()
             }
         }
         navigateTo()

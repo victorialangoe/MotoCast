@@ -12,13 +12,16 @@ import androidx.core.content.ContextCompat
 import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.google.android.gms.location.*
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.expressions.dsl.generated.zoom
 import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
@@ -28,6 +31,8 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.extension.style.sources.getSourceAs
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -179,6 +184,36 @@ class  MapLocationViewModel(
         }
     }
 
+    fun fitCameraToRouteAndWaypoints(destinations:  List<Destination>) {
+        val mapView = _uiState.value.mapView ?: return
+
+        val waypoints = mutableListOf<Point>()
+        destinations.forEach {
+            if (it.latitude != null && it.longitude != null){
+                waypoints.add(Point.fromLngLat(it.longitude, it.latitude))
+            }
+        }
+
+        val cameraPosition = mapView.getMapboxMap().cameraForCoordinates(
+            waypoints,
+            EdgeInsets(10.0, 100.0, 200.0, 100.0),
+        )
+        // Create a new camera position with a lower zoom level
+        val updatedCameraPosition = CameraOptions.Builder()
+            .center(cameraPosition.center)
+            .bearing(cameraPosition.bearing)
+            .pitch(cameraPosition.pitch)
+            .zoom(cameraPosition.zoom?.minus(0.5)) // Decrease the zoom level by 1
+            .build()
+
+        mapView.getMapboxMap().easeTo(
+            updatedCameraPosition,
+            mapAnimationOptions {
+                duration(1000L) // Set the duration of the animation in milliseconds
+            }
+        )
+    }
+
     /**
      * This function removes the route from the map.
      */
@@ -304,6 +339,7 @@ class  MapLocationViewModel(
      */
     override fun onLocationResult(result: LocationResult) {
         super.onLocationResult(result)
+        return
 
         val currentLocation = result.lastLocation
         val lastLocation = _uiState.value.lastLocation

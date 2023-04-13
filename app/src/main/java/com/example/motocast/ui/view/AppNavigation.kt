@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.motocast.MainActivity
 import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
@@ -22,12 +21,13 @@ fun AppNavigation(
     nowCastViewModel: NowCastViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     addressDataViewModel: AddressDataViewModel,
-    activity: MainActivity,
     context: Context
 ) {
     val navController = rememberNavController()
     val addressViewModelUiState = addressDataViewModel.uiState.collectAsState()
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
+    val mapLocationViewModelUiState = mapLocationViewModel.uiState.collectAsState()
+
 
     NavHost(navController = navController, startDestination = "home_screen") {
         composable("home_screen") {
@@ -38,9 +38,16 @@ fun AppNavigation(
                 routePlannerViewModel = routePlannerViewModel,
                 content = {
                     MapView(
-                        mapLocationViewModel = mapLocationViewModel,
-                        activity = activity,
-                        routePlannerViewModel = routePlannerViewModel
+                        mapView = mapLocationViewModelUiState.value.mapView,
+                        drawGeoJson = { geoJsonData -> mapLocationViewModel.drawGeoJson(geoJsonData) },
+                        onInit = {
+                            mapLocationViewModel.loadMapView(context)
+                            // calls cameraToUserLocation() when the map is loaded, less repetitive code
+                            if (!routePlannerViewModel.checkIfAllDestinationsHaveNames()){
+                                mapLocationViewModel.cameraToUserLocation()
+                            }
+                        },
+                        geoJsonData = routePlannerViewModelUiState.value.geoJsonData
                     )
                 },
                 onNavigateToScreen = {
@@ -62,7 +69,11 @@ fun AppNavigation(
                 }
                 },
                 navigateTo = { screen -> navController.navigate(screen) },
-                startRoute = { routePlannerViewModel.start { navController.navigate("home_screen") } },
+                startRoute = {
+                    routePlannerViewModel.start(
+                        { navController.navigate("home_screen") },
+                        { mapLocationViewModel.fitCameraToRouteAndWaypoints(routePlannerViewModelUiState.value.destinations) }
+                    ) },
                 removeDestination = { index -> routePlannerViewModel.removeDestination(index) },
                 updateDateUiState = { dateUiState -> routePlannerViewModel.updateDateUiState(dateUiState) },
                 updateTimeUiState = { timeUiState -> routePlannerViewModel.updateTimeUiState(timeUiState) },

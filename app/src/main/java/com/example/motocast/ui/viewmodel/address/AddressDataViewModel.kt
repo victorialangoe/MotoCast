@@ -40,7 +40,6 @@ class AddressDataViewModel : ViewModel() {
         val newDestinations = currentUiState.formerAddresses.toMutableList()
         newDestinations.add(address)
         _uiState.value = currentUiState.copy(formerAddresses = newDestinations)
-        Log.d("AddressDataViewModel", "Added former address: ${address.addressText}")
     }
 
     fun clearQuery() {
@@ -66,8 +65,6 @@ class AddressDataViewModel : ViewModel() {
             query = query,
             onSuccess = { addressSearchResult ->
                 val addresses = addressSearchResult.adresser.take(200).map { address ->
-                    Log.d("AddressDataViewModel", "Success: ${address.adressetekst}")
-
                     var distanceFromUser = if (_uiState.value.currentUserLocation != null) {
                         getAirDistanceFromPosToPos(
                             address.representasjonspunkt.lat,
