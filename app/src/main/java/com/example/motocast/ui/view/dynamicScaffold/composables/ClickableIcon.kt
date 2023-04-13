@@ -1,12 +1,10 @@
-package com.example.motocast.ui.view.route_scaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import com.example.motocast.R
 
 
 @Composable

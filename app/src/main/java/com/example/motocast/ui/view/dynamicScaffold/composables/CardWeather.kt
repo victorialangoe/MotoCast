@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.route_scaffold
+package com.example.motocast.ui.view.dynamicScaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -14,8 +14,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
-import com.example.motocast.ui.view.route_scaffold.cards.CardInfoDialog
-import com.example.motocast.ui.view.route_scaffold.cards.ClickableImage
 
 @Composable
 fun CardWeather(temperature: Int, fare: Boolean) {
