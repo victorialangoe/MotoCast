@@ -83,7 +83,7 @@ class AddressDataViewModel : ViewModel() {
                         municipality = address.kommunenavn,
                         latitude = address.representasjonspunkt.lat,
                         longitude = address.representasjonspunkt.lon,
-                        distanceFromUser = distanceFromUser?.toInt() ?: null
+                        distanceFromUser = distanceFromUser ?: null
                     )
                 }
                 _uiState.value = _uiState.value.copy(

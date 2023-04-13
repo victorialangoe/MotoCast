@@ -28,6 +28,7 @@ fun AppNavigation(
     val navController = rememberNavController()
     val addressViewModelUiState = addressDataViewModel.uiState.collectAsState()
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
+
     NavHost(navController = navController, startDestination = "home_screen") {
         composable("home_screen") {
             DynamicScaffoldView(

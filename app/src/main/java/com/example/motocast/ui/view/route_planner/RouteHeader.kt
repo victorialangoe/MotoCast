@@ -13,13 +13,13 @@ import com.example.motocast.util.BackButton
 
 @Composable
 fun RouteHeader(
-    navigateHome : () -> Unit,
+    onClick: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically) {
 
-        BackButton(onClick = { navigateHome() })
+        BackButton(onClick = onClick)
         Text(
             fontSize = 25.sp,
             text = "Ruteplanlegger",

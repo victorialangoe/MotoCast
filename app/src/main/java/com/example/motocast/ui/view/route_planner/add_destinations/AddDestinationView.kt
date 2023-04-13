@@ -46,7 +46,7 @@ fun AddDestinationView(
                 removeDestination(currentDestinations)
             },
             onValueChange = { query, address ->
-                updateDestination(activeDestinationIndex, address)
+                updateDestination(activeDestinationIndex, address) // Nødvendig
                 fetchAddressData(query)
             }
         )
