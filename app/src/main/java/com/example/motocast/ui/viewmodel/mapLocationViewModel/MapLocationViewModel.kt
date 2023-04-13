@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.motocast.BuildConfig
@@ -25,7 +26,9 @@ import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.logo.logo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.ResponseBody
@@ -81,6 +84,11 @@ class  MapLocationViewModel(
 
                             _uiState.value = _uiState.value.copy(isLoading = false)
                         }
+                    mapView.logo.updateSettings {
+                        position = Gravity.TOP or Gravity.RIGHT
+
+                    }
+
                 }
             )
         }
