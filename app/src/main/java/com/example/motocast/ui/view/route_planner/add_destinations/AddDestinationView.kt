@@ -62,6 +62,7 @@ fun AddDestinationView(
                 addresses = formerAddresses,
                 title = "Tidligere søk",
                 showTitle = false,
+                row = true,
                 query = query,
                 isLoading = false, //This is never loading
                 onResultClick = { address ->

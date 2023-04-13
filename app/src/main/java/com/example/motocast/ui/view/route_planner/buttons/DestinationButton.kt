@@ -45,15 +45,16 @@ fun DestinationButton(
         // this is the center
         BasicButton(
             centerContent = false,
+            fontSize = 18,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height = 55.dp)
                 .weight(0.76f, fill = true),
             text = when (destinationIndex) {
-                0 -> destinations[destinationIndex].name ?: "Startpunkt"
+                0 -> destinations[destinationIndex].name ?: "Legg til startpunkt"
                 destinations.size - 1 -> destinations[destinationIndex].name
-                    ?: "Målpunkt"
-                else -> destinations[destinationIndex].name ?: "Stopp"
+                    ?: "Legg til sluttpunkt"
+                else -> destinations[destinationIndex].name ?: "Legg til via punkt"
             },
             outlined = true,
             onClick = { editDestination() },

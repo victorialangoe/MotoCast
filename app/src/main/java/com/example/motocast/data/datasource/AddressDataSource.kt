@@ -17,6 +17,10 @@ class AddressDataSource : ViewModel() {
         onSuccess: (AddressSearchResult) -> Unit,
         onError: (String) -> Unit
     ) {
+        if (addressHelper == null) {
+            onError("Error: AddressHelper is null")
+            return
+        }
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
 

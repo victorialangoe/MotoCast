@@ -19,12 +19,14 @@ import com.example.motocast.ui.viewmodel.address.Address
  * @param onClick The callback to invoke when the address is clicked
  */
 @Composable
-fun AddressResult(address: Address, onClick: (address: Address) -> Unit) {
-
-    Spacer(modifier = Modifier.height(8.dp))
+fun AddressResult(
+    address: Address,
+    onClick: (address: Address) -> Unit
+) {
 
     Button(
         shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.height(64.dp).fillMaxWidth(),
         onClick = { onClick(address) },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
