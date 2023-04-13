@@ -1,6 +1,5 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import com.example.motocast.ui.viewmodel.address.Address
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
-import com.mapbox.geojson.Point
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,16 +19,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import kotlin.math.atan2
-import kotlin.math.roundToInt
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
 
     val uiState = _uiState
-
 
     init {
         setCurrentTimeAndDate()
@@ -84,15 +77,31 @@ class RoutePlannerViewModel : ViewModel() {
         return destinationsString
     }
 
-    fun addDestination() {
+    /**
+     * This method adds a new destination to the list of destinations if the list is not full. (max 5 destinations)
+     * Sets the active destination to the last destination in the list. (the one that was just added)
+     * Navigates to the add destination screen. (the screen where the user can add a destination)
+     */
+    fun addDestination(navigateTo: () -> Unit) {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
         // max 5 destinations
         if (newDestinations.size < 5) {
-            newDestinations.add(Destination(null, 0.0, 0.0, 0))
+            // insert new destination before the last item
+            val lastDestinationIndex = newDestinations.lastIndex
+            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0, 0))
             _uiState.value = currentUiState.copy(destinations = newDestinations)
-            printDestinations()
+            // set active destination to the new destination
+            setActiveDestinationIndex(lastDestinationIndex)
+            // Navigate to add destination screen
+            navigateTo()
         }
+    }
+
+
+    fun editDestination(index: Int, navigateTo:() -> Unit) {
+        setActiveDestinationIndex(index)
+        navigateTo()
     }
 
     fun setActiveDestinationIndex(index: Int) {
@@ -247,9 +256,8 @@ class RoutePlannerViewModel : ViewModel() {
     /**
      * Starts the route planning
      */
-    fun start() {
+    fun start(navigateTo: () -> Unit) {
         val currentUiState = _uiState.value
-        // TODO: A viewmodel for errors?
         if (!checkIfAllDestinationsHaveNames()) {
             _uiState.value = currentUiState.copy(error = "All destinations must have a name")
             return
@@ -264,9 +272,8 @@ class RoutePlannerViewModel : ViewModel() {
                 getRoute(destinations, BuildConfig.MAPBOX_ACCESS_TOKEN)
             }
         }
-
-
-
+        navigateTo()
+        printDestinations()
     }
 }
 
