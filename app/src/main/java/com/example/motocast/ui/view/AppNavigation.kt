@@ -72,7 +72,8 @@ fun AppNavigation(
                 day =  routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
                 hour = routePlannerViewModelUiState.value.startTime.timePickerUiState.hour,
                 minute = routePlannerViewModelUiState.value.startTime.timePickerUiState.minute,
-                context = context
+                context = context,
+                enabledStartRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
             )
         }
         composable("add_destination_screen") {
