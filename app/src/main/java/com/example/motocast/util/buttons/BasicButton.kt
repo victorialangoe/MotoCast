@@ -24,6 +24,7 @@ fun BasicButton(
     onClick: () -> Unit,
     outlined: Boolean = false,
     enabled: Boolean = true,
+    fontSize: Int = 22,
     trailingIcon: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
 ) {
@@ -43,8 +44,8 @@ fun BasicButton(
                 Spacer(modifier = Modifier.width(20.dp))
             }
             Text(
-                text = text,
-                fontSize = 22.sp,
+                text = if (text.length > 25 && !centerContent) text.substring(0, 25) + "..." else text,
+                fontSize = fontSize.sp,
                 color = buttonTextColor,
                 fontWeight = FontWeight.Normal
             )

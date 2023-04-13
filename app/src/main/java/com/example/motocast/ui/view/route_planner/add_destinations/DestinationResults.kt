@@ -1,9 +1,8 @@
 package com.example.motocast.ui.view.route_planner.add_destinations
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ fun DestinationResults(
     addresses: List<Address>,
     title: String,
     query: String,
+    row: Boolean = false,
     showTitle: Boolean = true,
     maxResults: Int = 5,
     isLoading: Boolean,
@@ -35,6 +35,40 @@ fun DestinationResults(
 ) {
     // Only show the first 5 results (If maxResults is not specified)
     addresses.take(maxResults)
+
+    val content: @Composable () -> Unit = {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            if (row) {
+                LazyRow {
+                    // Search results
+                    items(addresses.sortedWith(compareBy(
+                        // Sort first by the address that matches the query, then by distance
+                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { it.distanceFromUser }
+                    ))) {
+                        AddressResult(it, onResultClick)
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+
+            } else {
+                LazyColumn {
+                    // Search results
+                    items(addresses.sortedWith(compareBy(
+                        // Sort first by the address that matches the query, then by distance
+                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { it.distanceFromUser }
+                    ))) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        AddressResult(it, onResultClick)
+                    }
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -50,23 +84,13 @@ fun DestinationResults(
                 },
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.Start)
             )
         }
 
         // This is where all the search results will be shown (if any)
         if (addresses.isNotEmpty() && !isLoading) {
-
-            LazyColumn {
-                // Search results
-                items(addresses.sortedWith(compareBy(
-                    // Sort first by the address that matches the query, then by distance
-                    { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
-                    { it.distanceFromUser }
-                ))) {
-                    AddressResult(it, onResultClick)
-                }
-            }
+            content()
         }
     }
 }

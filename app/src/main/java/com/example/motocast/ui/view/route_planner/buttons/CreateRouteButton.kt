@@ -25,15 +25,17 @@ import com.example.motocast.util.buttons.BasicButton
 @Composable
 fun CreateRouteButton(
     startRoute: () -> Unit,
+    enabled: Boolean,
 ) {
     BasicButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(height = 55.dp),
-        text = "Ferdig",
+        text = if (enabled) "Ferdig" else "Ingen gyldig rute",
         outlined = false,
+        enabled = enabled,
         onClick = {
-           startRoute()
+           if (enabled) startRoute()
         },
     )
 }

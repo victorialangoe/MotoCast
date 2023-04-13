@@ -27,6 +27,7 @@ fun RoutePlannerView(
     removeDestination: (Int) -> Unit,
     updateDateUiState: (DatePickerUiState) -> Unit,
     updateTimeUiState: (TimePickerUiState) -> Unit,
+    enabledStartRoute: Boolean,
     destinations: List<Destination>,
     clearAll: () -> Unit,
     year: Int,
@@ -82,7 +83,10 @@ fun RoutePlannerView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                CreateRouteButton { startRoute() }
+                CreateRouteButton(
+                    startRoute = { startRoute() },
+                    enabled = enabledStartRoute
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
