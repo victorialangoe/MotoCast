@@ -1,9 +1,25 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.motocast.BuildConfig
+import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.ui.viewmodel.address.Address
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import kotlin.math.atan2
 import kotlin.math.roundToInt
@@ -14,6 +30,7 @@ class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
 
     val uiState = _uiState
+
 
     init {
         setCurrentTimeAndDate()
@@ -149,6 +166,84 @@ class RoutePlannerViewModel : ViewModel() {
         return true
     }
 
+    suspend fun getRoute(destinations: List<Destination>, accessToken: String) {
+        val coordinates = destinations.joinToString(separator = ";") { destination ->
+            "${destination.longitude},${destination.latitude}"
+        }
+
+
+
+
+        val directionsHelper = DirectionsHelper()
+        val service = directionsHelper.createDirectionsAPI()
+        val call = service.getDirections(
+            coordinates = coordinates,
+            accessToken = accessToken,
+            alternatives = false,
+            geometries = "geojson",
+            language = "en",
+            overview = "simplified",
+            steps = true
+        )
+
+        withContext(Dispatchers.IO) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+
+                        response.body()?.let { responseBody ->
+                            val jsonResponse = responseBody.string()
+                            convertToGeoJSON(jsonResponse)
+                        }
+                    } else {
+                        Log.e(
+                            "MapActivity",
+                            "Error getting route: ${response.errorBody()?.string()}"
+                        )
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.e("MapActivity", "Error getting route: ${t.message}")
+                }
+            })
+        }
+    }
+
+    /**
+     * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
+     *
+     * @param jsonData the JSON response from the Mapbox Directions API
+     * @return a GeoJSON
+     */
+    private fun convertToGeoJSON(jsonData: String) {
+        val jsonObject = JSONObject(jsonData)
+        val routesArray = jsonObject.getJSONArray("routes")
+        val firstRoute = routesArray.getJSONObject(0)
+        val legsArray = firstRoute.getJSONArray("legs")
+
+        val features = mutableListOf<Feature>()
+
+        for (legIndex in 0 until legsArray.length()) {
+            val currentLeg = legsArray.getJSONObject(legIndex)
+            val stepsArray = currentLeg.getJSONArray("steps")
+
+            for (stepIndex in 0 until stepsArray.length()) {
+                val step = stepsArray.getJSONObject(stepIndex)
+                val geometry = step.getJSONObject("geometry")
+                val lineString = LineString.fromJson(geometry.toString())
+
+                features.add(Feature.fromGeometry(lineString))
+            }
+        }
+
+        val featureCollection = FeatureCollection.fromFeatures(features)
+        _uiState.value = _uiState.value.copy(geoJsonData = featureCollection.toJson())
+    }
+
     /**
      * Starts the route planning
      */
@@ -160,7 +255,18 @@ class RoutePlannerViewModel : ViewModel() {
             return
         }
 
-        printDestinations()
+        // removes null to avoid null pointer exception
+        val destinations = currentUiState.destinations.filterNotNull()
+
+        //needs 2 destinations to get a route
+        if (destinations.size >= 2) {
+            viewModelScope.launch {
+                getRoute(destinations, BuildConfig.MAPBOX_ACCESS_TOKEN)
+            }
+        }
+
+
+
     }
 }
 

@@ -21,8 +21,12 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.layers.getLayer
 import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.getSource
+import com.mapbox.maps.extension.style.sources.getSourceAs
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -74,10 +78,7 @@ class  MapLocationViewModel(
                                 enabled = true
                                 pulsingEnabled = true
                             }
-                            val origin = Point.fromLngLat(10.717983,59.942730)
-                            val destination = Point.fromLngLat(10.447102, 61.114927)
-                            val accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
-                            getRoute(context, origin, destination, accessToken)
+
 
                             _uiState.value = _uiState.value.copy(isLoading = false)
                         }
@@ -143,65 +144,38 @@ class  MapLocationViewModel(
         }
     }
 
-    private fun getRoute(context: Context, origin: Point, destination: Point, accessToken: String) {
-        val coordinates = "${origin.longitude()},${origin.latitude()};" +
-                "${destination.longitude()},${destination.latitude()}"
 
-
-
-
-        val directionsHelper = DirectionsHelper()
-        val service = directionsHelper.createDirectionsAPI()
-        val call = service.getDirections(
-            coordinates = coordinates,
-            accessToken = accessToken,
-            alternatives = false,
-            geometries = "geojson",
-            language = "en",
-            overview = "simplified",
-            steps = true
-        )
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { responseBody ->
-                        val jsonResponse = responseBody.string()
-                        drawGeoJson(jsonResponse)
-                    }
-                } else {
-                    Log.e("MapActivity", "Error getting route: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("MapActivity", "Error getting route: ${t.message}")
-            }
-        })
-    }
 
     /**
      * This function draws the route on the map.
      * Uses convert to geoJSON to convert the JSON response from the Mapbox Directions API to a GeoJSON string.
-     * @param jsonString the JSON response from the Mapbox Directions API
+     * @param geoJsonString the JSON response from the Mapbox Directions API
      */
-    private fun drawGeoJson(jsonString: String) {
+    fun drawGeoJson(geoJsonString: String) {
         val mapView = _uiState.value.mapView
         mapView?.getMapboxMap()?.getStyle { style ->
+            val sourceId = "geojson-source"
+            val layerId = "geojson-layer"
 
-            val geoJSONString = convertToGeoJSON(jsonString)
-
-            val geoJsonSource = geoJsonSource("geojson-source") {
-                data(geoJSONString)
+            // Check if the source exists and update it, otherwise create and add the source
+            if (style.getSource(sourceId) != null) {
+                val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
+                geoJsonSource?.data(geoJsonString)
+            } else {
+                val geoJsonSource = geoJsonSource(sourceId) {
+                    data(geoJsonString)
+                }
+                style.addSource(geoJsonSource)
             }
-            style.addSource(geoJsonSource)
-            style.addLayerBelow(
-                lineLayer("geojson-layer", "geojson-source") {
+
+            // Check if the layer exists, otherwise create and add the layer
+            if (style.getLayer(layerId) == null) {
+                val lineLayer = lineLayer(layerId, sourceId) {
                     lineColor("#00b4d8")
                     lineWidth(5.0)
                 }
-                , "road-intersection"
-            )
+                style.addLayerBelow(lineLayer, "road-intersection")
+            }
         }
     }
 
@@ -214,34 +188,6 @@ class  MapLocationViewModel(
             style.removeStyleLayer("geojson-layer")
             style.removeStyleSource("geojson-source")
         }
-    }
-
-    /**
-     * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
-     *
-     * @param jsonData the JSON response from the Mapbox Directions API
-     * @return a GeoJSON
-     */
-    private fun convertToGeoJSON(jsonData: String): String {
-        val jsonObject = JSONObject(jsonData)
-        val routesArray = jsonObject.getJSONArray("routes")
-        val firstRoute = routesArray.getJSONObject(0)
-        val legsArray = firstRoute.getJSONArray("legs")
-        val firstLeg = legsArray.getJSONObject(0)
-        val stepsArray = firstLeg.getJSONArray("steps")
-
-        val features = mutableListOf<Feature>()
-
-        for (i in 0 until stepsArray.length()) {
-            val step = stepsArray.getJSONObject(i)
-            val geometry = step.getJSONObject("geometry")
-            val lineString = LineString.fromJson(geometry.toString())
-
-            features.add(Feature.fromGeometry(lineString))
-        }
-
-        val featureCollection = FeatureCollection.fromFeatures(features)
-        return featureCollection.toJson()
     }
 
 

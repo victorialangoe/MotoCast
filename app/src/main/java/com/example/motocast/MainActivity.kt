@@ -106,7 +106,8 @@ fun MotoCastApp(
                 content = {
                     MapView(
                         mapLocationViewModel = mapLocationViewModel,
-                        activity = activity
+                        activity = activity,
+                        routePlannerViewModel = routePlannerViewModel
                     )
                 },
                 onNavigateToScreen = {
@@ -133,7 +134,8 @@ fun MotoCastApp(
                 content = {
                     MapView(
                         mapLocationViewModel = mapLocationViewModel,
-                        activity = activity
+                        activity = activity,
+                        routePlannerViewModel = routePlannerViewModel
                     )
                 },
                 onNavigateToScreen = {
