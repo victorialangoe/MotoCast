@@ -53,7 +53,7 @@ fun RoutePlannerView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        RouteHeader(onClick = { navigateTo("home") })
+        RouteHeader(onClick = { navigateTo("home_screen") })
 
         Spacer(modifier = Modifier.height(20.dp))
 
