@@ -20,6 +20,7 @@ import com.example.motocast.ui.view.inputs.buttons.ClearAllButton
 import com.example.motocast.ui.view.inputs.buttons.CreateRouteButton
 import com.example.motocast.ui.viewmodel.inputs.InputViewModel
 
+// DEPRECATED - use route_planner
 @Composable
 fun InputScreen(
     inputViewModel: InputViewModel,

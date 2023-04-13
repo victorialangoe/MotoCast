@@ -15,7 +15,7 @@ interface AddressApi {
         @Query("fuzzy") fuzzy: Boolean = true,
         @Query("sokemodus") searchMode: String = "OR",
         @Query("utkoordsys") coordinateSystem: Int = 4258,
-        @Query("treffPerSide") resultsPerPage: Int = 100,
+        @Query("treffPerSide") resultsPerPage: Int = 200,
         @Query("side") page: Int = 0,
         @Query("asciiKompatibel") asciiCompatible: Boolean = true
     ): Call<AddressSearchResult>

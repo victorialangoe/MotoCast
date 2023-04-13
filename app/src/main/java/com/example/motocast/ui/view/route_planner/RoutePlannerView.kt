@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.route_planner
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,25 +11,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.motocast.R
 import com.example.motocast.ui.view.route_planner.buttons.AddFieldButton
 import com.example.motocast.ui.view.route_planner.buttons.ClearAllButton
 import com.example.motocast.ui.view.route_planner.buttons.CreateRouteButton
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DatePicker
+import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.view.route_planner.date_and_time.TimePicker
+import com.example.motocast.ui.viewmodel.route_planner.DatePickerUiState
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.viewmodel.route_planner.TimePickerUiState
 
 @Composable
 fun RoutePlannerView(
-    routePlannerViewModel: RoutePlannerViewModel,
-    navController: NavController,
+    navigateTo: (screen: String) -> Unit,
+    startRoute: () -> Unit,
+    editDestination: (Int) -> Unit,
+    addDestination: () -> Unit,
+    removeDestination: (Int) -> Unit,
+    updateDateUiState: (DatePickerUiState) -> Unit,
+    updateTimeUiState: (TimePickerUiState) -> Unit,
+    destinations: List<Destination>,
+    clearAll: () -> Unit,
+    year: Int,
+    month: Int,
+    day: Int,
+    hour: Int,
+    minute: Int,
+    context: Context
 ) {
-    val routePlannerUiState by routePlannerViewModel.uiState.collectAsState()
-
 
     Column(
         modifier = Modifier
@@ -37,95 +52,47 @@ fun RoutePlannerView(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RouteHeader(
-            navController = navController,
-        )
+
+        RouteHeader(onClick = { navigateTo("home") })
+
         Spacer(modifier = Modifier.height(20.dp))
 
+        // This is where all the added destinations will be shown (if any)
         LazyColumn {
-            items(routePlannerUiState.destinations.size) { destinationIndex ->
+            items(destinations.size) { destinationIndex ->
+                Spacer(modifier = Modifier.height(16.dp)) // Add a gap between the items
                 DestinationButton(
-                    header = when (destinationIndex) {
-                        0 -> "Fra"
-                        routePlannerUiState.destinations.size - 1 -> "Til"
-                        else -> "Via"
-                    },
-                    text = when (destinationIndex) {
-                        // TODO: We need to use the string resources!!!
-                        0 -> routePlannerUiState.destinations[destinationIndex].name
-                            ?: "Legg til startadresse"
-                        routePlannerUiState.destinations.size - 1 -> routePlannerUiState.destinations[destinationIndex].name ?: "Legg til sluttpunkt"
-                        else -> routePlannerUiState.destinations[destinationIndex].name ?: "Legg til via-adresse"
-                    },
-                    description = when (destinationIndex) {
-                        0 -> routePlannerUiState.destinations[destinationIndex].name
-                            ?: "Inputfelt for startadresse"
-                        routePlannerUiState.destinations.size - 1 -> routePlannerUiState.destinations[destinationIndex].name ?: "Inputfelt for sluttpunkt"
-                        else -> routePlannerUiState.destinations[destinationIndex].name ?: "Inputfelt for via-adresse"
-                    },
-                    icon = when (destinationIndex) {
-                        0 -> R.drawable.line_end_arrow_rounded
-                        routePlannerUiState.destinations.size - 1 -> R.drawable.mdi_goal
-                        else -> R.drawable.format_line_spacing_rounded
-                    },
-                    editAddress = {
-                        navController.navigate("add_destination_screen")
-                        routePlannerViewModel.setActiveDestinationIndex(destinationIndex)
-                    },
-                    removeFromRoute = {
-                        routePlannerViewModel.removeDestination(destinationIndex)
-                    },
-                    removeable = routePlannerUiState.destinations.size > 2
-                )
-            }
-
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-
-        AddFieldButton(routePlannerViewModel = routePlannerViewModel, navController = navController)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // TODO: Make this a custom component
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.48f)
-                    .padding(8.dp)
-            ) {
-                DatePicker(routePlannerViewModel)
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.98f)
-                    .padding(8.dp)
-            ) {
-                TimePicker(routePlannerViewModel)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        if (routePlannerUiState.error != null) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = routePlannerUiState.error ?: "",
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center)
+                    destinationIndex = destinationIndex,
+                    destinations = destinations,
+                    editDestination = { editDestination(destinationIndex) },
+                    removeDestination = { removeDestination(destinationIndex) }
                 )
             }
         }
 
-        CreateRouteButton(
-            navController = navController,
-            routePlannerViewModel = routePlannerViewModel
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AddFieldButton { addDestination() }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DateTimePicker(
+            context = context,
+            updateDateUiState = { updateDateUiState(it) },
+            updateTimeUiState = { updateTimeUiState(it) },
+            year = year,
+            month = month,
+            day = day,
+            hour = hour,
+            minute = minute,
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        ClearAllButton(routePlannerViewModel = routePlannerViewModel)
+        CreateRouteButton { startRoute() }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ClearAllButton(clearAll = { clearAll() })
     }
 }

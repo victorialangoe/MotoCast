@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.route_planner.buttons
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,39 +12,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.util.buttons.BasicButton
 
 @Composable
 fun CreateRouteButton(
-    navController: NavController,
-    routePlannerViewModel: RoutePlannerViewModel
+    startRoute: () -> Unit,
 ) {
-    Button(
-        onClick = {
-            if (routePlannerViewModel.checkIfAllDestinationsHaveNames()) {
-                routePlannerViewModel.start()
-                navController.navigate("home")
-            }
-        },
-        shape = RoundedCornerShape(size = 8.dp),
+    BasicButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(height = 55.dp),
-        colors = ButtonDefaults.buttonColors(Color.Black),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Ferdig",
-                fontSize = 22.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Normal
-            )
-        }
-    }
+        text = "Ferdig",
+        outlined = false,
+        onClick = {
+           startRoute()
+        },
+    )
 }

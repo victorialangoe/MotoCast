@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.route_planner.buttons
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,34 +13,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.inputs.InputViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.util.buttons.BasicButton
 
 @Composable
 fun ClearAllButton(
-    routePlannerViewModel: RoutePlannerViewModel
+    clearAll: () -> Unit,
 ) {
-    OutlinedButton(
-        onClick = {routePlannerViewModel.clear()},
-        shape = RoundedCornerShape(size = 8.dp),
+    BasicButton(
         modifier = Modifier
             .fillMaxWidth()
-            .height(height = 55.dp)
-            .border(1.dp, Color.Black, RoundedCornerShape(8.dp)),
-
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Start på nytt",
-                fontSize = 22.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            )
-        }
-    }
+            .height(height = 55.dp),
+        text = "Start på nytt",
+        outlined = true,
+        onClick = {
+            clearAll()
+        },
+    )
 }
