@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.address.Address
+import kotlin.reflect.KFunction2
 
 @Composable
 fun AddDestinationView(
@@ -27,6 +28,7 @@ fun AddDestinationView(
     activeDestinationIndex: Int,
     popBackStack: () -> Unit,
     fetchAddressData: (String) -> Unit,
+    getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>,
 ) {
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -48,6 +50,24 @@ fun AddDestinationView(
             onValueChange = { query, address ->
                 updateDestination(activeDestinationIndex, address) // Nødvendig
                 fetchAddressData(query)
+            },
+            onSetCurrentLocation = {
+                getCurrentLocation(
+                    { location ->
+                        val address = Address(
+                            addressText = "Min posisjon",
+                            municipality = null,
+                            latitude = location.latitude,
+                            longitude = location.longitude
+                        )
+                        updateDestination(activeDestinationIndex, address)
+                        clearResults()
+                        clearQuery()
+                        popBackStack()
+                    },
+                    { error -> // No location found or error
+                    }
+                )
             }
         )
 

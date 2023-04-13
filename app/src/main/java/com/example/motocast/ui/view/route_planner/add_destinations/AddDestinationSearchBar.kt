@@ -27,6 +27,7 @@ fun AddDestinationSearchBar(
     query: String = "",
     onBack: () -> Unit,
     onClear: () -> Unit,
+    onSetCurrentLocation: () -> Unit,
     onValueChange: (String, Address) -> Unit,
 ) {
     // We use this to request focus on the text field when the screen is loaded
@@ -85,6 +86,16 @@ fun AddDestinationSearchBar(
                         modifier = Modifier
                             .size(24.dp)
                             .clickable { onClear() }
+                    )
+                } else {
+                    // TODO: Implement search icon
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
+                        contentDescription = "Søk etter adresse icon",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onSetCurrentLocation() }
                     )
                 }
             }

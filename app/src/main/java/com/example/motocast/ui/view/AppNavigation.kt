@@ -107,6 +107,7 @@ fun AppNavigation(
                 getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                 activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                 popBackStack = { navController.popBackStack() },
+                getCurrentLocation = mapLocationViewModel::getCurrentLocation,
             )
         }
     }
