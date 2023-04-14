@@ -18,8 +18,16 @@ data class RoutePlannerUiState (
     val startTime: TimeAndDateUiState = TimeAndDateUiState(),
     val activeDestinationIndex : Int = 0,
     val error: String? = null,
-    val geoJsonData: String? = null
+    val geoJsonData: String? = null,
+    val waypoints: List<Waypoint> = emptyList()
 )
+
+data class Waypoint(
+    val longitude: Double?,
+    val latitude: Double?,
+    val duration: Double
+)
+
 
 data class TimeAndDateUiState (
     val timePickerUiState: TimePickerUiState = TimePickerUiState(),
