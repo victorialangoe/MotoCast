@@ -24,6 +24,17 @@ fun DateTimePicker(
             .fillMaxWidth()
             .padding(top = 8.dp, bottom = 8.dp)
     ) {
+
+        TimePicker(
+            context = context,
+            updateTimeUiState = updateTimeUiState,
+            hour = hour,
+            minute = minute,
+            modifier = Modifier.weight(1f, true)
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
         DatePicker(
             context = context,
             updateDateUiState = updateDateUiState,
@@ -32,14 +43,7 @@ fun DateTimePicker(
             day = day,
             modifier = Modifier.weight(1f, true)
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        TimePicker(
-            context = context,
-            updateTimeUiState = updateTimeUiState,
-            hour = hour,
-            minute = minute,
-            modifier = Modifier.weight(1f, true)
-        )
+
     }
 }
 

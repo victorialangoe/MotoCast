@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.motocast.MainActivity
 import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
+import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.HomeScaffoldContent
+import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.RouteScaffoldContent
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_planner.add_destinations.AddDestinationView
@@ -35,16 +37,33 @@ fun AppNavigation(
                 context = context,
                 nowCastViewModel = nowCastViewModel,
                 mapLocationViewModel = mapLocationViewModel,
-                routePlannerViewModel = routePlannerViewModel,
                 content = {
                     MapView(
                         mapLocationViewModel = mapLocationViewModel,
                         activity = activity
                     )
                 },
-                onNavigateToScreen = {
-                    navController.navigate("route_planner")
-                })
+                ScaffoldContent = (
+                    if (routePlannerViewModel.checkIfAllDestinationsHaveNames()){
+                        { RouteScaffoldContent(onNavigateToScreen = {
+                                navController.navigate("route_planner")
+                                },
+                            routeText = routePlannerViewModel.getDestinationNamesAsString(),
+                            destinations = routePlannerViewModelUiState.value.destinations,
+                            month = routePlannerViewModelUiState.value.startTime.datePickerUiState.month,
+                            day = routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
+                            hours = routePlannerViewModelUiState.value.startTime.timePickerUiState.hour,
+                            minutes = routePlannerViewModelUiState.value.startTime.timePickerUiState.minute,
+                            nowCastViewModel = nowCastViewModel //TODO: lavere kobling
+                        )}
+                    } else {
+                        { HomeScaffoldContent(onNavigateToScreen = {
+                            navController.navigate("route_planner")
+                            }
+                        )}
+                    }
+                )
+            )
         }
         composable("route_planner") {
             RoutePlannerView(

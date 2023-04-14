@@ -29,7 +29,7 @@ fun BasicButton(
 ) {
 
     val buttonColor = if (enabled) Color.Black else Color.Gray
-    var buttonTextColor = if (outlined) Color.Black else Color.White
+    val buttonTextColor = if (outlined) Color.Black else Color.White
     val buttonShape = RoundedCornerShape(size = 8.dp)
 
     val content: @Composable () -> Unit = {

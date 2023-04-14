@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.motocast.util.buttons.BasicButton
 
 @Composable
 fun EditRouteButton(onNavigateToScreen: () -> Unit) {
@@ -25,7 +26,14 @@ fun EditRouteButton(onNavigateToScreen: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Button(
+        BasicButton(text = "Rediger rute",
+            modifier = Modifier
+                .defaultMinSize(minWidth = 200.dp, minHeight = 48.dp)
+                .weight(0.8f),
+            onClick = { onNavigateToScreen() }
+        )
+
+        /*Button(
             onClick = onNavigateToScreen,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
@@ -39,7 +47,7 @@ fun EditRouteButton(onNavigateToScreen: () -> Unit) {
                 text = "Edit route",
                 style = MaterialTheme.typography.bodyLarge
             )
-        }
+        }*/
     }
 }
 

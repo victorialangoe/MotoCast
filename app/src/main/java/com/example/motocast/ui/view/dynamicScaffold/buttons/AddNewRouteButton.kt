@@ -14,9 +14,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.util.buttons.BasicButton
 
 @Composable
 fun AddNewRouteButton(onNavigateToScreen: () -> Unit) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,21 +28,13 @@ fun AddNewRouteButton(onNavigateToScreen: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            onClick = onNavigateToScreen,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color.White
-            ),
+        BasicButton(text = "Lag ny rute",
             modifier = Modifier
                 .defaultMinSize(minWidth = 200.dp, minHeight = 48.dp)
-                .weight(0.8f)
-        ) {
-            Text(
-                text = "Add new route",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+                .weight(0.8f),
+            onClick = { onNavigateToScreen () }
+        )
+
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.baseline_start_24),
             contentDescription = "Start new route icon",

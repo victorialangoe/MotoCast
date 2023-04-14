@@ -75,7 +75,7 @@ class RoutePlannerViewModel : ViewModel() {
         if (newDestinations.size < 5) {
             // insert new destination before the last item
             val lastDestinationIndex = newDestinations.lastIndex
-            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0, 0))
+            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0))
             _uiState.value = currentUiState.copy(destinations = newDestinations)
             // set active destination to the new destination
             setActiveDestinationIndex(lastDestinationIndex)

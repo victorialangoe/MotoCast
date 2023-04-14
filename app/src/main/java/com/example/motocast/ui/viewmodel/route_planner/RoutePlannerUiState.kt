@@ -9,8 +9,7 @@ data class RoutePlannerUiState (
         Destination(
             name = null,
             latitude = 0.0,
-            longitude = 0.0,
-            timestamp = 0
+            longitude = 0.0
         )
     },
     // TODO: USE api level 33 ?
@@ -39,6 +38,6 @@ data class Destination (
     val name: String?,
     val latitude: Double?,
     val longitude: Double?,
-    val timestamp: Long,
+    val timestamp: Long = System.currentTimeMillis() //default verdi?
 )
 

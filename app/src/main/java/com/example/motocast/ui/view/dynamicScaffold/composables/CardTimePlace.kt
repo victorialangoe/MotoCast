@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,12 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CardTimePlace(location: String, hours: Int, minutes: Int) {
+fun CardTimePlace(location: String?, hours: Int = 0, minutes: Int = 0) {
     val fHours = String.format("%02d", hours)
     val fMinutes = String.format("%02d", minutes)
 
     Column {
-        Text(text = location,
+        Text(text = location?: "No data",
             style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
         )
 

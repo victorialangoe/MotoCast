@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 
 @Composable
-fun TimeBadge() {
+fun TimeBadge(time: String) {
     Row(modifier = Modifier
         .clip(shape = RoundedCornerShape(8.dp))
         .background(color = Color(0xfff7f7f7))
@@ -30,7 +30,7 @@ fun TimeBadge() {
         
         Spacer(modifier = Modifier.width(8.dp))
         
-        Text(text = "10:00")
+        Text(text = time)
     }
 }
 

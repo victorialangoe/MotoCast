@@ -7,6 +7,7 @@ import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewMod
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import okhttp3.internal.wait
 
 /**
  * Provides the data to the NowCastScreen via the uiState variable.
@@ -97,6 +98,28 @@ class NowCastViewModel : ViewModel() {
             _uiState.value = currentUiState.copy(error = it, isLoading = false)
             Log.d("NowCastViewModel", "Error fetching NowCast data: $it")
         })
+    }
+
+    fun getTemperature(
+        latitude: Double?,
+        longitude: Double?,
+        onSuccess: (Double?) -> Unit)
+    {
+        var temperature: Double?
+
+        nowCastDataSource.getNowCastData (
+            latitude?: 0.0,
+            longitude?: 0.0,
+            onSuccess = {
+                temperature = it.properties.timeseries.first().data.instant.details.air_temperature
+
+                Log.d("NowCastViewModel", "Got NowCast temperature: $temperature")
+                onSuccess(temperature)
+            },
+            onError = {
+                Log.e("NowCastViewModel", "Error getting NowCast temperature: $it")
+            }
+        )
     }
 }
 

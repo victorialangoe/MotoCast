@@ -1,42 +1,34 @@
 package com.example.motocast.ui.view.dynamicScaffold.scaffoldContent
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.dynamicScaffold.RouteText
-import com.example.motocast.ui.view.dynamicScaffold.badges.DateBadge
-import com.example.motocast.ui.view.dynamicScaffold.badges.TimeBadge
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.motocast.ui.view.dynamicScaffold.composables.RouteText
 import com.example.motocast.ui.view.dynamicScaffold.buttons.EditRouteButton
-import com.example.motocast.ui.view.dynamicScaffold.cards.CardsColumn
+import com.example.motocast.ui.view.dynamicScaffold.composables.CardsColumn
+import com.example.motocast.ui.view.dynamicScaffold.composables.DateAndTimeRow
+import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 
 @Composable
 fun RouteScaffoldContent(
     onNavigateToScreen: () -> Unit,
-    routePlannerViewModel: RoutePlannerViewModel
-) {
-    RouteText(routePlannerViewModel)
+    routeText: String,
+    destinations: List<Destination>,
+    month: Int,
+    day: Int,
+    hours: Int,
+    minutes: Int,
+    nowCastViewModel: NowCastViewModel
+    ) {
 
-    DateAndTimeRow()
+    RouteText(routeText)
+
+    DateAndTimeRow(month, day, hours, minutes)
 
     EditRouteButton(onNavigateToScreen)
 
-    CardsColumn()
-}
-
-@Composable
-fun DateAndTimeRow(){
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center) {
-
-        TimeBadge()
-        Spacer(modifier = Modifier.width(50.dp))
-        DateBadge()
-    }
+    CardsColumn(destinations, nowCastViewModel)
 }

@@ -1,15 +1,18 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.dynamicScaffold.cards.Card
+import com.example.motocast.ui.viewmodel.nowcast.NowCastUiState
+import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import java.util.*
 
 @Composable
-fun CardsColumn (destinations: List<Destination>) {
+fun CardsColumn (destinations: List<Destination>, nowCastViewModel: NowCastViewModel) {
+
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)){
         items(destinations.size){index ->
 
@@ -22,38 +25,27 @@ fun CardsColumn (destinations: List<Destination>) {
             val hours = calendar.get(Calendar.HOUR_OF_DAY)
             val minutes = calendar.get(Calendar.MINUTE)
 
-            Card(
-                temperature = 12,
-                location = location?: "",
-                hours = hours,
-                minutes = minutes,
-                event = "blowingSnow",
-                awarenessLevel = "2; yellow; Moderate"
+            var temperatureNow: Double? by remember { mutableStateOf(null) }
+
+            nowCastViewModel.getTemperature(
+                latitude = destinations[index].latitude,
+                longitude = destinations[index].longitude,
+                onSuccess = {temperature -> temperatureNow = temperature}
             )
-        }
-/*
-        item{
-            Card(12, "Gjerstad", 10, 0, false,"blowingSnow" ,"2; yellow; Moderate")
-        }
 
-        item{
-            Card(8, "Oslo", 12, 2,false,"","")
-        }
+            Log.d("CardsColumn", "$location temperature: $temperatureNow")
 
-        item{
-            Card(-9, "Sandnessjøen", 9, 17,false,"","")
-        }
+            if (temperatureNow != null){
+                Card(
+                    temperature = temperatureNow,
+                    location = location?: "",
+                    hours = hours,
+                    minutes = minutes,
+                    event = "blowingSnow",
+                    awarenessLevel = "2; yellow; Moderate"
+                )
+            }
 
-        item{
-            Card(12, "Gjerstad", 22, 0, true,"","")
         }
-
-        item{
-            Card(12, "Gjerstad", 10, 0,false,"","")
-        }
-
-        item{
-            Card(12, "Gjerstad", 10, 0, true,"","")
-        }*/
     }
 }

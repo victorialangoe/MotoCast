@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge
-import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.example.motocast.ui.view.dynamicScaffold.composables.FavoritesSection
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 
@@ -108,7 +108,7 @@ fun ContentColumn(onNavigateToScreen: () -> Unit) {
                 .align(Alignment.CenterHorizontally)
         )
 
-        AddNewRouteButton(onNavigateToScreen)
+        //AddNewRouteButton(onNavigateToScreen)
 
         FavoritesSection()
     }

@@ -1,14 +1,14 @@
-package com.example.motocast.ui.view.dynamicScaffold
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 @Composable
 fun RouteText (
-    routePlannerViewModel: RoutePlannerViewModel
+    text: String
 ) {
-
-    Text(text = routePlannerViewModel.getDestinationNamesAsString(), fontSize = 20.sp)
+    Text(text = text, fontSize = 20.sp, textAlign = TextAlign.Center)
 }

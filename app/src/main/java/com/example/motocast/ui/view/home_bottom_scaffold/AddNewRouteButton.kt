@@ -49,9 +49,3 @@ fun AddNewRouteButton(onNavigateToScreen: () -> Unit) {
         )
     }
 }
-
-@Preview
-@Composable
-fun AddNewRouteButtonPreview() {
-    AddNewRouteButton() {}
-}

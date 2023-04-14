@@ -56,7 +56,7 @@ fun CurrentWeatherBadge(
                     nowCastUiState.symbolCode?.let { symbolCode ->
                         Image(
                             painter = painterResource(
-                                // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
+                                //TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
                                 id = context.resources.getIdentifier(
                                     symbolCode,
                                     "drawable",

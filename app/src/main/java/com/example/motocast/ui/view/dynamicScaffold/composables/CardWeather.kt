@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 
 @Composable
-fun CardWeather(temperature: Int, fare: Boolean) {
+fun CardWeather(temperature: Double? = null, fare: Boolean = false) {
+
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-    val image = ImageVector.vectorResource(id = R.drawable.baseline_wb_sunny_24) // this will be from api call
+    val image = ImageVector.vectorResource(id = R.drawable.danger_windy) // this will be from api call
+
     Row(horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically) {
 
@@ -26,22 +28,20 @@ fun CardWeather(temperature: Int, fare: Boolean) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        ClickableImage(showDialog = showDialog,
-            onDismiss = { setShowDialog(false) },
-            onClick = { setShowDialog(true) },
-            event = "",
-            awarenessLevel = "",
-            image = image
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_wb_sunny_24),
+            contentDescription = "Sunny Icon",
         )
-
-        
 
         if (fare){
             //Fare-condition
             Spacer(modifier = Modifier.size(6.dp))
-            Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.danger_windy),
-                contentDescription = "Danger windy icon",
+            ClickableImage(showDialog = showDialog,
+                onDismiss = { setShowDialog(false) },
+                onClick = { setShowDialog(true) },
+                event = "",
+                awarenessLevel = "",
+                image = image
             )
         }
     }

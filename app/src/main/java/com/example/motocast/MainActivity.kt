@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         addressDataViewModel = addressDataViewModel,
                         activity = this,
                         context = this
-                        )
+                    )
                 }
             }
         }

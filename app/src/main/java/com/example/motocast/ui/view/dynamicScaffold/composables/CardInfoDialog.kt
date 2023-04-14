@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button

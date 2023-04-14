@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Boolean = false, event: String, awarenessLevel: String) {
+fun Card (temperature: Double? = null,
+          location: String? = null,
+          hours: Int? = null,
+          minutes: Int? = null,
+          fare: Boolean = false,
+          event: String? = null,
+          awarenessLevel: String? = null) {
 
     Box(modifier = Modifier
         .clip(RoundedCornerShape(16.dp))
@@ -24,8 +30,8 @@ fun Card (temperature: Int, location: String, hours: Int, minutes: Int, fare: Bo
 
             CardTimePlace(
                 location = location,
-                hours = hours,
-                minutes = minutes
+                hours = hours?: -1,
+                minutes = minutes?: -1
             )
 
             Spacer(modifier = Modifier.weight(1f))

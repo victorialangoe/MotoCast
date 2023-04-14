@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 
 @Composable
-fun DateBadge() {
+fun DateBadge(date: String) {
     Row(modifier = Modifier
         .clip(shape = RoundedCornerShape(8.dp))
         .background(color = Color(0xfff7f7f7))
@@ -29,6 +29,6 @@ fun DateBadge() {
 
         Spacer(modifier = Modifier.width(10.dp))
 
-        Text(text = "21.03")
+        Text(text = date)
     }
 }

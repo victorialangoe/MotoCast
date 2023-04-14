@@ -28,8 +28,7 @@ fun DatePicker(
 
     datePicker.datePicker.minDate = Calendar.getInstance().timeInMillis
 
-
-    var label = "${day}. ${month}. $year"
+    var label = "${day}. ${month+1}. $year"
 
     // If the time is now, show "I dag" instead of the date
     val calendar = Calendar.getInstance()

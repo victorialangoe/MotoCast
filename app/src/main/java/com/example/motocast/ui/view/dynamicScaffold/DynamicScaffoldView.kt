@@ -22,6 +22,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge
+import com.example.motocast.ui.view.dynamicScaffold.composables.DynamicScaffoldTopBar
+import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.DynamicScaffoldContentColumn
 import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.HomeScaffoldContent
 import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.RouteScaffoldContent
 import com.example.motocast.ui.view.home_bottom_scaffold.*
@@ -34,17 +36,16 @@ import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 fun DynamicScaffoldView(
     context: Context,
     nowCastViewModel: NowCastViewModel,
-    routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
     content: @Composable (Modifier) -> Unit = { modifier ->
         Box(modifier) {
             Text("Scaffold Content")
         }
     },
-    onNavigateToScreen: () -> Unit
+    ScaffoldContent: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope() // TODO: Remove this
-    val scaffoldState = rememberBottomSheetScaffoldState() // Endre etterpå
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -55,17 +56,19 @@ fun DynamicScaffoldView(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = minHeight, max = maxHeight)
-                    .clip(cornerShape),
+                    .heightIn(min = minHeight, max = maxHeight),
+                    //.clip(cornerShape),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DynamicScaffoldViewTopBar(
+                DynamicScaffoldTopBar(
                     context = context,
                     nowCastViewModel = nowCastViewModel
                 ) {
                     mapLocationViewModel.cameraToUserLocation()
                 }
-                ContentColumn(onNavigateToScreen, routePlannerViewModel)
+                DynamicScaffoldContentColumn(
+                    ScaffoldContent = { ScaffoldContent () }
+                )
             }
         },
         content = {
@@ -80,62 +83,8 @@ fun DynamicScaffoldView(
     )
 }
 
-@Composable
-fun DynamicScaffoldViewTopBar(
-    context: Context,
-    nowCastViewModel: NowCastViewModel,
-    cameraToUserLocation: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
-        Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
-    }
-}
-
-@Composable
-fun ContentColumn(
-    onNavigateToScreen: () -> Unit,
-    routePlannerViewModel: RoutePlannerViewModel)
-{
-
-    Column(
-        modifier = Modifier
-            .clip(cornerShape)
-            .background(Color.White)
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.scaffold_dragbar),
-            contentDescription = "Bar to drag scaffold up",
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .align(Alignment.CenterHorizontally)
-        )
-        if (routePlannerViewModel.checkIfAllDestinationsHaveNames()) {
-            RouteScaffoldContent(onNavigateToScreen, routePlannerViewModel)
-            }
-        else {
-            HomeScaffoldContent(onNavigateToScreen)
-        }
-    }
-}
-
 
 
 // Constants
-private val cornerShape = RoundedCornerShape(16.dp)
 private val maxHeight = 700.dp
 private val minHeight = 300.dp

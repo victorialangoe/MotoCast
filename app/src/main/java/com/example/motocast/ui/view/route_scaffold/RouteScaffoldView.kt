@@ -17,10 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
-import com.example.motocast.ui.view.dynamicScaffold.cards.CardsColumn
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -91,7 +89,7 @@ fun ContentColumn(onNavigateToScreen: () -> Unit){
 
         EditRouteButton(onNavigateToScreen)
 
-        CardsColumn()
+        //CardsColumn()
     }
 }
 
@@ -113,9 +111,3 @@ fun DateAndTimeRow(){
 private val cornerShape = RoundedCornerShape(16.dp)
 private val maxHeight = 500.dp
 private val minHeight = 190.dp
-
-@Preview
-@Composable
-fun RouteScaffoldViewPreview(){
-    RouteScaffoldView() {}
-}

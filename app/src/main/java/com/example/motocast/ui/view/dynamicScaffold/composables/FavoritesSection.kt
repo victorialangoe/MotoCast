@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.home_bottom_scaffold.favorites
+package com.example.motocast.ui.view.dynamicScaffold.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -47,7 +47,7 @@ fun FavoritesCard(title: String, icon: ImageVector) {
             // max size of the card
             .size(240.dp, 80.dp),
     ) {
-        Column() {
+        Column {
             Text (
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
@@ -60,7 +60,7 @@ fun FavoritesCard(title: String, icon: ImageVector) {
             )
 
         }
-        Row() {
+        Row{
             Icon(
                 imageVector = icon,
                 contentDescription = "Favorite icon",
