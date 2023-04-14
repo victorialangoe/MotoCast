@@ -223,23 +223,6 @@ class  MapLocationViewModel(
     }
 
     /**
-     * This function removes the route from the map.
-     */
-    private fun removeRoute() {
-        val mapView = _uiState.value.mapView
-        mapView?.getMapboxMap()?.getStyle { style ->
-            style.removeStyleLayer("geojson-layer")
-            style.removeStyleSource("geojson-source")
-        }
-    }
-
-
-    private fun readGeoJsonFile(context: Context, fileName: String): String {
-        val inputStream = context.assets.open(fileName)
-        return inputStream.bufferedReader().use { it.readText() }
-    }
-
-    /**
      * This function checks if the user has granted the location permission.
      */
     private fun checkPermission(): Boolean {
