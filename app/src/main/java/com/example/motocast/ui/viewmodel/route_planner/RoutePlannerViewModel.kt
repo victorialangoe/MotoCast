@@ -49,6 +49,7 @@ class RoutePlannerViewModel : ViewModel() {
     /* This method is only used for debugging purposes */
     private fun printDestinations() {
         // create a string with - between each destination
+        /*
         _uiState.value.destinations.forEachIndexed { index, destination ->
             Log.d(
                 "RoutePlannerViewModel", "Destination $index: ${
@@ -58,7 +59,7 @@ class RoutePlannerViewModel : ViewModel() {
                             "timestamp: ${destination.timestamp}"
                 }"
             )
-        }
+        }*/
     }
     fun getTotalDestinations(): Int {
         return _uiState.value.destinations.size
@@ -226,13 +227,15 @@ class RoutePlannerViewModel : ViewModel() {
      * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
      *
      * @param jsonData the JSON response from the Mapbox Directions API
-     * @return a GeoJSON
+     *
+     * updates the uiState with the new route, and waypoints
      */
     private fun convertToGeoJSON(jsonData: String) {
         val jsonObject = JSONObject(jsonData)
         val routesArray = jsonObject.getJSONArray("routes")
         val firstRoute = routesArray.getJSONObject(0)
         val legsArray = firstRoute.getJSONArray("legs")
+        val duration = firstRoute.getDouble("duration")
 
         val features = mutableListOf<Feature>()
 
@@ -248,9 +251,57 @@ class RoutePlannerViewModel : ViewModel() {
                 features.add(Feature.fromGeometry(lineString))
             }
         }
+        val waypoints = mutableListOf<Waypoint>()
+
+        var elapsedDuration = 0.0
+        var targetDuration = 2 * 3600 // 2 hours in seconds
+        val totalDuration = duration.toInt()
+
+        // Add the first waypoint
+        val firstStep = legsArray.getJSONObject(0).getJSONArray("steps").getJSONObject(0)
+        val firstLocation = firstStep.getJSONObject("maneuver").getJSONArray("location")
+        waypoints.add(Waypoint(firstLocation.getDouble(0), firstLocation.getDouble(1), 0.0))
+
+        for (legIndex in 0 until legsArray.length()) {
+            val currentLeg = legsArray.getJSONObject(legIndex)
+            val stepsArray = currentLeg.getJSONArray("steps")
+            val lastStepIndex = stepsArray.length() - 1
+
+            for (stepIndex in 0 until stepsArray.length()) {
+                val step = stepsArray.getJSONObject(stepIndex)
+                elapsedDuration += step.getDouble("duration")
+
+                if (elapsedDuration >= targetDuration && targetDuration < totalDuration) {
+                    val location = step.getJSONObject("maneuver").getJSONArray("location")
+                    waypoints.add(Waypoint(location.getDouble(0), location.getDouble(1), elapsedDuration))
+
+                    // After the first additional waypoint, add another waypoint for every hour
+                    targetDuration += 1 * 3600 // Add 1 hour to the target duration
+                }
+
+                // Add the last waypoint of each leg, except for the last leg
+                if (stepIndex == stepsArray.length() - 1 && legIndex != legsArray.length() - 1) {
+                    val location = step.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(legIndex)
+                    waypoints.add(Waypoint(location.getDouble(0), location.getDouble(1), elapsedDuration))
+                }
+            }
+        }
+
+        val lastLeg = legsArray.getJSONObject(legsArray.length() - 1)
+        val lastStepsArray = lastLeg.getJSONArray("steps")
+        val lastStep = lastStepsArray.getJSONObject(lastStepsArray.length() - 1)
+        val lastLocation = lastStep.getJSONObject("maneuver").getJSONArray("location")
+        waypoints.add(Waypoint(lastLocation.getDouble(0), lastLocation.getDouble(1), elapsedDuration))
+
+        Log.d("Durations: ", "target $targetDuration, total $totalDuration, elapsed $elapsedDuration ")
+        // Print the waypoints with their durations
+        waypoints.forEach { waypoint ->
+            println("Waypoint: Longitude: ${waypoint.longitude}, Latitude: ${waypoint.latitude}, Duration: ${waypoint.duration}")
+        }
 
         val featureCollection = FeatureCollection.fromFeatures(features)
         _uiState.value = _uiState.value.copy(geoJsonData = featureCollection.toJson())
+        _uiState.value = _uiState.value.copy(waypoints = waypoints)
     }
 
     /**

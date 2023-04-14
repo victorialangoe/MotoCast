@@ -40,6 +40,8 @@ fun AppNavigation(
                     MapView(
                         mapView = mapLocationViewModelUiState.value.mapView,
                         drawGeoJson = { geoJsonData -> mapLocationViewModel.drawGeoJson(geoJsonData) },
+                        drawWaypoints = { waypointList -> mapLocationViewModel.drawWaypointsToMap(waypointList, context) },
+                        waypointList = routePlannerViewModelUiState.value.waypoints,
                         onInit = {
                             mapLocationViewModel.loadMapView(context)
                             // calls cameraToUserLocation() when the map is loaded, less repetitive code

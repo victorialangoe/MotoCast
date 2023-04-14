@@ -4,28 +4,29 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.route_planner.Destination
+import com.example.motocast.ui.viewmodel.route_planner.Waypoint
 import com.google.android.gms.location.*
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
-import com.mapbox.maps.extension.style.expressions.dsl.generated.zoom
+import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.addLayerBelow
+import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
@@ -35,18 +36,12 @@ import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
-import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import okhttp3.ResponseBody
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.math.min
 import kotlin.math.*
+import com.example.motocast.R
 
 
 /**
@@ -188,6 +183,51 @@ class  MapLocationViewModel(
                     lineWidth(5.0)
                 }
                 style.addLayerBelow(lineLayer, "road-intersection")
+            }
+        }
+    }
+
+    fun drawWaypointsToMap(waypoints: List<Waypoint>, context: Context) {
+        val mapView = _uiState.value.mapView
+        mapView?.getMapboxMap()?.getStyle { style ->
+            val sourceId = "waypoints-source"
+            val layerId = "waypoints-layer"
+
+            // Check if the source exists and update it, otherwise create and add the source
+            val features = waypoints.mapNotNull { waypoint ->
+                val latitude = waypoint.latitude ?: return@mapNotNull null
+                val longitude = waypoint.longitude ?: return@mapNotNull null
+                val point = Point.fromLngLat(longitude, latitude)
+                Feature.fromGeometry(point)
+            }
+            val featureCollection = FeatureCollection.fromFeatures(features)
+            if (style.getSource(sourceId) == null) {
+                style.addSource(geoJsonSource(sourceId) {
+                    featureCollection(featureCollection)
+                })
+            } else {
+                (style.getSource(sourceId) as GeoJsonSource).featureCollection(featureCollection)
+            }
+
+            val markerIcon = BitmapFactory.decodeResource(context.resources, R.drawable.marker)
+
+            // Load the waypoint icon
+            val iconId = "waypoint-icon"
+            try {
+                style.addImage(iconId, markerIcon)
+            } catch (e: RuntimeException) {
+                // Ignore the exception if the image already exists
+            }
+
+            // Add or update the SymbolLayer that uses the GeoJsonSource to display the waypoints
+            if (style.getLayer(layerId) == null) {
+                val symbolLayer = SymbolLayer(layerId, sourceId).apply {
+                    iconImage(iconId)
+                    iconAnchor(IconAnchor.BOTTOM)
+                    iconSize(0.3)
+                    iconAllowOverlap(true)  // Allow the icon to overlap with other symbols
+                }
+                style.addLayer(symbolLayer)
             }
         }
     }

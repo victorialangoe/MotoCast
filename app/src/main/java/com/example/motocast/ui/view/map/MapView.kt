@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import com.example.motocast.MainActivity
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.viewmodel.route_planner.Waypoint
 import com.mapbox.maps.MapView
 
 @Composable
@@ -16,12 +17,18 @@ fun MapView(
     mapView: MapView? = null,
     drawGeoJson: (String) -> Unit,
     onInit: () -> Unit,
+    drawWaypoints: (List<Waypoint>) -> Unit,
+    waypointList: List<Waypoint>? = null
     ) {
 
     onInit()
 
     if (geoJsonData != null) {
         drawGeoJson(geoJsonData)
+    }
+
+    if (waypointList != null) {
+        drawWaypoints(waypointList)
     }
 
     if (mapView != null) {

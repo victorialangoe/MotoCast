@@ -27,8 +27,6 @@ data class Waypoint(
     val latitude: Double?,
     val duration: Double
 )
-
-
 data class TimeAndDateUiState (
     val timePickerUiState: TimePickerUiState = TimePickerUiState(),
     val datePickerUiState: DatePickerUiState = DatePickerUiState()

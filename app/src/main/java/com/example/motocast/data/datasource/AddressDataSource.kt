@@ -25,7 +25,7 @@ class AddressDataSource : ViewModel() {
             withContext(Dispatchers.IO) {
 
                 val response = addressHelper.searchAddress(query).execute()
-                Log.d("AddressDataSource", "Success: ${response}")
+                //Log.d("AddressDataSource", "Success: ${response}")
                 if (response.isSuccessful) {
                     val addressData = response.body()
                     if (addressData != null) {
