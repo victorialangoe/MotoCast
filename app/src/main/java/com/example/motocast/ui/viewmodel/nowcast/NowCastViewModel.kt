@@ -100,21 +100,23 @@ class NowCastViewModel : ViewModel() {
         })
     }
 
-    fun getTemperature(
+    fun getTemperatureAndSymbolCode(
         latitude: Double?,
         longitude: Double?,
-        onSuccess: (Double?) -> Unit)
+        onSuccess: (Double?, String?) -> Unit)
     {
         var temperature: Double?
+        var symbolCode: String?
 
         nowCastDataSource.getNowCastData (
             latitude?: 0.0,
             longitude?: 0.0,
             onSuccess = {
                 temperature = it.properties.timeseries.first().data.instant.details.air_temperature
+                symbolCode = it.properties.timeseries.first().data.next_1_hours.summary.symbol_code
 
                 Log.d("NowCastViewModel", "Got NowCast temperature: $temperature")
-                onSuccess(temperature)
+                onSuccess(temperature, symbolCode)
             },
             onError = {
                 Log.e("NowCastViewModel", "Error getting NowCast temperature: $it")

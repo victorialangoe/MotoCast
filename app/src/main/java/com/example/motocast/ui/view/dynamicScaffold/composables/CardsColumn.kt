@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.dynamicScaffold.composables
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +12,7 @@ import com.example.motocast.ui.viewmodel.route_planner.Destination
 import java.util.*
 
 @Composable
-fun CardsColumn (destinations: List<Destination>, nowCastViewModel: NowCastViewModel) {
+fun CardsColumn (destinations: List<Destination>, nowCastViewModel: NowCastViewModel, context: Context) {
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)){
         items(destinations.size){index ->
@@ -26,11 +27,14 @@ fun CardsColumn (destinations: List<Destination>, nowCastViewModel: NowCastViewM
             val minutes = calendar.get(Calendar.MINUTE)
 
             var temperatureNow: Double? by remember { mutableStateOf(null) }
+            var symbolCodeNow: String? by remember { mutableStateOf(null) }
 
-            nowCastViewModel.getTemperature(
+            nowCastViewModel.getTemperatureAndSymbolCode(
                 latitude = destinations[index].latitude,
                 longitude = destinations[index].longitude,
-                onSuccess = {temperature -> temperatureNow = temperature}
+                onSuccess = {temperature, symbolCode ->
+                    temperatureNow = temperature
+                    symbolCodeNow = symbolCode}
             )
 
             Log.d("CardsColumn", "$location temperature: $temperatureNow")
@@ -38,11 +42,14 @@ fun CardsColumn (destinations: List<Destination>, nowCastViewModel: NowCastViewM
             if (temperatureNow != null){
                 Card(
                     temperature = temperatureNow,
+                    symbolCode = symbolCodeNow,
                     location = location?: "",
                     hours = hours,
                     minutes = minutes,
                     event = "blowingSnow",
-                    awarenessLevel = "2; yellow; Moderate"
+                    awarenessLevel = "2; yellow; Moderate",
+                    fare = true,
+                    context = context
                 )
             }
 

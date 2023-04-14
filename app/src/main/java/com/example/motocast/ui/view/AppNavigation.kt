@@ -54,7 +54,8 @@ fun AppNavigation(
                             day = routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
                             hours = routePlannerViewModelUiState.value.startTime.timePickerUiState.hour,
                             minutes = routePlannerViewModelUiState.value.startTime.timePickerUiState.minute,
-                            nowCastViewModel = nowCastViewModel //TODO: lavere kobling
+                            nowCastViewModel = nowCastViewModel, //TODO: lavere kobling
+                            context = context
                         )}
                     } else {
                         { HomeScaffoldContent(onNavigateToScreen = {

@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.dynamicScaffold.scaffoldContent
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +21,7 @@ import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 @Composable
 fun DynamicScaffoldContentColumn(
-    ScaffoldContent: @Composable () -> Unit
+    ScaffoldContent: @Composable () -> Unit,
 )
 {
     Column(

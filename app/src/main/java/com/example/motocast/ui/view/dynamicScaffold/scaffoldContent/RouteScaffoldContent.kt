@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.dynamicScaffold.scaffoldContent
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,7 +22,8 @@ fun RouteScaffoldContent(
     day: Int,
     hours: Int,
     minutes: Int,
-    nowCastViewModel: NowCastViewModel
+    nowCastViewModel: NowCastViewModel,
+    context: Context
     ) {
 
     RouteText(routeText)
@@ -30,5 +32,5 @@ fun RouteScaffoldContent(
 
     EditRouteButton(onNavigateToScreen)
 
-    CardsColumn(destinations, nowCastViewModel)
+    CardsColumn(destinations, nowCastViewModel, context)
 }

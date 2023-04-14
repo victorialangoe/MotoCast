@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.dynamicScaffold.composables
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,12 +13,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Card (temperature: Double? = null,
+          symbolCode: String? = null,
           location: String? = null,
           hours: Int? = null,
           minutes: Int? = null,
           fare: Boolean = false,
           event: String? = null,
-          awarenessLevel: String? = null) {
+          awarenessLevel: String? = null,
+          context: Context
+) {
 
     Box(modifier = Modifier
         .clip(RoundedCornerShape(16.dp))
@@ -36,7 +40,7 @@ fun Card (temperature: Double? = null,
 
             Spacer(modifier = Modifier.weight(1f))
 
-            CardWeather(temperature, fare)
+            CardWeather(temperature, fare, symbolCode, context)
         }
     }
 }
