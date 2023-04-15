@@ -49,16 +49,18 @@ fun AddressResult(
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
+                if (address.distanceFromUser != null){
+                    Text(
+                        fontSize = 14.sp,
+                        modifier = Modifier.weight(0.2f, fill = true),
 
-                Text(
-                    fontSize = 14.sp,
-                    modifier = Modifier.weight(0.2f, fill = true),
-                    text = if (address.distanceFromUser!! > 1000) {
-                        "${address.distanceFromUser / 1000} km"
-                    } else {
-                        "${address.distanceFromUser} m"
-                    },
-                )
+                        text = if (address.distanceFromUser > 1000) {
+                            "${address.distanceFromUser / 1000} km"
+                        } else {
+                            "${address.distanceFromUser} m"
+                        },
+                    )
+                }
 
             }
         }
