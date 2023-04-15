@@ -10,8 +10,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +20,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.view.dynamicScaffold.badges.CurrentWeatherBadge
+import com.example.motocast.ui.view.dynamicScaffold.badges.LocateUserBadge
 import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.HomeScaffoldContent
 import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.RouteScaffoldContent
-import com.example.motocast.ui.view.home_bottom_scaffold.*
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
@@ -61,10 +59,9 @@ fun DynamicScaffoldView(
             ) {
                 DynamicScaffoldViewTopBar(
                     context = context,
-                    nowCastViewModel = nowCastViewModel
-                ) {
-                    mapLocationViewModel.cameraToUserLocation()
-                }
+                    nowCastViewModel = nowCastViewModel,
+                    cameraToUserLocation = { mapLocationViewModel.cameraToUserLocation() }
+                )
                 ContentColumn(onNavigateToScreen, routePlannerViewModel)
             }
         },
@@ -72,7 +69,7 @@ fun DynamicScaffoldView(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Red)
+                    .background(Color.White)
             ) {
                 content(Modifier)
             }

@@ -1,8 +1,7 @@
 package com.example.motocast.ui.view.dynamicScaffold.scaffoldContent
 
 import androidx.compose.runtime.Composable
-import com.example.motocast.ui.view.home_bottom_scaffold.AddNewRouteButton
-import com.example.motocast.ui.view.home_bottom_scaffold.favorites.FavoritesSection
+import com.example.motocast.ui.view.dynamicScaffold.buttons.AddNewRouteButton
 
 @Composable
 fun HomeScaffoldContent(
@@ -11,5 +10,5 @@ fun HomeScaffoldContent(
 
     AddNewRouteButton(onNavigateToScreen)
 
-    FavoritesSection()
+    // FavoritesSection()
 }

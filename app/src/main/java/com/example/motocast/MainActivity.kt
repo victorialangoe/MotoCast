@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
                         nowCastViewModel = nowCastViewModel,
                         routePlannerViewModel = routePlannerViewModel,
                         addressDataViewModel = addressDataViewModel,
-                        activity = this,
                         context = this
                         )
                 }
@@ -72,4 +71,3 @@ class MainActivity : ComponentActivity() {
         mapLocationViewModel.stopLocationTracking()
     }
 }
-
