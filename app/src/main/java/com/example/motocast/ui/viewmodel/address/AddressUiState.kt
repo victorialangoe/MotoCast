@@ -6,7 +6,6 @@ import com.example.motocast.ui.viewmodel.route_planner.Destination
 data class AddressUiState(
     val isLoading: Boolean = false,
     val query: String = "",
-    val currentUserLocation: Location? = null,
     val addresses: List<Address> = emptyList(),
     val formerAddresses: List<Address> = emptyList(),
 

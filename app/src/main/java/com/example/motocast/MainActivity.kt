@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.example.motocast.ui.theme.MotoCastTheme
 import com.example.motocast.ui.view.AppNavigation
@@ -45,22 +46,16 @@ class MainActivity : ComponentActivity() {
         addressDataViewModel = AddressDataViewModel()
         routePlannerViewModel = RoutePlannerViewModel()
         nowCastViewModel = NowCastViewModel()
-        mapLocationViewModel = MapLocationViewModel(
-            activity = this,
-            timeInterval = 5000, // 5 seconds
-            minimalDistance = 100f, // 100 m
-            bigDistanceChange = 100_000f, // 100 km
-            nowCastViewModel = nowCastViewModel
-        )
+        mapLocationViewModel = MapLocationViewModel(activity = this)
         mapLocationViewModel.startLocationTracking()
-        nowCastViewModel.startFetchingNowCastData(mapLocationViewModel)
+        nowCastViewModel.startFetchingNowCastData { mapLocationViewModel.getCurrentLocation() }
 
     }
 
     override fun onResume() {
         super.onResume()
         // Start fetching data when the user resumes the activity
-        nowCastViewModel.startFetchingNowCastData(mapLocationViewModel)
+        nowCastViewModel.startFetchingNowCastData { mapLocationViewModel.getCurrentLocation() }
         mapLocationViewModel.startLocationTracking()
     }
 
