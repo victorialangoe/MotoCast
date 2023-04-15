@@ -2,13 +2,23 @@ package com.example.motocast.ui.viewmodel.route_planner
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.motocast.BuildConfig
+import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.ui.viewmodel.address.Address
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
-import kotlin.math.atan2
-import kotlin.math.roundToInt
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
@@ -67,15 +77,31 @@ class RoutePlannerViewModel : ViewModel() {
         return destinationsString
     }
 
-    fun addDestination() {
+    /**
+     * This method adds a new destination to the list of destinations if the list is not full. (max 5 destinations)
+     * Sets the active destination to the last destination in the list. (the one that was just added)
+     * Navigates to the add destination screen. (the screen where the user can add a destination)
+     */
+    fun addDestination(navigateTo: () -> Unit) {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
         // max 5 destinations
         if (newDestinations.size < 5) {
-            newDestinations.add(Destination(null, 0.0, 0.0, 0))
+            // insert new destination before the last item
+            val lastDestinationIndex = newDestinations.lastIndex
+            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0, 0))
             _uiState.value = currentUiState.copy(destinations = newDestinations)
-            printDestinations()
+            // set active destination to the new destination
+            setActiveDestinationIndex(lastDestinationIndex)
+            // Navigate to add destination screen
+            navigateTo()
         }
+    }
+
+
+    fun editDestination(index: Int, navigateTo:() -> Unit) {
+        setActiveDestinationIndex(index)
+        navigateTo()
     }
 
     fun setActiveDestinationIndex(index: Int) {
@@ -149,17 +175,105 @@ class RoutePlannerViewModel : ViewModel() {
         return true
     }
 
+    suspend fun getRoute(destinations: List<Destination>, accessToken: String) {
+        val coordinates = destinations.joinToString(separator = ";") { destination ->
+            "${destination.longitude},${destination.latitude}"
+        }
+
+
+
+
+        val directionsHelper = DirectionsHelper()
+        val service = directionsHelper.createDirectionsAPI()
+        val call = service.getDirections(
+            coordinates = coordinates,
+            accessToken = accessToken,
+            alternatives = false,
+            geometries = "geojson",
+            language = "en",
+            overview = "simplified",
+            steps = true
+        )
+
+        withContext(Dispatchers.IO) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+
+                        response.body()?.let { responseBody ->
+                            val jsonResponse = responseBody.string()
+                            convertToGeoJSON(jsonResponse)
+                        }
+                    } else {
+                        Log.e(
+                            "MapActivity",
+                            "Error getting route: ${response.errorBody()?.string()}"
+                        )
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.e("MapActivity", "Error getting route: ${t.message}")
+                }
+            })
+        }
+    }
+
+    /**
+     * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
+     *
+     * @param jsonData the JSON response from the Mapbox Directions API
+     * @return a GeoJSON
+     */
+    private fun convertToGeoJSON(jsonData: String) {
+        val jsonObject = JSONObject(jsonData)
+        val routesArray = jsonObject.getJSONArray("routes")
+        val firstRoute = routesArray.getJSONObject(0)
+        val legsArray = firstRoute.getJSONArray("legs")
+
+        val features = mutableListOf<Feature>()
+
+        for (legIndex in 0 until legsArray.length()) {
+            val currentLeg = legsArray.getJSONObject(legIndex)
+            val stepsArray = currentLeg.getJSONArray("steps")
+
+            for (stepIndex in 0 until stepsArray.length()) {
+                val step = stepsArray.getJSONObject(stepIndex)
+                val geometry = step.getJSONObject("geometry")
+                val lineString = LineString.fromJson(geometry.toString())
+
+                features.add(Feature.fromGeometry(lineString))
+            }
+        }
+
+        val featureCollection = FeatureCollection.fromFeatures(features)
+        _uiState.value = _uiState.value.copy(geoJsonData = featureCollection.toJson())
+    }
+
     /**
      * Starts the route planning
      */
-    fun start() {
+    fun start(navigateTo: () -> Unit, fitCameraToRouteAndWaypoints: ()->Unit) {
         val currentUiState = _uiState.value
-        // TODO: A viewmodel for errors?
         if (!checkIfAllDestinationsHaveNames()) {
             _uiState.value = currentUiState.copy(error = "All destinations must have a name")
             return
         }
 
+        // removes null to avoid null pointer exception
+        val destinations = currentUiState.destinations.filterNotNull()
+
+        //needs 2 destinations to get a route
+        if (destinations.size >= 2) {
+            viewModelScope.launch {
+                getRoute(destinations, BuildConfig.MAPBOX_ACCESS_TOKEN)
+                fitCameraToRouteAndWaypoints()
+            }
+        }
+        navigateTo()
         printDestinations()
     }
 }

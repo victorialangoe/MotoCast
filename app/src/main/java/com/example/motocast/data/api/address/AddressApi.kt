@@ -12,10 +12,10 @@ interface AddressApi {
     @GET("sok")
     fun searchAddress(
         @Query("sok") searchQuery: String,
-        @Query("fuzzy") fuzzy: Boolean = false,
+        @Query("fuzzy") fuzzy: Boolean = true,
         @Query("sokemodus") searchMode: String = "OR",
         @Query("utkoordsys") coordinateSystem: Int = 4258,
-        @Query("treffPerSide") resultsPerPage: Int = 10,
+        @Query("treffPerSide") resultsPerPage: Int = 200,
         @Query("side") page: Int = 0,
         @Query("asciiKompatibel") asciiCompatible: Boolean = true
     ): Call<AddressSearchResult>

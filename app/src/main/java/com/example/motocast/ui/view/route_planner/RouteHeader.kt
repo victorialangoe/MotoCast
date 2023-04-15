@@ -9,20 +9,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.motocast.util.BackButton
 
 @Composable
-
 fun RouteHeader(
-    navController: NavController,
+    onClick: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically) {
 
-        BackButton(onClick = { navController.navigate("home") })
-
+        BackButton(onClick = onClick)
         Text(
             fontSize = 25.sp,
             text = "Ruteplanlegger",

@@ -1,5 +1,6 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
+import com.mapbox.geojson.FeatureCollection
 import java.util.*
 
 data class RoutePlannerUiState (
@@ -17,6 +18,7 @@ data class RoutePlannerUiState (
     val startTime: TimeAndDateUiState = TimeAndDateUiState(),
     val activeDestinationIndex : Int = 0,
     val error: String? = null,
+    val geoJsonData: String? = null
 )
 
 data class TimeAndDateUiState (

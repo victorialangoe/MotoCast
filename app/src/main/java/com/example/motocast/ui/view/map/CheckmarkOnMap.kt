@@ -6,9 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.example.motocast.R
-import com.example.motocast.ui.view.route_scaffold.cards.CardInfoDialog
-import com.example.motocast.ui.view.route_scaffold.cards.ClickableImage
 
+/*
 @Composable
 fun checkMarkOnMap(){
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -29,3 +28,5 @@ fun checkMarkOnMap(){
         awarenessLevel = ""
     )
 }
+
+ */
