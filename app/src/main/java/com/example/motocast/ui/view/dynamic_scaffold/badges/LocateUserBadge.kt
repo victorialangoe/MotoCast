@@ -1,6 +1,5 @@
-package com.example.motocast.ui.view.dynamicScaffold.badges
+package com.example.motocast.ui.view.dynamic_scaffold.badges
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button

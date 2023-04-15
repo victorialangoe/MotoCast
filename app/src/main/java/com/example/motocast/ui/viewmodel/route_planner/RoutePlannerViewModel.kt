@@ -18,6 +18,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.Duration
 import java.util.*
 
 class RoutePlannerViewModel : ViewModel() {
@@ -40,7 +41,7 @@ class RoutePlannerViewModel : ViewModel() {
         // update ui state
         _uiState.value = _uiState.value.copy(
             startTime = TimeAndDateUiState(
-                TimePickerUiState(hour, minute, false),
+                TimePickerUiState(hour, minute),
                 DatePickerUiState(year, month, dayOfMonth)
             )
         )
@@ -174,6 +175,61 @@ class RoutePlannerViewModel : ViewModel() {
         }
         return true
     }
+
+    /**
+     * This method returns the start date in the format: MM-DD
+     */
+    fun getStartDate(): String {
+        val currentUiState = _uiState.value
+        val timeAndDateUiState = currentUiState.startTime
+        val datePickerUiState = timeAndDateUiState.datePickerUiState
+        val month = if (datePickerUiState.month < 10) {
+            "0${datePickerUiState.month}"
+        } else {
+            datePickerUiState.month.toString()
+        }
+        val day = if (datePickerUiState.day < 10) {
+            "0${datePickerUiState.day}"
+        } else {
+            datePickerUiState.day.toString()
+        }
+        return "$month-$day"
+    }
+
+
+    /**
+     * This method returns the start time in the format: HH:mm
+     */
+    fun getStartTime(): String {
+        val currentUiState = _uiState.value
+        val timeAndDateUiState = currentUiState.startTime
+        val timePickerUiState = timeAndDateUiState.timePickerUiState
+        val hour = if (timePickerUiState.hour < 10) {
+            "0${timePickerUiState.hour}"
+        } else {
+            timePickerUiState.hour.toString()
+        }
+        val minute = if (timePickerUiState.minute < 10) {
+            "0${timePickerUiState.minute}"
+        } else {
+            timePickerUiState.minute.toString()
+        }
+        return "$hour:$minute"
+    }
+
+    /**
+     * This method returns the duration of the trip. // TODO: remove dummy value
+     */
+    fun getDuration(seconds: Long = 500): String {
+        val duration = Duration.ofSeconds(seconds)
+        return "Varighet: " + when {
+            duration.toDays() > 0 -> "${duration.toDays()} ${if (duration.toDays() == 1L) "dag" else "dager"}"
+            duration.toHours() > 0 -> "${duration.toHours()} ${if (duration.toHours() == 1L) "time" else "timer"}"
+            duration.toMinutes() > 0 -> "${duration.toMinutes()} min"
+            else -> "$seconds sek"
+        }
+    }
+
 
     suspend fun getRoute(destinations: List<Destination>, accessToken: String) {
         val coordinates = destinations.joinToString(separator = ";") { destination ->

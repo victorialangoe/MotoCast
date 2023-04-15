@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.motocast.ui.view.dynamicScaffold.DynamicScaffoldView
+import com.example.motocast.ui.view.dynamic_scaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_planner.add_destinations.AddDestinationView
@@ -54,32 +54,52 @@ fun AppNavigation(
         }
         composable("route_planner") {
             RoutePlannerView(
-                editDestination = { index -> routePlannerViewModel.editDestination(index) {
-                    navController.navigate(
-                        "add_destination_screen"
-                    )
-                }
+                editDestination = { index ->
+                    routePlannerViewModel.editDestination(index) {
+                        navController.navigate(
+                            "add_destination_screen"
+                        )
+                    }
                 },
-                addDestination = { routePlannerViewModel.addDestination {
-                    navController.navigate(
-                        "add_destination_screen"
-                    )
-                }
+                addDestination = {
+                    routePlannerViewModel.addDestination {
+                        navController.navigate(
+                            "add_destination_screen"
+                        )
+                    }
                 },
                 navigateTo = { screen -> navController.navigate(screen) },
                 startRoute = {
                     routePlannerViewModel.start(
                         { navController.navigate("home_screen") },
-                        { mapLocationViewModel.fitCameraToRouteAndWaypoints(routePlannerViewModelUiState.value.destinations) }
-                    ) },
+                        {
+                            mapLocationViewModel.fitCameraToRouteAndWaypoints(
+                                routePlannerViewModelUiState.value.destinations
+                            )
+                        }
+                    )
+                    mapLocationViewModel.trackUserOnMap(
+                        routeExists = true,
+                        destinations = routePlannerViewModelUiState.value.destinations,
+                        track = false
+                    )
+                },
                 removeDestination = { index -> routePlannerViewModel.removeDestination(index) },
-                updateDateUiState = { dateUiState -> routePlannerViewModel.updateDateUiState(dateUiState) },
-                updateTimeUiState = { timeUiState -> routePlannerViewModel.updateTimeUiState(timeUiState) },
+                updateDateUiState = { dateUiState ->
+                    routePlannerViewModel.updateDateUiState(
+                        dateUiState
+                    )
+                },
+                updateTimeUiState = { timeUiState ->
+                    routePlannerViewModel.updateTimeUiState(
+                        timeUiState
+                    )
+                },
                 destinations = routePlannerViewModelUiState.value.destinations,
                 clearAll = { routePlannerViewModel.clear() },
                 year = routePlannerViewModelUiState.value.startTime.datePickerUiState.year,
                 month = routePlannerViewModelUiState.value.startTime.datePickerUiState.month,
-                day =  routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
+                day = routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
                 hour = routePlannerViewModelUiState.value.startTime.timePickerUiState.hour,
                 minute = routePlannerViewModelUiState.value.startTime.timePickerUiState.minute,
                 context = context,
@@ -88,10 +108,16 @@ fun AppNavigation(
         }
         composable("add_destination_screen") {
             AddDestinationView(
-                fetchAddressData = { query -> addressDataViewModel.fetchAddressData(
-                    query,
-                    getAirDistanceFromLocation = { location -> mapLocationViewModel.getAirDistanceFromLocation(location) }
-                ) },
+                fetchAddressData = { query ->
+                    addressDataViewModel.fetchAddressData(
+                        query,
+                        getAirDistanceFromLocation = { location ->
+                            mapLocationViewModel.getAirDistanceFromLocation(
+                                location
+                            )
+                        }
+                    )
+                },
                 clearQuery = { addressDataViewModel.clearQuery() },
                 clearResults = { addressDataViewModel.clearResults() },
                 addFormerAddress = { address -> addressDataViewModel.addFormerAddress(address) },
@@ -99,9 +125,18 @@ fun AppNavigation(
                 addresses = addressViewModelUiState.value.addresses,
                 query = addressViewModelUiState.value.query,
                 isFetching = addressViewModelUiState.value.isLoading,
-                setActiveDestinationIndex = { index -> routePlannerViewModel.setActiveDestinationIndex(index) },
+                setActiveDestinationIndex = { index ->
+                    routePlannerViewModel.setActiveDestinationIndex(
+                        index
+                    )
+                },
                 removeDestination = { index -> routePlannerViewModel.removeDestination(index) },
-                updateDestination = { index, destination -> routePlannerViewModel.updateDestination(index, destination) },
+                updateDestination = { index, destination ->
+                    routePlannerViewModel.updateDestination(
+                        index,
+                        destination
+                    )
+                },
                 getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                 activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                 popBackStack = { navController.popBackStack() },

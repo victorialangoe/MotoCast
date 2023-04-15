@@ -26,7 +26,9 @@ fun AddressResult(
 
     Button(
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.height(64.dp).fillMaxWidth(),
+        modifier = Modifier
+            .height(64.dp)
+            .fillMaxWidth(),
         onClick = { onClick(address) },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
@@ -50,15 +52,19 @@ fun AddressResult(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    fontSize = 14.sp,
-                    modifier = Modifier.weight(0.2f, fill = true),
-                    text = if (address.distanceFromUser!! > 1000) {
-                        "${address.distanceFromUser / 1000} km"
-                    } else {
-                        "${address.distanceFromUser} m"
-                    },
-                )
+                if (address.distanceFromUser != null) {
+                    Text(
+                        fontSize = 14.sp,
+                        modifier = Modifier.weight(0.2f, fill = true),
+                        text = if (address.distanceFromUser!! > 1000) {
+                            "${address.distanceFromUser / 1000} km"
+                        } else {
+                            "${address.distanceFromUser} m"
+                        },
+                    )
+                } else {
+                    Text(text = "hei")
+                }
 
             }
         }

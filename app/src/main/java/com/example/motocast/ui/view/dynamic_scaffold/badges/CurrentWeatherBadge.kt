@@ -1,7 +1,6 @@
-package com.example.motocast.ui.view.dynamicScaffold.badges
+package com.example.motocast.ui.view.dynamic_scaffold.badges
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -49,7 +48,7 @@ fun CurrentWeatherBadge(
                         Text(
                             text = "${temperature}°C",
                             color = Color.Black,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
 
