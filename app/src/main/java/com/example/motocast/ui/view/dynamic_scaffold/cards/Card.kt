@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamicScaffold.cards
+package com.example.motocast.ui.view.dynamic_scaffold.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

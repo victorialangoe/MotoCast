@@ -83,8 +83,8 @@ fun DestinationResults(
                     else -> title
                 },
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .align(Alignment.Start)
+                    .padding(vertical = 8.dp)
             )
         }
 

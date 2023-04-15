@@ -267,8 +267,10 @@ class MapLocationViewModel(
      * This function is called when the user clicks on the "Track user on map" button.
      * It toggles the value of the trackUserOnMap variable.
      */
-    fun trackUserOnMap(routeExists: Boolean, destinations: List<Destination>) {
-        _uiState.value = _uiState.value.copy(trackUserOnMap = !_uiState.value.trackUserOnMap)
+    fun trackUserOnMap(routeExists: Boolean, destinations: List<Destination>, track : Boolean? = null) {
+        _uiState.value = _uiState.value.copy(
+            trackUserOnMap = track ?: !_uiState.value.trackUserOnMap
+        )
 
         if (!_uiState.value.trackUserOnMap && routeExists) {
             fitCameraToRouteAndWaypoints(destinations)

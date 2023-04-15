@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.route_planner.add_destinations
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +37,7 @@ fun AddDestinationSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

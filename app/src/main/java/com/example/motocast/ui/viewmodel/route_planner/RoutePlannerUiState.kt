@@ -28,7 +28,6 @@ data class TimeAndDateUiState (
 data class TimePickerUiState (
     val hour: Int = 0,
     val minute: Int = 0,
-    val is24Hour: Boolean = false
 )
 
 data class DatePickerUiState (
