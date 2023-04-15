@@ -33,6 +33,8 @@ fun AppNavigation(
         composable("home_screen") {
             DynamicScaffoldView(
                 context = context,
+                destinations = routePlannerViewModelUiState.value.destinations,
+                isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                 nowCastViewModel = nowCastViewModel,
                 mapLocationViewModel = mapLocationViewModel,
                 routePlannerViewModel = routePlannerViewModel,
@@ -42,10 +44,6 @@ fun AppNavigation(
                         drawGeoJson = { geoJsonData -> mapLocationViewModel.drawGeoJson(geoJsonData) },
                         onInit = {
                             mapLocationViewModel.loadMapView(context)
-                            // calls cameraToUserLocation() when the map is loaded, less repetitive code
-                            if (!routePlannerViewModel.checkIfAllDestinationsHaveNames()){
-                                mapLocationViewModel.cameraToUserLocation()
-                            }
                         },
                         geoJsonData = routePlannerViewModelUiState.value.geoJsonData
                     )
@@ -92,8 +90,7 @@ fun AppNavigation(
             AddDestinationView(
                 fetchAddressData = { query -> addressDataViewModel.fetchAddressData(
                     query,
-                    getCurrentLocation = mapLocationViewModel::getCurrentLocation,
-                    getAirDistanceFromPosToPos = mapLocationViewModel::getAirDistanceFromPosToPos,
+                    getAirDistanceFromLocation = { location -> mapLocationViewModel.getAirDistanceFromLocation(location) }
                 ) },
                 clearQuery = { addressDataViewModel.clearQuery() },
                 clearResults = { addressDataViewModel.clearResults() },
@@ -108,7 +105,7 @@ fun AppNavigation(
                 getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                 activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                 popBackStack = { navController.popBackStack() },
-                getCurrentLocation = mapLocationViewModel::getCurrentLocation,
+                getCurrentLocation = { mapLocationViewModel.getCurrentLocation() },
             )
         }
     }

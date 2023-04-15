@@ -1,6 +1,7 @@
 package com.example.motocast.ui.view.dynamicScaffold.badges
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -29,17 +30,16 @@ fun CurrentWeatherBadge(
     context: Context
 ) {
     val nowCastUiState by nowCastViewModel.uiState.collectAsState()
-
     // We don´t want to show anything if we don't have the data.
     if (nowCastUiState.temperature != null && nowCastUiState.symbolCode != null) {
         //
         Surface(
+            shadowElevation = 2.dp,
             shape = RoundedCornerShape(32.dp),
             color = Color.White,
         ) {
             Row(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {

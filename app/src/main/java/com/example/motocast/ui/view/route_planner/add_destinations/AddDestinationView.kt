@@ -28,7 +28,7 @@ fun AddDestinationView(
     activeDestinationIndex: Int,
     popBackStack: () -> Unit,
     fetchAddressData: (String) -> Unit,
-    getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>,
+    getCurrentLocation: () -> Location?,
 ) {
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -52,22 +52,19 @@ fun AddDestinationView(
                 fetchAddressData(query)
             },
             onSetCurrentLocation = {
-                getCurrentLocation(
-                    { location ->
-                        val address = Address(
-                            addressText = "Min posisjon",
-                            municipality = null,
-                            latitude = location.latitude,
-                            longitude = location.longitude
-                        )
-                        updateDestination(activeDestinationIndex, address)
-                        clearResults()
-                        clearQuery()
-                        popBackStack()
-                    },
-                    { error -> // No location found or error
-                    }
-                )
+                val location: Location? = getCurrentLocation()
+                location?.let {
+                    val address = Address(
+                        addressText = "Min posisjon",
+                        municipality = null,
+                        latitude = location.latitude,
+                        longitude = location.longitude
+                    )
+                    updateDestination(activeDestinationIndex, address)
+                    clearResults()
+                    clearQuery()
+                    popBackStack()
+                }
             }
         )
 

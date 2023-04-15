@@ -21,19 +21,6 @@ class AddressDataViewModel : ViewModel() {
      * @return A list of addresses, limited to 50
      */
 
-    private fun updateCurrentUserLocation(
-        getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>
-    )
-    {
-        getCurrentLocation(
-            { location ->
-                _uiState.value = _uiState.value.copy(currentUserLocation = location)
-            }, {
-                Log.d("AddressDataViewModel", "Error: $it")
-            }
-        )
-    }
-
     fun addFormerAddress(address: Address) {
 
         val currentUiState = _uiState.value
@@ -48,15 +35,12 @@ class AddressDataViewModel : ViewModel() {
 
     fun fetchAddressData(
         query: String,
-        getCurrentLocation: KFunction2<(location: Location) -> Unit, (exception: Exception) -> Unit, Unit>,
-        getAirDistanceFromPosToPos: KFunction3<Double, Double, Location, Int>
+        getAirDistanceFromLocation: (Location) -> Int?,
 
     ): List<Address> {
-        if (query.length < 0) {
+        if (query.isEmpty()) {
             return emptyList()
         }
-
-        updateCurrentUserLocation(getCurrentLocation)
 
         _uiState.value = _uiState.value.copy(isLoading = true, query = query)
 
@@ -65,22 +49,20 @@ class AddressDataViewModel : ViewModel() {
             query = query,
             onSuccess = { addressSearchResult ->
                 val addresses = addressSearchResult.adresser.take(200).map { address ->
-                    var distanceFromUser = if (_uiState.value.currentUserLocation != null) {
-                        getAirDistanceFromPosToPos(
-                            address.representasjonspunkt.lat,
-                            address.representasjonspunkt.lon,
-                            _uiState.value.currentUserLocation!!
-                        )
-                    } else {
-                        null
-                    }
+
+                    val distanceFromUser = getAirDistanceFromLocation(
+                        Location("").apply {
+                            latitude = address.representasjonspunkt.lat
+                            longitude = address.representasjonspunkt.lon
+                        }
+                    )
 
                     Address(
                         addressText = address.adressetekst,
                         municipality = address.kommunenavn,
                         latitude = address.representasjonspunkt.lat,
                         longitude = address.representasjonspunkt.lon,
-                        distanceFromUser = distanceFromUser ?: null
+                        distanceFromUser = distanceFromUser
                     )
                 }
                 _uiState.value = _uiState.value.copy(

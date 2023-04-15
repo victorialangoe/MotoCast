@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -25,12 +26,15 @@ import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.HomeScaffold
 import com.example.motocast.ui.view.dynamicScaffold.scaffoldContent.RouteScaffoldContent
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DynamicScaffoldView(
     context: Context,
+    destinations: List<Destination>,
+    isTrackUserActive: Boolean,
     nowCastViewModel: NowCastViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
@@ -41,8 +45,7 @@ fun DynamicScaffoldView(
     },
     onNavigateToScreen: () -> Unit
 ) {
-    val scope = rememberCoroutineScope() // TODO: Remove this
-    val scaffoldState = rememberBottomSheetScaffoldState() // Endre etterpå
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -60,7 +63,14 @@ fun DynamicScaffoldView(
                 DynamicScaffoldViewTopBar(
                     context = context,
                     nowCastViewModel = nowCastViewModel,
-                    cameraToUserLocation = { mapLocationViewModel.cameraToUserLocation() }
+                    onLocateUserClick = {
+
+                        mapLocationViewModel.trackUserOnMap(
+                            routeExists = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
+                            destinations = destinations
+                        )
+                    },
+                    isTrackUserActive = isTrackUserActive
                 )
                 ContentColumn(onNavigateToScreen, routePlannerViewModel)
             }
@@ -81,7 +91,8 @@ fun DynamicScaffoldView(
 fun DynamicScaffoldViewTopBar(
     context: Context,
     nowCastViewModel: NowCastViewModel,
-    cameraToUserLocation: () -> Unit,
+    onLocateUserClick: () -> Unit,
+    isTrackUserActive: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -91,7 +102,7 @@ fun DynamicScaffoldViewTopBar(
     ) {
         CurrentWeatherBadge(context = context, nowCastViewModel = nowCastViewModel)
         Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge(cameraToUserLocation = cameraToUserLocation)
+        LocateUserBadge(onLocateUserClick = { onLocateUserClick() }, active = isTrackUserActive)
     }
 }
 
@@ -106,6 +117,7 @@ fun ContentColumn(
             .clip(cornerShape)
             .background(Color.White)
             .fillMaxSize()
+            .shadow(1.dp)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
