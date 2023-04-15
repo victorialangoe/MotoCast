@@ -101,5 +101,8 @@ class NowCastViewModel : ViewModel() {
                 Log.d("NowCastViewModel", "Error fetching NowCast data: $it")
             })
     }
+    fun getJob(): Job? {
+        return job
+    }
 }
 
