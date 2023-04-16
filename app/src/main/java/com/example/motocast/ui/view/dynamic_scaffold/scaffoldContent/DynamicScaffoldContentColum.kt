@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 @Composable
 fun DynamicScaffoldContentColum(
@@ -20,6 +22,8 @@ fun DynamicScaffoldContentColum(
     date: String,
     time: String,
     duration: String,
+    waypoints: List<RouteWithWaypoint>,
+    context: Context
 ) {
 
     Column(
@@ -38,7 +42,9 @@ fun DynamicScaffoldContentColum(
             routeText = routeText,
             date = date,
             time = time,
-            duration = duration
+            duration = duration,
+            waypoints = waypoints,
+            context = context
         )
         else HomeScaffoldContent(onButtonClick = homeScaffoldButtonOnClick)
 

@@ -15,8 +15,7 @@ class NowCastDataSource : DataHelper() {
         onError: (String) -> Unit
     ) {
         if (metRetrofitService != null) {
-            Log.d("NowCastDataSource", "metRetrofitService is not null")
-            fetchData(
+           return  fetchData(
                 apiCall = { metRetrofitService.getNowCastData(latitude, longitude).execute() },
                 onSuccess = { nowCastData: NowCastDataModel -> onSuccess(nowCastData) },
                 onError = { errorMessage: String -> onError(errorMessage) }

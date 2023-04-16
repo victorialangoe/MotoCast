@@ -16,17 +16,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent.DynamicScaffoldContentColum
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
-import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DynamicScaffoldView(
     context: Context,
     destinations: List<Destination>,
+    waypoints: List<RouteWithWaypoint>,
     isTrackUserActive: Boolean,
-    nowCastViewModel: NowCastViewModel,
+    weatherViewModel: WeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
     content: @Composable (Modifier) -> Unit,
@@ -55,7 +57,7 @@ fun DynamicScaffoldView(
 
                 DynamicScaffoldViewTopBar(
                     context = context,
-                    nowCastViewModel = nowCastViewModel,
+                    weatherViewModel = weatherViewModel,
                     onLocateUserClick = {
 
                         mapLocationViewModel.trackUserOnMap(
@@ -80,6 +82,8 @@ fun DynamicScaffoldView(
                     date = routePlannerViewModel.getStartDate(),
                     time = routePlannerViewModel.getStartTime(),
                     duration = routePlannerViewModel.getDuration(),
+                    waypoints = waypoints,
+                    context = context
                 )
 
             }

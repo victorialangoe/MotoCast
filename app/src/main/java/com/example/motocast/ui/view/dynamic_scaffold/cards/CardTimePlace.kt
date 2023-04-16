@@ -10,11 +10,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.*
 
 @Composable
-fun CardTimePlace(location: String, hours: Int, minutes: Int) {
-    val fHours = String.format("%02d", hours)
-    val fMinutes = String.format("%02d", minutes)
+fun CardTimePlace(location: String, time: Calendar?) {
+    val hours = time?.get(Calendar.HOUR_OF_DAY)
+    val minutes = time?.get(Calendar.MINUTE)
 
     Column {
         Text(text = location,
@@ -23,6 +24,8 @@ fun CardTimePlace(location: String, hours: Int, minutes: Int) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        Text(text = "kl $fHours:$fMinutes")
+        if (hours != null && minutes != null) {
+            Text(text = "$hours:$minutes")
+        }
     }
 }

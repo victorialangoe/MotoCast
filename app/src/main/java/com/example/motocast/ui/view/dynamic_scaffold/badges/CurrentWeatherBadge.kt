@@ -20,15 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.MainActivity
-import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 
 
 @Composable
 fun CurrentWeatherBadge(
-    nowCastViewModel: NowCastViewModel,
+    weatherViewModel: WeatherViewModel,
     context: Context
 ) {
-    val nowCastUiState by nowCastViewModel.uiState.collectAsState()
+    val nowCastUiState by weatherViewModel.uiState.collectAsState()
     // We don´t want to show anything if we don't have the data.
     if (nowCastUiState.temperature != null && nowCastUiState.symbolCode != null) {
         //
@@ -75,5 +75,5 @@ fun CurrentWeatherBadge(
 @Preview
 @Composable
 fun CurrentWeatherBadgePreview() {
-    CurrentWeatherBadge(context = MainActivity(), nowCastViewModel = NowCastViewModel())
+    CurrentWeatherBadge(context = MainActivity(), weatherViewModel = WeatherViewModel())
 }
