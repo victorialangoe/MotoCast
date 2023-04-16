@@ -5,10 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.directions.DirectionsHelper
+import com.example.motocast.data.datasource.DirectionsDataSource
+import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.ui.viewmodel.address.Address
+import com.mapbox.core.constants.Constants
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
+import com.mapbox.geojson.utils.PolylineUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -230,52 +235,14 @@ class RoutePlannerViewModel : ViewModel() {
         }
     }
 
-
-    suspend fun getRoute(destinations: List<Destination>, accessToken: String) {
-        val coordinates = destinations.joinToString(separator = ";") { destination ->
-            "${destination.longitude},${destination.latitude}"
+    fun getDestinationsCoordinatesAsString(): String {
+        val currentUiState = _uiState.value
+        val destinations = currentUiState.destinations
+        val coordinates = mutableListOf<String>()
+        destinations.forEach {
+            coordinates.add("${it.longitude},${it.latitude}")
         }
-
-
-
-
-        val directionsHelper = DirectionsHelper()
-        val service = directionsHelper.createDirectionsAPI() ?: return
-        val call = service.getDirections(
-            coordinates = coordinates,
-            accessToken = accessToken,
-            alternatives = false,
-            geometries = "geojson",
-            language = "en",
-            overview = "simplified",
-            steps = true
-        )
-
-        withContext(Dispatchers.IO) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.isSuccessful) {
-
-                        response.body()?.let { responseBody ->
-                            val jsonResponse = responseBody.string()
-                            convertToGeoJSON(jsonResponse)
-                        }
-                    } else {
-                        Log.e(
-                            "MapActivity",
-                            "Error getting route: ${response.errorBody()?.string()}"
-                        )
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Log.e("MapActivity", "Error getting route: ${t.message}")
-                }
-            })
-        }
+        return coordinates.joinToString(";")
     }
 
     /**
@@ -284,28 +251,34 @@ class RoutePlannerViewModel : ViewModel() {
      * @param jsonData the JSON response from the Mapbox Directions API
      * @return a GeoJSON
      */
-    private fun convertToGeoJSON(jsonData: String) {
-        val jsonObject = JSONObject(jsonData)
-        val routesArray = jsonObject.getJSONArray("routes")
-        val firstRoute = routesArray.getJSONObject(0)
-        val legsArray = firstRoute.getJSONArray("legs")
+    private fun convertToGeoJSON(jsonData: RouteSearchResult) {
+
+        val routesArray = jsonData.routes
+        val firstRoute = routesArray[0]
+        val legsArray = firstRoute.legs
 
         val features = mutableListOf<Feature>()
 
-        for (legIndex in 0 until legsArray.length()) {
-            val currentLeg = legsArray.getJSONObject(legIndex)
-            val stepsArray = currentLeg.getJSONArray("steps")
+        for (legIndex in legsArray.indices) {
+            val currentLeg = legsArray[legIndex]
+            val stepsArray = currentLeg.steps
 
-            for (stepIndex in 0 until stepsArray.length()) {
-                val step = stepsArray.getJSONObject(stepIndex)
-                val geometry = step.getJSONObject("geometry")
-                val lineString = LineString.fromJson(geometry.toString())
+            for (stepIndex in stepsArray.indices) {
+                val step = stepsArray[stepIndex]
+                val geometry = step.geometry
+                // Convert the list of coordinates to a list of Point objects
+                val coordinatesList = geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
+
+                // Create a LineString from the list of Point objects
+                val lineString = LineString.fromLngLats(coordinatesList)
 
                 features.add(Feature.fromGeometry(lineString))
+
             }
         }
 
         val featureCollection = FeatureCollection.fromFeatures(features)
+        Log.d("RoutePlannerViewModel", "GeoJSON: ${featureCollection}")
         _uiState.value = _uiState.value.copy(geoJsonData = featureCollection.toJson())
     }
 
@@ -313,6 +286,9 @@ class RoutePlannerViewModel : ViewModel() {
      * Starts the route planning
      */
     fun start(navigateTo: () -> Unit, fitCameraToRouteAndWaypoints: ()->Unit) {
+
+        val directionsDataSource = DirectionsDataSource()
+
         val currentUiState = _uiState.value
         if (!checkIfAllDestinationsHaveNames()) {
             _uiState.value = currentUiState.copy(error = "All destinations must have a name")
@@ -325,8 +301,16 @@ class RoutePlannerViewModel : ViewModel() {
         //needs 2 destinations to get a route
         if (destinations.size >= 2) {
             viewModelScope.launch {
-                getRoute(destinations, BuildConfig.MAPBOX_ACCESS_TOKEN)
-                fitCameraToRouteAndWaypoints()
+                directionsDataSource.getDirectionsData(
+                    getDestinationsCoordinatesAsString(),
+                    onSuccess = { jsonData ->
+                        convertToGeoJSON(jsonData)
+                        fitCameraToRouteAndWaypoints()
+                    },
+                    onError = { error: String ->
+                        Log.d("RoutePlannerViewModel", "Error: $error")
+                    })
+
             }
         }
         navigateTo()

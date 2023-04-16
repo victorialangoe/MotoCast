@@ -1,5 +1,6 @@
 package com.example.motocast.util
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +78,7 @@ open class DataHelper: ViewModel() {
 
             retrofit.create(apiClass)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Log.d("DataHelper","Error: ${e}")
             null
         }
     }

@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Gravity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.motocast.data.datasource.DirectionsDataSource
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.google.android.gms.location.*
 import com.mapbox.geojson.Point
@@ -51,6 +52,7 @@ class MapLocationViewModel(
     private var timeInterval = 100L // 100 milliseconds
     private val minimalDistance = 1f // 0 meters
     val uiState = _uiState.asStateFlow()
+    private val directionsDataSource = DirectionsDataSource()
 
 
     /**
@@ -81,7 +83,7 @@ class MapLocationViewModel(
                 )
             }
             catch (e: Exception) {
-                Log.d("MapActivity", "Error: ${e.message}")
+                Log.d("MapActivity", "Error: ${e}")
             }
         }
     }
