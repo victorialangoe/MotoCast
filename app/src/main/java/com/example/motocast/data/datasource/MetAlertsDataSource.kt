@@ -5,44 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.metalerts.MetAlertsHelper
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.ui.view.getWeatherIcon
+import com.example.motocast.util.DataHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MetAlertsDataSource: ViewModel() {
+class MetAlertsDataSource: DataHelper() {
     private val metRetrofitService = MetAlertsHelper().createMetAlertsAPI()
-
     fun getMetAlertsData(
         onSuccess: (MetAlertsDataModel) -> Unit,
         onError: (String) -> Unit
     ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val response = metRetrofitService.getMetAlertsData().execute()
-                if (response.isSuccessful) {
-                    val weatherData = response.body()
-                    val weatherIconMap = mutableMapOf<String, String>()
-                    if (weatherData != null) {
-                        for (feature in weatherData.features) {
-                            val properties = feature.properties
-                            val event = properties.event
-                            val awarenessLevel = properties.awareness_level
-                            val icon = getWeatherIcon(event, awarenessLevel)
-                            val information = properties.description
-                            weatherIconMap[event] = icon
-                            // data and icon created
-                        }
-                    }
-                    if (weatherData != null) {
-                        onSuccess(weatherData)
-                    } else {
-                        onError("Empty response")
-
-                    }
-                } else {
-                    onError("Error: ${response.errorBody()}")
-                }
-            }
+        if (metRetrofitService != null) {
+            fetchData(
+                apiCall = { metRetrofitService.getMetAlertsData().execute() },
+                onSuccess = { metAlertsData: MetAlertsDataModel -> onSuccess(metAlertsData) },
+                onError = { errorMessage: String -> onError(errorMessage) }
+            )
+        } else {
+            onError("Error: metRetrofitService is null")
         }
     }
 

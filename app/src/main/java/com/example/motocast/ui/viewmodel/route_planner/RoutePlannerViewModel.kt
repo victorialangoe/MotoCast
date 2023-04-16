@@ -240,7 +240,7 @@ class RoutePlannerViewModel : ViewModel() {
 
 
         val directionsHelper = DirectionsHelper()
-        val service = directionsHelper.createDirectionsAPI()
+        val service = directionsHelper.createDirectionsAPI() ?: return
         val call = service.getDirections(
             coordinates = coordinates,
             accessToken = accessToken,
