@@ -1,6 +1,6 @@
 package com.example.motocast.data.api.address
 
-import com.example.motocast.data.model.AddressSearchResult
+import AddressSearchResult
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

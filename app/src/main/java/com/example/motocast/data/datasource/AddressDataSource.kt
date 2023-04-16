@@ -1,10 +1,10 @@
 package com.example.motocast.data.datasource
 
+import AddressSearchResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.address.AddressHelper
-import com.example.motocast.data.model.AddressSearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
