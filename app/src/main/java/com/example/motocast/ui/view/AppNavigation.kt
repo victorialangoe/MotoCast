@@ -14,6 +14,7 @@ import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import java.util.Calendar
 
 @Composable
 fun AppNavigation(
@@ -86,23 +87,14 @@ fun AppNavigation(
                     )
                 },
                 removeDestination = { index -> routePlannerViewModel.removeDestination(index) },
-                updateDateUiState = { dateUiState ->
-                    routePlannerViewModel.updateDateUiState(
-                        dateUiState
-                    )
-                },
-                updateTimeUiState = { timeUiState ->
-                    routePlannerViewModel.updateTimeUiState(
-                        timeUiState
+                updateStartTime = { time: Calendar ->
+                    routePlannerViewModel.updateStartTime(
+                        time
                     )
                 },
                 destinations = routePlannerViewModelUiState.value.destinations,
                 clearAll = { routePlannerViewModel.clear() },
-                year = routePlannerViewModelUiState.value.startTime.datePickerUiState.year,
-                month = routePlannerViewModelUiState.value.startTime.datePickerUiState.month,
-                day = routePlannerViewModelUiState.value.startTime.datePickerUiState.day,
-                hour = routePlannerViewModelUiState.value.startTime.timePickerUiState.hour,
-                minute = routePlannerViewModelUiState.value.startTime.timePickerUiState.minute,
+                startTime = routePlannerViewModelUiState.value.startTime,
                 context = context,
                 enabledStartRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
             )
