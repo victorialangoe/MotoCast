@@ -29,12 +29,15 @@ open class DataHelper: ViewModel() {
                         if (data != null) {
                             onSuccess(data)
                         } else {
+                            Log.d("Empty response", response.toString())
                             onError("Empty response")
                         }
                     } else {
+                        Log.d("Error", response.toString())
                         onError("Error: ${response.code()} ${response.message()}")
                     }
                 } catch (e: Exception) {
+                    Log.d("Exception", e.toString())
                     onError(e.localizedMessage ?: "Unknown error")
                 }
             }

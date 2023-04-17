@@ -32,7 +32,7 @@ data class RouteWithWaypoint (
     val longitude: Double?,
     val timeFromStart: Double?,
     val timestamp: Calendar?,
-    var weatherUiState: WeatherUiState = WeatherUiState(),
+    var weatherUiState: WeatherUiState? = null,
 )
 
 data class TimeAndDateUiState (

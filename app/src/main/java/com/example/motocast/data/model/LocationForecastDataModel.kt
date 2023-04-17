@@ -41,7 +41,7 @@ data class TimeSeries(
 data class Data(
     val instant: Instant,
     val next_12_hours: Summary,
-    val next_1_hours: SummaryWithDetails,
+    val next_1_hours: SummaryWithDetails?,
     val next_6_hours: SummaryWithDetails
 )
 

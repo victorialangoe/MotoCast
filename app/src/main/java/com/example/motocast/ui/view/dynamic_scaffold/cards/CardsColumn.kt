@@ -15,13 +15,15 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context) {
         items(waypoints) { waypoint ->
             val weather = waypoint.weatherUiState
             val time = waypoint.timestamp
-            Card(
-                temperature = weather.temperature?.toInt() ?: 0,
-                location = waypoint.name ?: "",
-                time = time,
-                iconSymbol = weather.symbolCode ?: "",
-                context = context
-            )
+            if (weather != null) {
+                Card(
+                    temperature = weather.temperature?.toInt() ?: 0,
+                    location = waypoint.name ?: "",
+                    time = time,
+                    iconSymbol = weather.symbolCode ?: "",
+                    context = context
+                )
+            }
 
 
         }

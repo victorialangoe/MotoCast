@@ -1,7 +1,6 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.DirectionsDataSource
 import com.example.motocast.data.model.Leg
@@ -14,19 +13,10 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.util.*
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import java.sql.Timestamp
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
@@ -272,12 +262,10 @@ class RoutePlannerViewModel : ViewModel() {
                 val geometry = step.geometry
                 // Convert the list of coordinates to a list of Point objects
                 val coordinatesList = geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
-
                 // Create a LineString from the list of Point objects
                 val lineString = LineString.fromLngLats(coordinatesList)
 
                 features.add(Feature.fromGeometry(lineString))
-
             }
         }
         val featureCollection = FeatureCollection.fromFeatures(features)
@@ -289,6 +277,7 @@ class RoutePlannerViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
     }
 
+
     private suspend fun addWaypointsToUiState(
         legs: List<Leg>,
         waypoints: List<Waypoint>,
@@ -296,58 +285,76 @@ class RoutePlannerViewModel : ViewModel() {
         startTime: TimeAndDateUiState,
     ) = coroutineScope {
         val weatherViewModel = WeatherViewModel()
-        val routeWithWaypoint = waypoints.mapIndexed { index, waypoint ->
-            async {
-                val timeFromStart = when (waypoint) {
-                    waypoints.first() -> 0.0
-                    waypoints.last() -> duration
-                    else -> 0.0
-                }
-                val startMin = startTime.timePickerUiState.minute
-                val startHour = startTime.timePickerUiState.hour
-                val startDay = startTime.datePickerUiState.day
-                val startMonth = startTime.datePickerUiState.month
-                val startYear = startTime.datePickerUiState.year
+        val routeWithWaypoint = createRouteWithWaypoints(waypoints, duration, startTime, weatherViewModel)
 
+        updateRouteDurations(legs, routeWithWaypoint)
+        _uiState.value = _uiState.value.copy(waypoints = routeWithWaypoint)
+    }
 
-                val timeAsCalendar = Calendar.getInstance()
-                val start = timeAsCalendar
+    private suspend fun createRouteWithWaypoints(
+        waypoints: List<Waypoint>,
+        duration: Double,
+        startTime: TimeAndDateUiState,
+        weatherViewModel: WeatherViewModel,
+    ): MutableList<RouteWithWaypoint> {
+        return coroutineScope {
+            waypoints.mapIndexed { index, waypoint ->
+                async {
+                    val timeFromStart = when (waypoint) {
+                        waypoints.first() -> 0.0
+                        waypoints.last() -> duration
+                        else -> 0.0
+                    }
 
-                timeAsCalendar.set(startYear, startMonth, startDay, startHour, startMin)
-                // add the duration to timeAsCalendar
-                timeAsCalendar.add(Calendar.SECOND, timeFromStart.toInt())
-                val route = RouteWithWaypoint(
-                    name = null,
-                    longitude = waypoint.location[0],
-                    latitude = waypoint.location[1],
-                    timeFromStart = timeFromStart,
-                    timestamp = timeAsCalendar,
-                )
+                    val timeAsCalendar = startTime.toCalendar().apply {
+                        add(Calendar.SECOND, timeFromStart.toInt())
+                    }
 
-                Log.d("RouteViewModel", "Route time: ${route.timestamp?.time}")
-                Log.d("RouteViewModel", "Start time: ${start.time}")
+                    val route = RouteWithWaypoint(
+                        name = null,
+                        longitude = waypoint.location[0],
+                        latitude = waypoint.location[1],
+                        timeFromStart = timeFromStart,
+                        timestamp = timeAsCalendar,
+                    )
 
-
-                val weatherUiState = weatherViewModel.getWeatherData(
-                    route = route,
-                    startTime = start,
-                )
-                if (weatherUiState != null) {
+                    val weatherUiState = route.getWeatherData(weatherViewModel)
                     route.copy(weatherUiState = weatherUiState)
-                } else {
-                    route
                 }
-            }
-        }.awaitAll().toMutableList()
+            }.awaitAll().toMutableList()
+        }
+    }
 
+
+    private fun TimeAndDateUiState.toCalendar(): Calendar {
+        return Calendar.getInstance().apply {
+            set(
+                datePickerUiState.year,
+                datePickerUiState.month,
+                datePickerUiState.day,
+                timePickerUiState.hour,
+                timePickerUiState.minute
+            )
+        }
+    }
+
+    private suspend fun RouteWithWaypoint.getWeatherData(weatherViewModel: WeatherViewModel): WeatherUiState? {
+        return if (latitude != null && longitude != null && timestamp != null) {
+            weatherViewModel.getWeatherData(
+                latitude = latitude,
+                longitude = longitude,
+                timestamp = timestamp
+            )
+        } else null
+    }
+
+    private fun updateRouteDurations(legs: List<Leg>, routeWithWaypoint: MutableList<RouteWithWaypoint>) {
         for (legIndex in legs.indices) {
             val leg = legs[legIndex]
             val route = routeWithWaypoint[legIndex + 1]
             val updatedRoute = route.copy(timeFromStart = leg.duration)
             routeWithWaypoint[legIndex + 1] = updatedRoute
         }
-
-        _uiState.value = _uiState.value.copy(waypoints = routeWithWaypoint)
     }
 
 
@@ -383,9 +390,18 @@ class RoutePlannerViewModel : ViewModel() {
                             val waypoints = routeSearchResult.waypoints
                             val legs = routeSearchResult.routes[0].legs
                             val duration = routeSearchResult.routes[0].duration
-                            addWaypointsToUiState(legs, waypoints, duration, startTime = _uiState.value.startTime)
-                        Log.d("RoutePlannerViewModel", "Uistate waypoints: ${_uiState.value.waypoints}")
-                    }}
+                            addWaypointsToUiState(
+                                legs,
+                                waypoints,
+                                duration,
+                                startTime = _uiState.value.startTime
+                            )
+                            Log.d(
+                                "RoutePlannerViewModel",
+                                "Uistate waypoints: ${_uiState.value.waypoints}"
+                            )
+                        }
+                    }
                 },
                 onError = { error: String ->
                     Log.d("RoutePlannerViewModel", "Error: $error")

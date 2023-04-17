@@ -1,22 +1,17 @@
 package com.example.motocast.ui.viewmodel.weather
 
+import Data
+import LongTermWeatherData
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.LocationForecastDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
-import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.lang.Math.abs
-import java.sql.Time
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -33,44 +28,6 @@ class WeatherViewModel : ViewModel() {
     private val locationForecastDataSource = LocationForecastDataSource()
 
     val uiState: StateFlow<WeatherUiState> = _uiState
-
-    suspend fun getWeatherData(route: RouteWithWaypoint, startTime: Calendar): WeatherUiState? {
-        return try {
-
-            if (route.latitude == null || route.longitude == null) {
-                Log.e("WeatherViewModel", "Latitude or longitude is null")
-                return null
-            }
-            val timestamp = route.timestamp ?: startTime
-            Log.d("WeatherViewModel", "Timestamp: $timestamp")
-            Log.d("WeatherViewModel", "Start time: $startTime")
-            // TODO: We can not fetch data from back in time, so we need to check if the timestamp is in the past
-            val hoursFromNow = if (route.timestamp != null) {
-                val timeRightNow = Calendar.getInstance()
-                val diff = timestamp.timeInMillis - timeRightNow.timeInMillis
-                val diffHours = diff / (60 * 60 * 1000)
-                diffHours
-            } else {
-                0
-            }
-
-            Log.d("WeatherViewModel", "Hours from timestamp: $hoursFromNow")
-            Log.d("WeatherViewModel", "Timestamp: $timestamp")
-
-
-            val weatherData = if(hoursFromNow < 3) {
-                fetchNowCastData(route.latitude, route.longitude)
-            } else {
-                fetchLocationForecastData(route.latitude, route.longitude, timestamp)
-            }
-
-            weatherData
-        } catch (e: Exception) {
-            Log.e("WeatherViewModel", "Error: $e")
-            null
-        }
-    }
-
 
 
     /**
@@ -124,6 +81,33 @@ class WeatherViewModel : ViewModel() {
         job = null
     }
 
+    /**
+     * Fetches the data from the NowCastDataSource or LocationForecastDataSource depending on the time.
+     * If the time is less than 2 hours from now, the NowCastDataSource is used. Otherwise the LocationForecastDataSource is used.
+     * @param longitude The longitude of the location
+     * @param latitude The latitude of the location
+     * @param timestamp The timestamp of the time we want to get the weather data for
+     */
+    suspend fun getWeatherData(
+        longitude: Double,
+        latitude: Double,
+        timestamp: Calendar
+    ): WeatherUiState? {
+
+        val hoursFromNow = calculateHoursFromNow(timestamp)
+        Log.d("WeatherViewModel", "Hours from now: $hoursFromNow")
+
+        return try {
+            when {
+                hoursFromNow < 2 -> fetchNowCastData(latitude, longitude)
+                else -> fetchLocationForecastData(latitude, longitude, timestamp)
+            }
+        } catch (e: Exception) {
+            Log.e("WeatherViewModel", "Error: $e")
+            null
+        }
+    }
+
     private fun updateNowCastData(latitude: Double, longitude: Double) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -138,8 +122,7 @@ class WeatherViewModel : ViewModel() {
     /**
      * Fetch the data from the API and update the UI.
      */
-
-    suspend fun fetchNowCastData(
+    private suspend fun fetchNowCastData(
         latitude: Double,
         longitude: Double
     ): WeatherUiState = suspendCoroutine { continuation ->
@@ -159,18 +142,22 @@ class WeatherViewModel : ViewModel() {
                 )
             },
             onError = { error ->
+                Log.e("NowCastViewModel", "Error: $error")
                 continuation.resumeWithException(Exception(error))
             }
         )
     }
 
 
-    fun formatToISO8601(calendar: Calendar): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        return dateFormat.format(calendar.time)
-    }
-
+    /**
+     * Fetch LocationForecast data from the API based on the timestamp, latitude and longitude.
+     *
+     * @param latitude The latitude of the location
+     * @param longitude The longitude of the location
+     * @param timestamp The timestamp of the location
+     * @return The weather data for the location
+     * @throws Exception If the API returns an error or if the data is not found
+     */
     private suspend fun fetchLocationForecastData(
         latitude: Double,
         longitude: Double,
@@ -179,67 +166,29 @@ class WeatherViewModel : ViewModel() {
         locationForecastDataSource.getLongTermWeatherData(
             latitude,
             longitude,
-            onSuccess = { response ->
-                // Remove minutes and seconds from the timestamp
-                val zeroedTimestamp = timestamp.clone() as Calendar
-                zeroedTimestamp.set(Calendar.DAY_OF_MONTH, timestamp.get(Calendar.DAY_OF_MONTH))
-                zeroedTimestamp.set(Calendar.YEAR, timestamp.get(Calendar.YEAR))
-                zeroedTimestamp.set(Calendar.HOUR_OF_DAY, timestamp.get(Calendar.HOUR_OF_DAY))
-                zeroedTimestamp.set(Calendar.MINUTE, 0)
-                zeroedTimestamp.set(Calendar.SECOND, 0)
-                zeroedTimestamp.set(Calendar.MILLISECOND, 0)
-                val timestampString = formatToISO8601(zeroedTimestamp)
+            onSuccess = { response: LongTermWeatherData ->
+                val zeroedTimestamp = getZeroedTimestamp(timestamp)
 
-                var data = response.properties.timeseries.find {
-                    it.time == timestampString
-                }
-                if (data == null) {
-                    // Find the closest value between 0, 6, 12, and 18 to the current hour
-                    val currentHour = timestamp.get(Calendar.HOUR_OF_DAY)
-                    val closestHour = listOf(0, 6, 12, 18).minByOrNull { abs(it - currentHour) }
+                val data: Data? = findClosestWeatherData(response, zeroedTimestamp)
 
-                    // Loop through the hours starting from the closest hour
-                    for (hour in closestHour!!..23) {
-                        zeroedTimestamp.set(Calendar.HOUR_OF_DAY, hour)
-                        val timestampString = formatToISO8601(zeroedTimestamp)
-                        Log.d(
-                            "WeatherViewModel",
-                            "Looking for data for the timestamp: $timestampString"
+                if (data != null) {
+                    continuation.resume(
+                        WeatherUiState(
+                            isLoading = false,
+                            symbolCode = if (data.next_1_hours != null) {
+                                data.next_1_hours.summary.symbol_code
+                            } else {
+                                data.next_6_hours.summary.symbol_code
+                            },
+                            temperature = data.instant.details.air_temperature,
+                            windSpeed = data.instant.details.wind_speed,
+                            windDirection = data.instant.details.wind_from_direction,
+                            updatedAt = response.properties.meta.updated_at
                         )
-
-                        // Replace the following with your actual data retrieval method
-                        data = response.properties.timeseries.find {
-                            it.time == timestampString
-                        }
-                        if (data != null) {
-                            Log.d(
-                                "WeatherViewModel",
-                                "Found data for the timestamp: $timestampString"
-                            )
-                            break
-                        }
-                    }
-                    Log.e("WeatherViewModel", "No data found for the timestamp: $timestampString")
-                }
-
-
-                Log.d("WeatherViewModel", "Lat/lon/timestamp: $latitude, $longitude, $timestampString")
-                Log.d("WeatherViewModel", "Data: $data")
-
-                continuation.resume(
-                    WeatherUiState(
-                        isLoading = false,
-                        symbolCode = if (data?.data?.next_1_hours != null) {
-                            data?.data?.next_1_hours?.summary?.symbol_code ?: "TEST"
-                        } else {
-                            data?.data?.next_6_hours?.summary?.symbol_code ?: "TEST"
-                        },
-                        temperature = data?.data?.instant?.details?.air_temperature ?: 0.0,
-                        windSpeed = data?.data?.instant?.details?.wind_speed ?: 0.0,
-                        windDirection = data?.data?.instant?.details?.wind_from_direction ?: 0.0,
-                        updatedAt = response.properties.meta.updated_at ?: ""
                     )
-                )
+                } else {
+                    continuation.resumeWithException(Exception("No data found"))
+                }
             },
             onError = { error ->
                 continuation.resumeWithException(Exception(error))
@@ -247,6 +196,81 @@ class WeatherViewModel : ViewModel() {
         )
     }
 
+
+    /**
+     * Find the closest weather data to the timestamp.
+     * Sometimes the API doesn't have data for the exact timestamp, so we need to find the closest one. (00:00, 06:00, 12:00, 18:00)
+     *
+     * @param response The response from the API containing all the weather data
+     * @param zeroedTimestamp The timestamp to find the closest data for (without minutes, seconds and milliseconds)
+     * @return The closest weather data as a [Data] object or null if no data was found.
+     */
+    private fun findClosestWeatherData(
+        response: LongTermWeatherData,
+        zeroedTimestamp: Calendar
+    ): Data? {
+        var timeseries = response.properties.timeseries.find {
+            it.time == formatToISO8601(zeroedTimestamp)
+        }
+        if (timeseries == null) {
+            val currentHour = zeroedTimestamp.get(Calendar.HOUR_OF_DAY)
+            val closestHour = listOf(0, 6, 12, 18).minByOrNull { abs(it - currentHour) }
+
+            for (hour in closestHour!!..23) {
+                zeroedTimestamp.set(Calendar.HOUR_OF_DAY, hour)
+                val timestampString = formatToISO8601(zeroedTimestamp)
+                Log.d(
+                    "WeatherViewModel",
+                    "Looking for data for the timestamp: $timestampString"
+                )
+
+                timeseries = response.properties.timeseries.find {
+                    it.time == timestampString
+                }
+                if (timeseries != null) {
+                    Log.d(
+                        "WeatherViewModel",
+                        "Found data for the timestamp: $timestampString"
+                    )
+                    break
+                }
+            }
+            Log.e(
+                "WeatherViewModel",
+                "No data found for the timestamp: ${formatToISO8601(zeroedTimestamp)}"
+            )
+        }
+        return timeseries?.data
+    }
+
+    private fun calculateHoursFromNow(timestamp: Calendar?): Double {
+        return timestamp?.let {
+            val timeRightNow = Calendar.getInstance()
+            val diff = timestamp.timeInMillis - timeRightNow.timeInMillis
+            diff.toDouble() / (60 * 60 * 1000)
+        } ?: 0.0
+    }
+
+    private fun formatToISO8601(calendar: Calendar): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+        return dateFormat.format(calendar.time)
+    }
+
+    /**
+     * Get the timestamp with the MINUTE, SECOND and MILLISECOND set to 0.
+     * @param timestamp The timestamp to zero out.
+     */
+    private fun getZeroedTimestamp(timestamp: Calendar): Calendar {
+        val zeroedTimestamp = timestamp.clone() as Calendar
+        zeroedTimestamp.set(Calendar.DAY_OF_MONTH, timestamp.get(Calendar.DAY_OF_MONTH))
+        zeroedTimestamp.set(Calendar.YEAR, timestamp.get(Calendar.YEAR))
+        zeroedTimestamp.set(Calendar.HOUR_OF_DAY, timestamp.get(Calendar.HOUR_OF_DAY))
+        zeroedTimestamp.set(Calendar.MINUTE, 0)
+        zeroedTimestamp.set(Calendar.SECOND, 0)
+        zeroedTimestamp.set(Calendar.MILLISECOND, 0)
+        return zeroedTimestamp
+    }
 
 
 }
