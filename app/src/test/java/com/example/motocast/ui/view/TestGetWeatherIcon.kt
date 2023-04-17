@@ -8,6 +8,6 @@ class TestGetWeatherIcon {
     @Test
     fun testGetWeatherIcon() {
         val result = getWeatherIcon("forestFire", "2; yellow; Moderate")
-        assertTrue(result == "R.drawable.icon-warning-forestfire_|yellow")
+        assertTrue(result == "R.drawable.icon-warning-forestfire_yellow")
     }
 }

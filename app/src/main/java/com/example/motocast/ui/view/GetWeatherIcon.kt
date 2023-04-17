@@ -31,5 +31,5 @@ fun getWeatherIcon(event: String, awarenessLevel: String): String {
 
 
     // Choose how to combine the event and awareness level icons, if needed
-    return "R.drawable.$eventIcon|$awarenessLevelIcon"
+    return "R.drawable.$eventIcon$awarenessLevelIcon"
 }
