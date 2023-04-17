@@ -11,7 +11,7 @@ import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
 
 class AddressDataViewModel : ViewModel() {
-    private val addressDataSource = AddressDataSource()
+    internal var addressDataSource = AddressDataSource()
     private val _uiState = MutableStateFlow(AddressUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -80,6 +80,10 @@ class AddressDataViewModel : ViewModel() {
 
     fun clearResults() {
         _uiState.value = _uiState.value.copy(addresses = emptyList())
+    }
+    //for testing purposes
+    fun getQuery(): String {
+        return _uiState.value.query
     }
 }
 
