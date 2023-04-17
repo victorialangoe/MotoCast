@@ -14,9 +14,8 @@ import com.example.motocast.ui.view.route_planner.buttons.ClearAllButton
 import com.example.motocast.ui.view.route_planner.buttons.CreateRouteButton
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
-import com.example.motocast.ui.viewmodel.route_planner.DatePickerUiState
 import com.example.motocast.ui.viewmodel.route_planner.Destination
-import com.example.motocast.ui.viewmodel.route_planner.TimePickerUiState
+import java.util.Calendar
 
 @Composable
 fun RoutePlannerView(
@@ -25,16 +24,11 @@ fun RoutePlannerView(
     editDestination: (Int) -> Unit,
     addDestination: () -> Unit,
     removeDestination: (Int) -> Unit,
-    updateDateUiState: (DatePickerUiState) -> Unit,
-    updateTimeUiState: (TimePickerUiState) -> Unit,
+    updateStartTime: (Calendar) -> Unit,
     enabledStartRoute: Boolean,
     destinations: List<Destination>,
     clearAll: () -> Unit,
-    year: Int,
-    month: Int,
-    day: Int,
-    hour: Int,
-    minute: Int,
+    startTime: Calendar,
     context: Context
 ) {
 
@@ -72,13 +66,8 @@ fun RoutePlannerView(
 
                 DateTimePicker(
                     context = context,
-                    updateDateUiState = { updateDateUiState(it) },
-                    updateTimeUiState = { updateTimeUiState(it) },
-                    year = year,
-                    month = month,
-                    day = day,
-                    hour = hour,
-                    minute = minute,
+                    startTime = startTime,
+                    updateStartTime = { updateStartTime(it) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
