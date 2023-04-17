@@ -2,43 +2,26 @@ package com.example.motocast.data.datasource
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.nowcast.NowCastHelper
 import com.example.motocast.data.model.NowCastDataModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.motocast.util.DataHelper
 
-class NowCastDataSource : ViewModel() {
+class NowCastDataSource : DataHelper() {
     private val metRetrofitService = NowCastHelper().createNowCastAPI()
-
     fun getNowCastData(
         latitude: Double,
         longitude: Double,
         onSuccess: (NowCastDataModel) -> Unit,
         onError: (String) -> Unit
     ) {
-        Log.d("NowCastDataSource", "Fetching the data")
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-
-                val response = metRetrofitService.getNowCastData(latitude, longitude).execute()
-                Log.d("NowCastDataSource", "Success: ${response}")
-
-                if (response.isSuccessful) {
-                    val weatherData = response.body()
-                    if (weatherData != null) {
-                        onSuccess(weatherData)
-                    } else {
-                        onError("Empty response")
-
-                    }
-                    Log.d("NowCastDataSource", "Success: ${response}")
-                } else {
-                    Log.d("NowCastDataSource", "Error: ${response}")
-                    onError("Error: ${response.code()} ${response.message()} ")
-                }
-            }
+        if (metRetrofitService != null) {
+           return fetchData(
+                apiCall = { metRetrofitService.getNowCastData(latitude, longitude).execute() },
+                onSuccess = { nowCastData: NowCastDataModel -> onSuccess(nowCastData) },
+                onError = { errorMessage: String -> onError(errorMessage) }
+            )
+        } else {
+            onError("Error: metRetrofitService is null")
         }
     }
 }

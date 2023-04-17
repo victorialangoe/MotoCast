@@ -1,45 +1,28 @@
 package com.example.motocast.data.datasource
 
+import AddressSearchResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.address.AddressHelper
-import com.example.motocast.data.model.AddressSearchResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.motocast.util.DataHelper
 
-class AddressDataSource : ViewModel() {
-    private val addressHelper = AddressHelper().createAddressHelperDataAPI()
+class AddressDataSource: DataHelper() {
+    private val addressRetrofitService = AddressHelper().createAddressHelperDataAPI()
 
     fun getAddressData(
         query: String,
         onSuccess: (AddressSearchResult) -> Unit,
         onError: (String) -> Unit
     ) {
-        if (addressHelper == null) {
-            onError("Error: AddressHelper is null")
-            return
-        }
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-
-                val response = addressHelper.searchAddress(query).execute()
-                Log.d("AddressDataSource", "Success: ${response}")
-                if (response.isSuccessful) {
-                    val addressData = response.body()
-                    if (addressData != null) {
-
-                        onSuccess(addressData)
-                    } else {
-                        onError("Empty response")
-                    }
-                } else {
-                    onError("Error: ${response.errorBody()}")
-                }
-            }
+        if (addressRetrofitService != null) {
+            fetchData(
+                apiCall = { addressRetrofitService.searchAddress(query).execute() },
+                onSuccess = { addressData: AddressSearchResult -> onSuccess(addressData) },
+                onError = { errorMessage: String -> onError(errorMessage) }
+            )
+        } else {
+            onError("Error: addressRetrofitService is null")
         }
     }
-
 }
 

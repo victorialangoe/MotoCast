@@ -12,13 +12,13 @@ import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_planner.add_destinations.AddDestinationView
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
-import com.example.motocast.ui.viewmodel.nowcast.NowCastViewModel
+import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 
 @Composable
 fun AppNavigation(
     mapLocationViewModel: MapLocationViewModel,
-    nowCastViewModel: NowCastViewModel,
+    weatherViewModel: WeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     addressDataViewModel: AddressDataViewModel,
     context: Context
@@ -35,9 +35,10 @@ fun AppNavigation(
                 context = context,
                 destinations = routePlannerViewModelUiState.value.destinations,
                 isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
-                nowCastViewModel = nowCastViewModel,
+                weatherViewModel = weatherViewModel,
                 mapLocationViewModel = mapLocationViewModel,
                 routePlannerViewModel = routePlannerViewModel,
+                waypoints = routePlannerViewModelUiState.value.waypoints,
                 content = {
                     MapView(
                         mapView = mapLocationViewModelUiState.value.mapView,

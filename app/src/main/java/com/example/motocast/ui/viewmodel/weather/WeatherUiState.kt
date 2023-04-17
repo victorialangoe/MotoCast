@@ -1,6 +1,5 @@
-package com.example.motocast.ui.viewmodel.nowcast
-
-data class NowCastUiState (
+package com.example.motocast.ui.viewmodel.weather
+data class WeatherUiState (
     val isLoading: Boolean = false,
     val symbolCode: String? = null,
     val temperature: Double? = null,

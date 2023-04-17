@@ -1,45 +1,105 @@
-package com.example.motocast.data.model
-
-data class Metadata(
-    val viserFra: Int,
-    val totaltAntallTreff: Int,
-    val treffPerSide: Int,
-    val viserTil: Int,
-    val sokeStreng: String,
-    val asciiKompatibel: Boolean,
-    val side: Int
-)
-
-data class Representasjonspunkt(
-    val epsg: String,
-    val lat: Double,
-    val lon: Double
-)
-
-data class Adresse(
-    val adressenavn: String,
-    val adressetekst: String,
-    val adressetilleggsnavn: String?,
-    val adressekode: Int,
-    val nummer: Int,
-    val bokstav: String?,
-    val kommunenummer: String,
-    val kommunenavn: String,
-    val gardsnummer: Int,
-    val bruksnummer: Int,
-    val festenummer: Int,
-    val undernummer: String?,
-    val bruksenhetsnummer: List<String>,
-    val objtype: String,
-    val poststed: String,
-    val postnummer: String,
-    val adressetekstutenadressetilleggsnavn: String,
-    val stedfestingverifisert: Boolean,
-    val representasjonspunkt: Representasjonspunkt,
-    val oppdateringsdato: String
-)
+import com.google.gson.annotations.SerializedName
 
 data class AddressSearchResult(
+    @SerializedName("metadata")
     val metadata: Metadata,
-    val adresser: List<Adresse>
+
+    @SerializedName("adresser")
+    val addresses: List<Address>
+)
+
+data class Metadata(
+    @SerializedName("side")
+    val page: Int,
+
+    @SerializedName("treffPerSide")
+    val hitsPerPage: Int,
+
+    @SerializedName("totaltAntallTreff")
+    val totalHits: Int,
+
+    @SerializedName("viserTil")
+    val showingTo: Int,
+
+    @SerializedName("sokeStreng")
+    val searchString: String,
+
+    @SerializedName("asciiKompatibel")
+    val asciiCompatible: Boolean,
+
+    @SerializedName("viserFra")
+    val showingFrom: Int
+)
+
+data class Address(
+    @SerializedName("adressenavn")
+    val addressName: String,
+
+    @SerializedName("adressetekst")
+    val addressText: String,
+
+    @SerializedName("adressetilleggsnavn")
+    val addressAdditionalName: String,
+
+    @SerializedName("adressekode")
+    val addressCode: Int,
+
+    @SerializedName("nummer")
+    val number: Int,
+
+    @SerializedName("bokstav")
+    val letter: String,
+
+    @SerializedName("kommunenummer")
+    val municipalityNumber: String,
+
+    @SerializedName("kommunenavn")
+    val municipalityName: String,
+
+    @SerializedName("gardsnummer")
+    val farmNumber: Int,
+
+    @SerializedName("bruksnummer")
+    val usageNumber: Int,
+
+    @SerializedName("festenummer")
+    val partyNumber: Int,
+
+    @SerializedName("undernummer")
+    val subNumber: Int,
+
+    @SerializedName("bruksenhetsnummer")
+    val unitNumber: List<String>,
+
+    @SerializedName("objtype")
+    val objectType: String,
+
+    @SerializedName("poststed")
+    val postPlace: String,
+
+    @SerializedName("postnummer")
+    val postalCode: String,
+
+    @SerializedName("adressetekstutenadressetilleggsnavn")
+    val addressTextWithoutAdditionalName: String,
+
+    @SerializedName("stedfestingverifisert")
+    val locationVerified: Boolean,
+
+    @SerializedName("representasjonspunkt")
+    val representationPoint: RepresentationPoint,
+
+    @SerializedName("oppdateringsdato")
+    val updateDate: String
+)
+
+data class RepresentationPoint(
+    @SerializedName("epsg")
+    val epsg: String,
+
+    @SerializedName("lat")
+    val latitude: Double,
+
+    @SerializedName("lon")
+    val longitude: Double
 )

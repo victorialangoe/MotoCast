@@ -48,20 +48,20 @@ class AddressDataViewModel : ViewModel() {
         addressDataSource.getAddressData(
             query = query,
             onSuccess = { addressSearchResult ->
-                val addresses = addressSearchResult.adresser.take(200).map { address ->
+                val addresses = addressSearchResult.addresses.take(200).map { address ->
 
                     val distanceFromUser = getAirDistanceFromLocation(
                         Location("").apply {
-                            latitude = address.representasjonspunkt.lat
-                            longitude = address.representasjonspunkt.lon
+                            latitude = address.representationPoint.latitude
+                            longitude = address.representationPoint.longitude
                         }
                     )
 
                     Address(
-                        addressText = address.adressetekst,
-                        municipality = address.kommunenavn,
-                        latitude = address.representasjonspunkt.lat,
-                        longitude = address.representasjonspunkt.lon,
+                        addressText = address.addressText,
+                        municipality = address.municipalityName,
+                        latitude = address.representationPoint.latitude,
+                        longitude = address.representationPoint.longitude,
                         distanceFromUser = distanceFromUser
                     )
                 }

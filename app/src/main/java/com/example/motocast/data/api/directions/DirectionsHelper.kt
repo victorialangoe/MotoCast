@@ -1,21 +1,16 @@
 package com.example.motocast.data.api.directions
 
+import com.example.motocast.BuildConfig
+import com.example.motocast.util.DataHelper
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 
-class DirectionsHelper {
-
-    private val BASE_URL = "https://api.mapbox.com/directions/"
-
-    fun createDirectionsAPI(): DirectionsApi {
-        val client = OkHttpClient.Builder().build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .build()
-
-        return retrofit.create(DirectionsApi::class.java)
+class DirectionsHelper: DataHelper() {
+    fun createDirectionsAPI(): DirectionsApi? {
+        return createAPI(
+            apiClass = DirectionsApi::class.java,
+            baseUrl = BuildConfig.DIRECTIONS_API_BASE_URL
+        )
     }
 }
