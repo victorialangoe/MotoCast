@@ -1,11 +1,7 @@
 package com.example.motocast.ui.view.dynamic_scaffold.cards
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,24 +11,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.motocast.R
 
 @Composable
-fun CardWeather(
+fun DisplayWeather(
     temperature: Int,
     fare: Boolean,
     symbolCode: String?,
     context: android.content.Context
 ) {
-    Log.d("CardWeather", "symbolCode: $symbolCode")
-
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp)
     ) {
 
-        Text(text = "$temperature °C", style = TextStyle(color = Color(0xff416788)))
+        Text(
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            text = "$temperature °C",
+            style = when (temperature > 0) {
+            true -> TextStyle(color = Color(0xffe74c3c)) // this is red
+            false -> TextStyle(color = Color(0xff3498db)) // this is blue
+        })
 
         Spacer(modifier = Modifier.size(10.dp))
 
@@ -47,7 +51,7 @@ fun CardWeather(
                     )
                 ),
                 contentDescription = symbolCode,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(30.dp)
             )
         }
     }

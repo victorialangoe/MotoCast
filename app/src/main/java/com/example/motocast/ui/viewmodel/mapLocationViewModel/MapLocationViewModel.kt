@@ -65,7 +65,7 @@ class MapLocationViewModel(
                     mapView = MapView(context).apply {
                         val mapView = this
                         mapView.getMapboxMap()
-                            .loadStyleUri("mapbox://styles/mapbox/navigation-day-v1") {
+                            .loadStyleUri("mapbox://styles/mapbox/navigation-night-v1") {
                                 mapView.location.apply {
                                     enabled = true
                                     pulsingEnabled = true

@@ -285,45 +285,83 @@ class RoutePlannerViewModel : ViewModel() {
         startTime: TimeAndDateUiState,
     ) = coroutineScope {
         val weatherViewModel = WeatherViewModel()
-        val routeWithWaypoint = createRouteWithWaypoints(waypoints, duration, startTime, weatherViewModel)
+        val routeWithWaypoint =
+            createRouteWithWaypoints(waypoints, weatherViewModel, startTime)
 
         updateRouteDurations(legs, routeWithWaypoint)
+        updateRouteTimeStamps(legs, routeWithWaypoint, startTime)
+
         _uiState.value = _uiState.value.copy(waypoints = routeWithWaypoint)
+    }
+
+
+    private fun updateRouteDurations(
+        legs: List<Leg>,
+        routeWithWaypoint: MutableList<RouteWithWaypoint>
+    ) {
+        // Update the durations of the routes
+        for (legIndex in legs.indices) {
+            val leg = legs[legIndex]
+            val route = routeWithWaypoint[legIndex + 1]
+            val updatedRoute = route.copy(
+                timeFromStart = leg.duration)
+            routeWithWaypoint[legIndex + 1] = updatedRoute
+        }
+    }
+
+    private fun updateRouteTimeStamps(
+        legs: List<Leg>,
+        routeWithWaypoint: MutableList<RouteWithWaypoint>,
+        startTime: TimeAndDateUiState
+    ) {
+        // Update the timestamps of the routes
+        var timeFromStart = 0.0
+        for (legIndex in legs.indices) {
+            val leg = legs[legIndex]
+            val route = routeWithWaypoint[legIndex + 1]
+            timeFromStart += leg.duration
+            val updatedRoute = route.copy(
+                timestamp = startTime.toCalendar().apply {
+                    add(Calendar.SECOND, timeFromStart.toInt())
+                })
+            routeWithWaypoint[legIndex + 1] = updatedRoute
+        }
     }
 
     private suspend fun createRouteWithWaypoints(
         waypoints: List<Waypoint>,
-        duration: Double,
-        startTime: TimeAndDateUiState,
         weatherViewModel: WeatherViewModel,
+        startTime: TimeAndDateUiState
     ): MutableList<RouteWithWaypoint> {
-        return coroutineScope {
-            waypoints.mapIndexed { index, waypoint ->
-                async {
-                    val timeFromStart = when (waypoint) {
-                        waypoints.first() -> 0.0
-                        waypoints.last() -> duration
-                        else -> 0.0
-                    }
 
-                    val timeAsCalendar = startTime.toCalendar().apply {
-                        add(Calendar.SECOND, timeFromStart.toInt())
+        return coroutineScope {
+
+            val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
+                async {
+
+                    val timestamp = startTime.toCalendar().apply {
+                        add(Calendar.SECOND, index * 60)
                     }
 
                     val route = RouteWithWaypoint(
                         name = null,
                         longitude = waypoint.location[0],
                         latitude = waypoint.location[1],
-                        timeFromStart = timeFromStart,
-                        timestamp = timeAsCalendar,
+                        timestamp = timestamp,
+                        timeFromStart = null,
                     )
 
                     val weatherUiState = route.getWeatherData(weatherViewModel)
-                    route.copy(weatherUiState = weatherUiState)
+                    val updatedRoute = route.copy(weatherUiState = weatherUiState)
+                    updatedRoute
                 }
-            }.awaitAll().toMutableList()
+            }
+            deferredRoutes.awaitAll().toMutableList()
         }
     }
+
+
+
 
 
     private fun TimeAndDateUiState.toCalendar(): Calendar {
@@ -346,15 +384,6 @@ class RoutePlannerViewModel : ViewModel() {
                 timestamp = timestamp
             )
         } else null
-    }
-
-    private fun updateRouteDurations(legs: List<Leg>, routeWithWaypoint: MutableList<RouteWithWaypoint>) {
-        for (legIndex in legs.indices) {
-            val leg = legs[legIndex]
-            val route = routeWithWaypoint[legIndex + 1]
-            val updatedRoute = route.copy(timeFromStart = leg.duration)
-            routeWithWaypoint[legIndex + 1] = updatedRoute
-        }
     }
 
 

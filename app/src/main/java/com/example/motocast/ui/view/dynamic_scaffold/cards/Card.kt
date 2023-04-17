@@ -42,7 +42,7 @@ fun Card(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            CardWeather(temperature, fare, iconSymbol, context = context)
+            DisplayWeather(temperature, fare, iconSymbol, context = context)
         }
     }
 }

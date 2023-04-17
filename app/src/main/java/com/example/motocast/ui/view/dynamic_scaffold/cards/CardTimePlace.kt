@@ -14,8 +14,15 @@ import java.util.*
 
 @Composable
 fun CardTimePlace(location: String, time: Calendar?) {
-    val hours = time?.get(Calendar.HOUR_OF_DAY)
-    val minutes = time?.get(Calendar.MINUTE)
+
+    val date = time?.let {
+        val day = it.get(Calendar.DAY_OF_MONTH)
+        val month = it.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+        val hour = it.get(Calendar.HOUR_OF_DAY)
+        val minute = it.get(Calendar.MINUTE)
+
+        "$day. $month, ${String.format("%02d", hour)}:${String.format("%02d", minute)}"
+    }
 
     Column {
         Text(text = location,
@@ -24,8 +31,8 @@ fun CardTimePlace(location: String, time: Calendar?) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        if (hours != null && minutes != null) {
-            Text(text = "$hours:$minutes")
+        if (date != null) {
+            Text(text = date)
         }
     }
 }
