@@ -21,21 +21,23 @@ import androidx.navigation.NavController
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.util.buttons.BasicButton
+import com.example.motocast.util.buttons.FilledButton
 
 @Composable
 fun CreateRouteButton(
     startRoute: () -> Unit,
     enabled: Boolean,
 ) {
-    BasicButton(
+    FilledButton(
+        text = if (enabled){
+            "Start rute"
+        } else {
+            "Ikke gyldig rute"
+        },
+        onClick = { startRoute() },
         modifier = Modifier
             .fillMaxWidth()
-            .height(height = 55.dp),
-        text = if (enabled) "Ferdig" else "Ingen gyldig rute",
-        outlined = false,
+            .height(56.dp),
         enabled = enabled,
-        onClick = {
-           if (enabled) startRoute()
-        },
     )
 }

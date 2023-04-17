@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.motocast.ui.theme.MotoCastTheme
+import com.example.motocast.ui.theme.AppTheme
 import com.example.motocast.ui.view.WordAnimation
 import com.example.motocast.ui.view.rememberAnimationState
 import com.example.motocast.ui.view.AppNavigation
@@ -32,19 +32,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MotoCastTheme {
+            AppTheme {
                 val animationState = rememberAnimationState()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    /*
                     AnimatedVisibility(
                         visible = !animationState.value,
                         exit = fadeOut(animationSpec = tween(durationMillis = 500))
                     ) {
                         WordAnimation()
                     }
+
+                     */
                     Crossfade(targetState = animationState.value, animationSpec = tween(durationMillis = 500)) { isAnimationComplete ->
                         if (isAnimationComplete) {
                             AppNavigation(

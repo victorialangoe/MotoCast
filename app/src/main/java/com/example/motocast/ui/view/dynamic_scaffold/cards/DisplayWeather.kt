@@ -2,6 +2,7 @@ package com.example.motocast.ui.view.dynamic_scaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,13 +31,10 @@ fun DisplayWeather(
     ) {
 
         Text(
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
             text = "$temperature °C",
-            style = when (temperature > 0) {
-            true -> TextStyle(color = Color(0xffe74c3c)) // this is red
-            false -> TextStyle(color = Color(0xff3498db)) // this is blue
-        })
+            style = MaterialTheme.typography.bodyMedium
+        )
 
         Spacer(modifier = Modifier.size(10.dp))
 

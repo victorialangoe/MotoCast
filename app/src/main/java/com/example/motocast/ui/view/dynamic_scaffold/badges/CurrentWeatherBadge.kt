@@ -3,6 +3,7 @@ package com.example.motocast.ui.view.dynamic_scaffold.badges
 import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +22,7 @@ fun CurrentWeatherBadge(
     Surface(
         shadowElevation = 2.dp,
         shape = RoundedCornerShape(32.dp),
-        color = Color.White,
+        color = MaterialTheme.colorScheme.surface,
     ) {
         DisplayWeather(
             temperature = temperature,

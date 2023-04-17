@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,7 +32,9 @@ fun AddDestinationView(
     getCurrentLocation: () -> Location?,
 ) {
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
+    ) {
 
         AddDestinationSearchBar(
             query = query,
@@ -51,7 +54,7 @@ fun AddDestinationView(
                 }
             },
             onValueChange = { query, address ->
-                updateDestination(activeDestinationIndex, address) // Nødvendig
+                updateDestination(activeDestinationIndex, address)
                 fetchAddressData(query)
             },
             onSetCurrentLocation = {
@@ -73,7 +76,7 @@ fun AddDestinationView(
 
         Column(
             modifier = Modifier
-                .background(Color(0xFFF5F5F5)) // TODO: Move to theme
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxSize()
         ) {

@@ -175,6 +175,16 @@ class RoutePlannerViewModel : ViewModel() {
         return true
     }
 
+    fun checkIfSomeDestinationsHaveNames(): Boolean {
+        val currentUiState = _uiState.value
+        currentUiState.destinations.forEach {
+            if (it.name != null && it.name != "") {
+                return true
+            }
+        }
+        return false
+    }
+
     /**
      * This method returns the start date in the format: MM-DD
      */

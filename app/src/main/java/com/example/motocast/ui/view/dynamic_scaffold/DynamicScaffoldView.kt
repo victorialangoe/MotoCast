@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +45,7 @@ fun DynamicScaffoldView(
         scaffoldState = scaffoldState,
         sheetPeekHeight = minHeight,
         sheetBackgroundColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         sheetElevation = 0.dp,
         sheetContent = {
 
@@ -71,8 +73,7 @@ fun DynamicScaffoldView(
                 DynamicScaffoldContentColum(
                     modifier = Modifier
                         .clip(cornerShape)
-                        .background(Color.White, shape = cornerShape)
-                        .border(border = BorderStroke(1.dp, Color.LightGray), shape = cornerShape)
+                        .background(color = MaterialTheme.colorScheme.surface)
                         .fillMaxSize()
                         .padding(16.dp),
                     homeScaffoldButtonOnClick = onNavigateToScreen,
@@ -92,7 +93,7 @@ fun DynamicScaffoldView(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 content(Modifier)
             }

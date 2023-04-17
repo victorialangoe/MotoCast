@@ -18,7 +18,7 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context) {
             if (weather != null) {
                 Card(
                     temperature = weather.temperature?.toInt() ?: 0,
-                    location = waypoint.name ?: "",
+                    location = waypoint.name ?: "No name found",
                     time = time,
                     iconSymbol = weather.symbolCode ?: "",
                     context = context

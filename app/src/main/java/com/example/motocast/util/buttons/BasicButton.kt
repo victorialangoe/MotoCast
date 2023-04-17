@@ -3,10 +3,7 @@ package com.example.motocast.util.buttons
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,14 +21,13 @@ fun BasicButton(
     onClick: () -> Unit,
     outlined: Boolean = false,
     enabled: Boolean = true,
-    fontSize: Int = 22,
     trailingIcon: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
 ) {
 
-    val buttonColor = if (enabled) Color.Black else Color.Gray
-    var buttonTextColor = if (outlined) Color.Black else Color.White
-    val buttonShape = RoundedCornerShape(size = 8.dp)
+    val buttonColor = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    var buttonTextColor = if (outlined) buttonColor else MaterialTheme.colorScheme.onPrimary
+    val buttonShape = MaterialTheme.shapes.extraLarge
 
     val content: @Composable () -> Unit = {
         Row(
@@ -45,9 +41,8 @@ fun BasicButton(
             }
             Text(
                 text = if (text.length > 25 && !centerContent) text.substring(0, 25) + "..." else text,
-                fontSize = fontSize.sp,
+                style = MaterialTheme.typography.labelMedium,
                 color = buttonTextColor,
-                fontWeight = FontWeight.Normal
             )
             trailingIcon?.let {
                 Spacer(modifier = Modifier.width(20.dp))
@@ -61,7 +56,7 @@ fun BasicButton(
             onClick = { onClick() },
             shape = buttonShape,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = buttonTextColor,
+                contentColor = MaterialTheme.colorScheme.primary,
                 containerColor = Color.Transparent,
             ),
             border = BorderStroke(1.dp, buttonColor),
@@ -75,7 +70,7 @@ fun BasicButton(
             onClick = { onClick() },
             shape = buttonShape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
+                containerColor = buttonColor,
                 contentColor = buttonTextColor,
             ),
             enabled = enabled,
@@ -84,15 +79,4 @@ fun BasicButton(
             content()
         }
     }
-}
-
-@Preview
-@Composable
-fun BasicButtonPreview() {
-    BasicButton(
-        text = "Legg til stopp",
-        onClick = { },
-        outlined = true,
-        enabled = true,
-    )
 }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.MotoCast" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MotoCast" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="colorPrimary">@color/light_primary</item>
+        <item name="colorPrimaryDark">@color/light_primary</item>
+        <item name="colorAccent">@color/light_secondary</item>
+        <item name="android:windowBackground">@color/light_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>

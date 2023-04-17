@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.motocast.ui.viewmodel.address.Address
+import com.mapbox.maps.extension.style.style
 
 /**
  * A composable that displays a single address result
@@ -31,22 +33,26 @@ fun AddressResult(
             .fillMaxWidth(),
         onClick = { onClick(address) },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surfaceTint,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         )
     )
     {
         Column {
 
-            Text(text = address.addressText, fontSize = 16.sp)
-
+            Text(
+                text = address.addressText,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
             Spacer(modifier = Modifier.height(4.dp))
 
             Row(modifier = Modifier.fillMaxWidth()) {
 
                 Text(
                     text = address.municipality ?: "",
-                    fontSize = 14.sp,
+                    style  = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(0.8f, fill = true)
                 )
 
@@ -55,6 +61,7 @@ fun AddressResult(
                 if (address.distanceFromUser != null) {
                     Text(
                         fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(0.2f, fill = true),
                         text = if (address.distanceFromUser!! > 1000) {
                             "${address.distanceFromUser / 1000} km"
@@ -62,8 +69,6 @@ fun AddressResult(
                             "${address.distanceFromUser} m"
                         },
                     )
-                } else {
-                    Text(text = "hei")
                 }
 
             }

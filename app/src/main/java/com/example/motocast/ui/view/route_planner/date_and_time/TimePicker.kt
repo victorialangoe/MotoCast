@@ -2,26 +2,11 @@ package com.example.motocast.ui.view.route_planner.date_and_time
 
 import android.app.TimePickerDialog
 import android.content.Context
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import java.util.*
-import androidx.compose.material3.Text
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.motocast.R
-import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerUiState
-import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
 import com.example.motocast.ui.viewmodel.route_planner.TimePickerUiState
 
 @Composable

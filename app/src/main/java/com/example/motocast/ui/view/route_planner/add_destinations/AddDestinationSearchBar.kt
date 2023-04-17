@@ -3,11 +3,7 @@ package com.example.motocast.ui.view.route_planner.add_destinations
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -15,13 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
-import com.example.motocast.util.BackButton
+import com.example.motocast.util.buttons.BackButton
 
 @Composable
 fun AddDestinationSearchBar(
@@ -37,7 +32,7 @@ fun AddDestinationSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -57,24 +52,31 @@ fun AddDestinationSearchBar(
                 )
                 onValueChange(it, newAddress)
             },
-            label = { Text("Søk etter adresse") },
             modifier = Modifier
                 .weight(0.8f, fill = true)
                 .focusRequester(focusRequester),
-            shape = RoundedCornerShape(8.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            textStyle = MaterialTheme.typography.bodyMedium,
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                focusedLabelColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                cursorColor = Color.Black,
-                textColor = Color.Black,
-            ),
+                focusedBorderColor = MaterialTheme.colorScheme.surface,
+                unfocusedBorderColor = MaterialTheme.colorScheme.surface,
+                focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+                cursorColor = MaterialTheme.colorScheme.onSurface,
+                textColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surface,
+                focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+
+            )
+            ,
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
                     contentDescription = "Søk etter adresse icon",
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -84,7 +86,7 @@ fun AddDestinationSearchBar(
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_close_24),
                         contentDescription = "Fjerne søk etter adresse icon",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(24.dp)
                             .clickable { onClear() }
@@ -94,7 +96,7 @@ fun AddDestinationSearchBar(
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
                         contentDescription = "Søk etter adresse icon",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(24.dp)
                             .clickable { onSetCurrentLocation() }

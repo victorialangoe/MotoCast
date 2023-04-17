@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.map
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.mapbox.maps.MapView
@@ -21,7 +22,7 @@ fun MapView(
     if (mapView != null) {
         MapViewContent(mapView)
     } else {
-        Text(text = "Loading map...")
+        Text(text = "Loading map...", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

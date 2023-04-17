@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,8 +28,8 @@ fun LocateUserBadge(
         },
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.White,
-            contentColor = Color.Black
+            backgroundColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         modifier = Modifier
             .padding(4.dp)
@@ -39,13 +40,13 @@ fun LocateUserBadge(
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.baseline_my_location_24),
                 contentDescription = "Aktiv posisjon sporing icon",
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         } else {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
                 contentDescription = "Inaktiv posisjon sporing icon",
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
 

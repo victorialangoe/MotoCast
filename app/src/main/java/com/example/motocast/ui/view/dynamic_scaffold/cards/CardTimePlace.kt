@@ -3,6 +3,7 @@ package com.example.motocast.ui.view.dynamic_scaffold.cards
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,7 +33,7 @@ fun CardTimePlace(location: String, time: Calendar?) {
         Spacer(modifier = Modifier.size(10.dp))
 
         if (date != null) {
-            Text(text = date)
+            Text(text = date, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
