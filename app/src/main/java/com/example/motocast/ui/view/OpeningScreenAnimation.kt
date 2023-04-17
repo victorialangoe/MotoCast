@@ -24,9 +24,10 @@ fun WordAnimation() {
         }
     }, modifier = Modifier
         .fillMaxWidth()
-        .height(600.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .scale(scale = 1.5f)
+        .fillMaxHeight()
+        .height(700.dp)
+        .clip(RoundedCornerShape(1.dp))
+        .scale(scale = 1.2f)
     )
 }
 
