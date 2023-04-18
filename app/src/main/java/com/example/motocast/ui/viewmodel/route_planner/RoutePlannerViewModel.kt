@@ -1,8 +1,10 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
+import ReverseGeocodingResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.DirectionsDataSource
+import com.example.motocast.data.datasource.ReverseGeocodingSource
 import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
@@ -24,6 +26,7 @@ class RoutePlannerViewModel : ViewModel() {
     private val viewModelScope = CoroutineScope(Dispatchers.Main)
 
     val uiState = _uiState
+    private val reverseGeocodingDataSource = ReverseGeocodingSource()
 
 
     /* This method is only used for debugging purposes */
@@ -293,8 +296,13 @@ class RoutePlannerViewModel : ViewModel() {
                         add(Calendar.SECOND, index * 60)
                     }
 
+                    val name = getReverseGeocodedName(
+                        longitude = waypoint.location[0],
+                        latitude = waypoint.location[1]
+                    )
+
                     val route = RouteWithWaypoint(
-                        name = null,
+                        name = name ?: "Ukjent destinasjon",
                         longitude = waypoint.location[0],
                         latitude = waypoint.location[1],
                         timestamp = timestamp,
@@ -318,6 +326,26 @@ class RoutePlannerViewModel : ViewModel() {
                 timestamp = timestamp
             )
         } else null
+    }
+
+    suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
+        val nameDeferred = CompletableDeferred<String?>()
+
+        reverseGeocodingDataSource.getReverseGeocodingData(
+            longitude,
+            latitude,
+            onSuccess = { response: ReverseGeocodingResult ->
+                var name = response.features.firstOrNull()?.placeName
+                name = name?.replace(", Norge", "") ?: name
+                nameDeferred.complete(name)
+            },
+            onError = { error: String ->
+                Log.e("RouteViewModel", error)
+                nameDeferred.complete(null)
+            }
+        )
+
+        return nameDeferred.await()
     }
 
 
@@ -345,6 +373,7 @@ class RoutePlannerViewModel : ViewModel() {
                 onSuccess = { routeSearchResult: RouteSearchResult ->
                     viewModelScope.launch {
                         val geoJsonData = convertRouteSearchResultToGeoJSON(routeSearchResult)
+
 
                         withContext(Dispatchers.Main) {
                             addGeoJsonDataToUiState(geoJsonData)

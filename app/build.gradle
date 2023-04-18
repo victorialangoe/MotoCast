@@ -29,6 +29,7 @@ android {
         buildConfigField("String", "ADDRESS_API_BASE_URL", "\"" + localProperties['address_api_base_url'] + "\"")
         buildConfigField("String", "DIRECTIONS_API_BASE_URL", "\"" + localProperties['directions_api_base_url'] + "\"")
         buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"" + localProperties['mapbox_access_token'] + "\"")
+        buildConfigField("String", "MAPBOX_API_BASE_URL", "\"" + localProperties['mapbox_api_base_url'] + "\"")
     }
 
     buildTypes {
