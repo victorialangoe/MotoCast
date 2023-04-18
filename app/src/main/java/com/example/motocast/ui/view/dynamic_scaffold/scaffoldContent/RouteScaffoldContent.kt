@@ -15,7 +15,7 @@ import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 @Composable
 fun RouteScaffoldContent(
     onButtonClick: () -> Unit,
-    routeText: String,
+    isLoading: Boolean,
     time: String,
     date: String,
     duration: String,
@@ -26,15 +26,12 @@ fun RouteScaffoldContent(
         modifier = Modifier
         .fillMaxWidth()
     ) {
-        RouteText(routeText)
+        EditRouteButton(onButtonClick, isLoading = isLoading)
         Spacer(modifier = Modifier.height(16.dp))
-        DateTimeDurationRow(date, time, duration)
+        DateTimeDurationRow(date, time, duration, isLoading)
         Spacer(modifier = Modifier.height(16.dp))
-        EditRouteButton(onButtonClick)
     }
 
-    Spacer(modifier = Modifier.height(8.dp))
-
-    CardsColumn(waypoints = waypoints, context = context)
+    CardsColumn(waypoints = waypoints, context = context, isLoading = isLoading)
 }
 

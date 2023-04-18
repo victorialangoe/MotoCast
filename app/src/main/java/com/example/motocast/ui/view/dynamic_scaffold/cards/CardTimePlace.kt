@@ -22,7 +22,7 @@ fun CardTimePlace(location: String, time: Calendar?) {
         val hour = it.get(Calendar.HOUR_OF_DAY)
         val minute = it.get(Calendar.MINUTE)
 
-        "$day. $month, ${String.format("%02d", hour)}:${String.format("%02d", minute)}"
+        "$day. $month ${String.format("%02d", hour)}:${String.format("%02d", minute)}"
     }
 
     Column {

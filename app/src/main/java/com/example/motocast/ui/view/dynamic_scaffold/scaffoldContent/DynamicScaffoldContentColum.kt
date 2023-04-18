@@ -20,7 +20,7 @@ fun DynamicScaffoldContentColum(
     modifier: Modifier = Modifier,
     routeScaffoldButtonOnClick: () -> Unit,
     homeScaffoldButtonOnClick: () -> Unit,
-    routeText: String,
+    isRouteLoading: Boolean,
     showScroll: Boolean = true,
     showRoute: Boolean,
     date: String,
@@ -50,7 +50,7 @@ fun DynamicScaffoldContentColum(
 
         if (showRoute) RouteScaffoldContent(
             onButtonClick = routeScaffoldButtonOnClick,
-            routeText = routeText,
+            isLoading = isRouteLoading,
             date = date,
             time = time,
             duration = duration,

@@ -16,12 +16,13 @@ import com.example.motocast.util.buttons.BasicButton
 import com.example.motocast.util.buttons.FilledButton
 
 @Composable
-fun EditRouteButton(onNavigateToScreen: () -> Unit) {
+fun EditRouteButton(onNavigateToScreen: () -> Unit, isLoading: Boolean) {
     FilledButton(
         onClick = onNavigateToScreen,
         text = "Endre rute",
         modifier = Modifier
             .fillMaxWidth()
-            .height(55.dp)
+            .height(55.dp),
+        enabled = !isLoading,
     )
 }

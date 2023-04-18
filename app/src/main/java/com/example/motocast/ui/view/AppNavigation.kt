@@ -40,6 +40,7 @@ fun AppNavigation(
                 weatherViewModel = weatherViewModel,
                 mapLocationViewModel = mapLocationViewModel,
                 routePlannerViewModel = routePlannerViewModel,
+                isRouteLoading = routePlannerViewModelUiState.value.isLoading,
                 duration = routePlannerViewModelUiState.value.durationAsString,
                 waypoints = routePlannerViewModelUiState.value.waypoints,
                 content = {

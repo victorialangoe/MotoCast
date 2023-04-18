@@ -1,9 +1,11 @@
 package com.example.motocast.ui.view.route_planner.add_destinations
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -83,13 +85,31 @@ fun DestinationResults(
         modifier = Modifier
             .fillMaxWidth()
     ) {
+        if (isLoading) {
+            // Show a loading indicator
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.surface,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(8.dp)
+                )
+            }
+        }
+
         // This is the title of the search results
-        if (showTitle || addresses.isNotEmpty()) {
+        if (showTitle && !isLoading) {
             Text(
-                text = when {
-                    isLoading -> "Laster..."
-                    addresses.isEmpty() -> "Ingen treff"
-                    else -> title
+                text = if (addresses.isEmpty()) {
+                    "Ingen treff"
+                } else {
+                    title
                 },
                 modifier = Modifier
                     .align(Alignment.Start)

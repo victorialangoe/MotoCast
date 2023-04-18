@@ -17,9 +17,11 @@ import com.example.motocast.util.buttons.FilledButton
 @Composable
 fun AddFieldButton(
     addDestination: () -> Unit,
+    enabled: Boolean = true,
 ) {
     FilledButton(
-        text = "Legg til stopp",
+        enabled = enabled,
+        text = if (enabled) "Legg til stopp " else "Maks 10 stopp",
         onClick = addDestination,
         modifier = Modifier
             .fillMaxWidth()

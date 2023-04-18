@@ -29,6 +29,7 @@ fun DynamicScaffoldView(
     destinations: List<Destination>,
     waypoints: List<RouteWithWaypoint>,
     isTrackUserActive: Boolean,
+    isRouteLoading: Boolean,
     weatherViewModel: WeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
@@ -38,9 +39,9 @@ fun DynamicScaffoldView(
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val showRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames()
-    val cornerShape = MaterialTheme.shapes.medium
+    val cornerShape = MaterialTheme.shapes.large
 
-    val maxHeight = if (showRoute) 600.dp else 150.dp
+    val maxHeight = if (showRoute) 800.dp else 150.dp
     val minHeight = if (showRoute) 300.dp else 150.dp
 
     BottomSheetScaffold(
@@ -80,7 +81,7 @@ fun DynamicScaffoldView(
                         .padding(16.dp),
                     homeScaffoldButtonOnClick = onNavigateToScreen,
                     routeScaffoldButtonOnClick = onNavigateToScreen,
-                    routeText = routePlannerViewModel.getDestinationNamesAsString(),
+                    isRouteLoading = isRouteLoading,
                     showRoute = showRoute,
                     date = routePlannerViewModel.getStartDate(),
                     time = routePlannerViewModel.getStartTime(),

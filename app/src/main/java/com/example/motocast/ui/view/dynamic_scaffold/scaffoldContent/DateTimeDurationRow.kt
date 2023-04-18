@@ -1,7 +1,9 @@
 package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +17,7 @@ fun DateTimeDurationRow(
     date: String,
     time: String,
     duration: String,
+    isLoading: Boolean,
 ) {
     Row(modifier = Modifier
         .fillMaxWidth(),
@@ -34,9 +37,18 @@ fun DateTimeDurationRow(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = duration,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface)
+        if (isLoading) {
+            // Material3 ProgressIndicator
+            CircularProgressIndicator(
+                modifier = Modifier.size(14.dp),
+                color = MaterialTheme.colorScheme.surface,
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Text(
+                text = duration,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface)
+        }
     }
 }

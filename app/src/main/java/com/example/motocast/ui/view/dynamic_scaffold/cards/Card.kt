@@ -15,6 +15,7 @@ import java.util.Calendar
 
 @Composable
 fun Card(
+    modifier: Modifier = Modifier,
     temperature: Int,
     location: String,
     time: Calendar?,
@@ -24,10 +25,7 @@ fun Card(
 ) {
 
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = MaterialTheme.colorScheme.surface)
-            .fillMaxWidth()
+        modifier = modifier
     )
     {
         Row(

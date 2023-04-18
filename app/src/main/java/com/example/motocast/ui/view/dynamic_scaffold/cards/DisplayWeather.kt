@@ -39,19 +39,21 @@ fun DisplayWeather(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        symbolCode?.let { symbolCode ->
-            Icon(
-                painter = painterResource(
-                    // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
-                    id = context.resources.getIdentifier(
-                        symbolCode,
-                        "drawable",
-                        context.packageName
-                    )
-                ),
-                contentDescription = symbolCode,
-                modifier = Modifier.size(30.dp)
-            )
+        if (symbolCode != null && symbolCode.isNotEmpty()) {
+            symbolCode.let { symbolCode ->
+                Image(
+                    painter = painterResource(
+                        // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
+                        id = context.resources.getIdentifier(
+                            symbolCode,
+                            "drawable",
+                            context.packageName
+                        )
+                    ),
+                    contentDescription = symbolCode,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
     }
 

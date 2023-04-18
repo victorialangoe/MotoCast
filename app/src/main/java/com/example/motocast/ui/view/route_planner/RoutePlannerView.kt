@@ -63,7 +63,10 @@ fun RoutePlannerView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                AddFieldButton { addDestination() }
+                AddFieldButton(
+                    addDestination = { addDestination() },
+                    enabled = destinations.size < 10
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
