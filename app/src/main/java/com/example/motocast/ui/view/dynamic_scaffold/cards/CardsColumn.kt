@@ -45,33 +45,6 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                 if (waypoint != waypoints.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(
-                            id = when (waypoint) {
-                                waypoints.first() -> R.drawable.baseline_my_location_24
-                                waypoints.last() -> R.drawable.mdi_goal
-                                else -> R.drawable.baseline_location_on_24
-                            }
-                        ),
-                        contentDescription = when (waypoint) {
-                            waypoints.first() -> "Start icon"
-                            waypoints.last() -> "Mål icon"
-                            else -> "Mellomstopp icon"
-                        },
-                        modifier = Modifier
-                            .size(18.dp)
-                            .weight(0.1f),
-                        tint = when (waypoint) {
-                            waypoints.first() -> Orange500
-                            waypoints.last() -> Orange500
-                            else -> Orange300
-                        }
-                    )
                     Card(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
@@ -84,8 +57,6 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                         iconSymbol = weather?.symbolCode ?: "",
                         context = context
                     )
-                }
-
             }
         }
     }
