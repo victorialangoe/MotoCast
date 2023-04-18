@@ -1,8 +1,10 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
+import ReverseGeocodingResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.DirectionsDataSource
+import com.example.motocast.data.datasource.ReverseGeocodingSource
 import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
@@ -15,6 +17,7 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import okhttp3.internal.format
 import java.time.Duration
 import java.util.*
 
@@ -23,27 +26,7 @@ class RoutePlannerViewModel : ViewModel() {
     private val viewModelScope = CoroutineScope(Dispatchers.Main)
 
     val uiState = _uiState
-
-    init {
-        setCurrentTimeAndDate()
-    }
-
-    private fun setCurrentTimeAndDate() {
-        // get time and date from system
-        val calendar = Calendar.getInstance()
-        val year = calendar[Calendar.YEAR]
-        val month = calendar[Calendar.MONTH]
-        val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
-        val hour = calendar[Calendar.HOUR_OF_DAY]
-        val minute = calendar[Calendar.MINUTE]
-        // update ui state
-        _uiState.value = _uiState.value.copy(
-            startTime = TimeAndDateUiState(
-                TimePickerUiState(hour, minute),
-                DatePickerUiState(year, month, dayOfMonth)
-            )
-        )
-    }
+    private val reverseGeocodingDataSource = ReverseGeocodingSource()
 
     /* This method is only used for debugging purposes */
     private fun printDestinations() {
@@ -137,22 +120,9 @@ class RoutePlannerViewModel : ViewModel() {
         }
     }
 
-    fun updateDateUiState(datePickerUiState: DatePickerUiState) {
+    fun updateStartTime(time: Calendar){
         val currentUiState = _uiState.value
-        val newTimeAndDateUiState = currentUiState.startTime.copy(
-            datePickerUiState = datePickerUiState
-        )
-        _uiState.value = currentUiState.copy(startTime = newTimeAndDateUiState)
-        printDestinations()
-    }
-
-    fun updateTimeUiState(timePickerUiState: TimePickerUiState) {
-        val currentUiState = _uiState.value
-        val newTimeAndDateUiState = currentUiState.startTime.copy(
-            timePickerUiState = timePickerUiState
-        )
-        _uiState.value = currentUiState.copy(startTime = newTimeAndDateUiState)
-        printDestinations()
+        _uiState.value = currentUiState.copy(startTime = time)
     }
 
     /**
@@ -160,7 +130,7 @@ class RoutePlannerViewModel : ViewModel() {
      */
     fun clear() {
         _uiState.value = RoutePlannerUiState()
-        setCurrentTimeAndDate()
+        _uiState.value = _uiState.value.copy(startTime = Calendar.getInstance())
         printDestinations()
 
     }
@@ -189,20 +159,11 @@ class RoutePlannerViewModel : ViewModel() {
      * This method returns the start date in the format: MM-DD
      */
     fun getStartDate(): String {
-        val currentUiState = _uiState.value
-        val timeAndDateUiState = currentUiState.startTime
-        val datePickerUiState = timeAndDateUiState.datePickerUiState
-        val month = if (datePickerUiState.month < 10) {
-            "0${datePickerUiState.month}"
-        } else {
-            datePickerUiState.month.toString()
-        }
-        val day = if (datePickerUiState.day < 10) {
-            "0${datePickerUiState.day}"
-        } else {
-            datePickerUiState.day.toString()
-        }
-        return "$month-$day"
+        val startTime = _uiState.value.startTime
+        val month = startTime.get(Calendar.MONTH) + 1
+        val day = startTime.get(Calendar.DAY_OF_MONTH)
+        // add 0 in front of month and day if they are less than 10
+        return format("%02d-%02d", month, day)
     }
 
 
@@ -210,20 +171,11 @@ class RoutePlannerViewModel : ViewModel() {
      * This method returns the start time in the format: HH:mm
      */
     fun getStartTime(): String {
-        val currentUiState = _uiState.value
-        val timeAndDateUiState = currentUiState.startTime
-        val timePickerUiState = timeAndDateUiState.timePickerUiState
-        val hour = if (timePickerUiState.hour < 10) {
-            "0${timePickerUiState.hour}"
-        } else {
-            timePickerUiState.hour.toString()
-        }
-        val minute = if (timePickerUiState.minute < 10) {
-            "0${timePickerUiState.minute}"
-        } else {
-            timePickerUiState.minute.toString()
-        }
-        return "$hour:$minute"
+        val startTime = _uiState.value.startTime
+        val hour = startTime.get(Calendar.HOUR_OF_DAY)
+        val minute = startTime.get(Calendar.MINUTE)
+        // add 0 in front of hour and minute if they are less than 10
+        return format("%02d:%02d", hour, minute)
     }
 
     /**
@@ -290,7 +242,7 @@ class RoutePlannerViewModel : ViewModel() {
     private suspend fun addWaypointsToUiState(
         legs: List<Leg>,
         waypoints: List<Waypoint>,
-        startTime: TimeAndDateUiState,
+        startTime: Calendar
     ) = coroutineScope {
         val weatherViewModel = WeatherViewModel()
         val routeWithWaypoint =
@@ -320,7 +272,7 @@ class RoutePlannerViewModel : ViewModel() {
     private fun updateRouteTimeStamps(
         legs: List<Leg>,
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
-        startTime: TimeAndDateUiState
+        startTime: Calendar
     ) {
         // Update the timestamps of the routes
         var timeFromStart = 0.0
@@ -329,7 +281,7 @@ class RoutePlannerViewModel : ViewModel() {
             val route = routeWithWaypoint[legIndex + 1]
             timeFromStart += leg.duration
             val updatedRoute = route.copy(
-                timestamp = startTime.toCalendar().apply {
+                timestamp = startTime.apply {
                     add(Calendar.SECOND, timeFromStart.toInt())
                 })
             routeWithWaypoint[legIndex + 1] = updatedRoute
@@ -339,7 +291,7 @@ class RoutePlannerViewModel : ViewModel() {
     private suspend fun createRouteWithWaypoints(
         waypoints: List<Waypoint>,
         weatherViewModel: WeatherViewModel,
-        startTime: TimeAndDateUiState
+        startTime: Calendar,
     ): MutableList<RouteWithWaypoint> {
 
         return coroutineScope {
@@ -347,12 +299,17 @@ class RoutePlannerViewModel : ViewModel() {
             val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
                 async {
 
-                    val timestamp = startTime.toCalendar().apply {
+                    val timestamp = startTime.apply {
                         add(Calendar.SECOND, index * 60)
                     }
 
+                    val name = getReverseGeocodedName(
+                        longitude = waypoint.location[0],
+                        latitude = waypoint.location[1]
+                    )
+
                     val route = RouteWithWaypoint(
-                        name = null,
+                        name = name ?: "Ukjent destinasjon",
                         longitude = waypoint.location[0],
                         latitude = waypoint.location[1],
                         timestamp = timestamp,
@@ -368,22 +325,6 @@ class RoutePlannerViewModel : ViewModel() {
         }
     }
 
-
-
-
-
-    private fun TimeAndDateUiState.toCalendar(): Calendar {
-        return Calendar.getInstance().apply {
-            set(
-                datePickerUiState.year,
-                datePickerUiState.month,
-                datePickerUiState.day,
-                timePickerUiState.hour,
-                timePickerUiState.minute
-            )
-        }
-    }
-
     private suspend fun RouteWithWaypoint.getWeatherData(weatherViewModel: WeatherViewModel): WeatherUiState? {
         return if (latitude != null && longitude != null && timestamp != null) {
             weatherViewModel.getWeatherData(
@@ -392,6 +333,26 @@ class RoutePlannerViewModel : ViewModel() {
                 timestamp = timestamp
             )
         } else null
+    }
+
+    suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
+        val nameDeferred = CompletableDeferred<String?>()
+
+        reverseGeocodingDataSource.getReverseGeocodingData(
+            longitude,
+            latitude,
+            onSuccess = { response: ReverseGeocodingResult ->
+                var name = response.features.firstOrNull()?.placeName
+                name = name?.replace(", Norge", "") ?: name
+                nameDeferred.complete(name)
+            },
+            onError = { error: String ->
+                Log.e("RouteViewModel", error)
+                nameDeferred.complete(null)
+            }
+        )
+
+        return nameDeferred.await()
     }
 
 
@@ -410,7 +371,7 @@ class RoutePlannerViewModel : ViewModel() {
         }
 
         // removes null to avoid null pointer exception
-        val destinations = currentUiState.destinations.filterNotNull()
+        val destinations = currentUiState.destinations
 
         //needs 2 destinations to get a route
         if (destinations.size >= 2) {
