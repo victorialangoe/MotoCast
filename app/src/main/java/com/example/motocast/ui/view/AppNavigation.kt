@@ -39,6 +39,7 @@ fun AppNavigation(
                 weatherViewModel = weatherViewModel,
                 mapLocationViewModel = mapLocationViewModel,
                 routePlannerViewModel = routePlannerViewModel,
+                duration = routePlannerViewModelUiState.value.durationAsString,
                 waypoints = routePlannerViewModelUiState.value.waypoints,
                 content = {
                     MapView(

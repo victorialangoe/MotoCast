@@ -22,6 +22,7 @@ data class RoutePlannerUiState (
     val error: String? = null,
     val geoJsonData: String? = null,
     val duration: Double = 0.0, // in seconds
+    var durationAsString: String = "",
     val distance: Double = 0.0, // in meters
     val waypoints: List<RouteWithWaypoint> = listOf(),
 )

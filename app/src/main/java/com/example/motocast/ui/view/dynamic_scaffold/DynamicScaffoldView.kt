@@ -32,6 +32,7 @@ fun DynamicScaffoldView(
     weatherViewModel: WeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     mapLocationViewModel: MapLocationViewModel,
+    duration: String,
     content: @Composable (Modifier) -> Unit,
     onNavigateToScreen: () -> Unit
 ) {
@@ -83,7 +84,7 @@ fun DynamicScaffoldView(
                     showRoute = showRoute,
                     date = routePlannerViewModel.getStartDate(),
                     time = routePlannerViewModel.getStartTime(),
-                    duration = routePlannerViewModel.getDuration(),
+                    duration = duration,
                     waypoints = waypoints,
                     context = context,
                     showScroll = showRoute

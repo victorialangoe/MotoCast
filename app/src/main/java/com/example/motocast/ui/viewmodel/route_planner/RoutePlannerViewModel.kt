@@ -229,14 +229,13 @@ class RoutePlannerViewModel : ViewModel() {
     /**
      * This method returns the duration of the trip. // TODO: remove dummy value
      */
-    fun getDuration(seconds: Long = 500): String {
-
-        val duration = Duration.ofSeconds(seconds)
+    private fun getDurationAsString(durationInSek: Long): String {
+        val duration = Duration.ofSeconds(durationInSek)
         return "Varighet: " + when {
             duration.toDays() > 0 -> "${duration.toDays()} ${if (duration.toDays() == 1L) "dag" else "dager"}"
             duration.toHours() > 0 -> "${duration.toHours()} ${if (duration.toHours() == 1L) "time" else "timer"}"
             duration.toMinutes() > 0 -> "${duration.toMinutes()} min"
-            else -> "$seconds sek"
+            else -> "$durationInSek sek"
         }
     }
 
@@ -291,7 +290,6 @@ class RoutePlannerViewModel : ViewModel() {
     private suspend fun addWaypointsToUiState(
         legs: List<Leg>,
         waypoints: List<Waypoint>,
-        duration: Double,
         startTime: TimeAndDateUiState,
     ) = coroutineScope {
         val weatherViewModel = WeatherViewModel()
@@ -429,10 +427,13 @@ class RoutePlannerViewModel : ViewModel() {
                             val waypoints = routeSearchResult.waypoints
                             val legs = routeSearchResult.routes[0].legs
                             val duration = routeSearchResult.routes[0].duration
+                            _uiState.value = _uiState.value.copy(
+                                durationAsString = getDurationAsString(duration.toLong()    )
+                            )
+
                             addWaypointsToUiState(
                                 legs,
                                 waypoints,
-                                duration,
                                 startTime = _uiState.value.startTime
                             )
                             Log.d(
