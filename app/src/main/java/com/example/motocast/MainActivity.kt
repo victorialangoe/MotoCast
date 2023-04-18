@@ -19,6 +19,7 @@ import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
+import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -27,12 +28,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var mapLocationViewModel: MapLocationViewModel
     private lateinit var routePlannerViewModel: RoutePlannerViewModel
     private lateinit var addressDataViewModel: AddressDataViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme {
                 val animationState = rememberAnimationState()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -54,16 +55,16 @@ class MainActivity : ComponentActivity() {
                                 weatherViewModel = weatherViewModel,
                                 routePlannerViewModel = routePlannerViewModel,
                                 addressDataViewModel = addressDataViewModel,
+                                settingsViewModel = settingsViewModel,
                                 context = this,
-                                mapBottomOffset = 50 // Bug when we change theme (Crashes the app)
                             )
                         }
                     }
                 }
-            }
+
         }
 
-
+        settingsViewModel = SettingsViewModel()
         addressDataViewModel = AddressDataViewModel()
         routePlannerViewModel = RoutePlannerViewModel()
         weatherViewModel = WeatherViewModel()

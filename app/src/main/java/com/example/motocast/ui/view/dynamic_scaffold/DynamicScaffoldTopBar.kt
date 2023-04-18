@@ -16,6 +16,7 @@ import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 
 @Composable
 fun DynamicScaffoldViewTopBar(
+    modifier: Modifier = Modifier,
     context: Context,
     weatherViewModel: WeatherViewModel,
     onLocateUserClick: () -> Unit,
@@ -23,9 +24,8 @@ fun DynamicScaffoldViewTopBar(
 ) {
     val weatherUiState = weatherViewModel.uiState.collectAsState()
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 

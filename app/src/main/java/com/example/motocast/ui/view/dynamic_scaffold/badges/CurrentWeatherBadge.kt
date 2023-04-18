@@ -24,7 +24,6 @@ fun CurrentWeatherBadge(
 ) {
     Box(
         modifier = Modifier
-            .padding(vertical = 2.dp, horizontal = 4.dp)
             .clip(MaterialTheme.shapes.extraLarge)
             .background(color = MaterialTheme.colorScheme.surface)
     ) {

@@ -8,4 +8,5 @@ data class MapLocationUiState(
     val mapView: MapView? = null,
     val lastLocation: Location? = null,
     val trackUserOnMap: Boolean = false,
+    val mapBottomOffset: Int = 50,
 )

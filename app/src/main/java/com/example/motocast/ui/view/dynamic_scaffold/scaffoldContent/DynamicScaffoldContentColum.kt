@@ -1,7 +1,6 @@
 package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -9,10 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 @Composable
@@ -20,6 +16,7 @@ fun DynamicScaffoldContentColum(
     modifier: Modifier = Modifier,
     routeScaffoldButtonOnClick: () -> Unit,
     homeScaffoldButtonOnClick: () -> Unit,
+    settingsNavigateTo: () -> Unit,
     isRouteLoading: Boolean,
     showScroll: Boolean = true,
     showRoute: Boolean,
@@ -35,7 +32,7 @@ fun DynamicScaffoldContentColum(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (showScroll){
+        if (showScroll) {
             // Little box
             Box(
                 modifier = Modifier
@@ -45,7 +42,7 @@ fun DynamicScaffoldContentColum(
 
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
             )
-            Spacer (modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         if (showRoute) RouteScaffoldContent(
@@ -55,9 +52,13 @@ fun DynamicScaffoldContentColum(
             time = time,
             duration = duration,
             waypoints = waypoints,
-            context = context
+            context = context,
+            settingsNavigateTo = settingsNavigateTo
         )
-        else HomeScaffoldContent(onButtonClick = homeScaffoldButtonOnClick)
+        else HomeScaffoldContent(
+            onButtonClick = homeScaffoldButtonOnClick,
+            settingsNavigateTo = settingsNavigateTo
+        )
 
     }
 }
