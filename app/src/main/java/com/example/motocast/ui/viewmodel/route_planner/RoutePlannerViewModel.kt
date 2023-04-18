@@ -17,6 +17,7 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.internal.format
 import java.time.Duration
 import java.util.*
@@ -25,7 +26,7 @@ class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
     private val viewModelScope = CoroutineScope(Dispatchers.Main)
 
-    val uiState = _uiState
+    val uiState = _uiState.asStateFlow()
     private val reverseGeocodingDataSource = ReverseGeocodingSource()
 
 

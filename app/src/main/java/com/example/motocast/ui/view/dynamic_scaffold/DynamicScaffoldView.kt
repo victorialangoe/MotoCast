@@ -26,6 +26,7 @@ import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 @Composable
 fun DynamicScaffoldView(
     context: Context,
+    navigateToSettings: () -> Unit,
     destinations: List<Destination>,
     waypoints: List<RouteWithWaypoint>,
     isTrackUserActive: Boolean,
@@ -61,6 +62,7 @@ fun DynamicScaffoldView(
             ) {
 
                 DynamicScaffoldViewTopBar(
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     context = context,
                     weatherViewModel = weatherViewModel,
                     onLocateUserClick = {
@@ -88,7 +90,8 @@ fun DynamicScaffoldView(
                     duration = duration,
                     waypoints = waypoints,
                     context = context,
-                    showScroll = showRoute
+                    showScroll = showRoute,
+                    settingsNavigateTo = navigateToSettings
                 )
 
             }

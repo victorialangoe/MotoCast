@@ -28,7 +28,7 @@ fun DisplayWeather(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
 
         Text(

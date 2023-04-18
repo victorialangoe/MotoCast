@@ -32,7 +32,6 @@ fun LocateUserBadge(
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         modifier = Modifier
-            .padding(4.dp)
             .size(50.dp),
     ) {
 

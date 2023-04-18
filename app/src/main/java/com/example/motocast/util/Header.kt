@@ -12,8 +12,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.motocast.util.buttons.BackButton
 
 @Composable
-fun RouteHeader(
+fun Header(
     onClick: () -> Unit,
+    text: String,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -23,7 +24,7 @@ fun RouteHeader(
         Text(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            text = "Ruteplanlegger",
+            text = text,
             modifier = Modifier.weight(0.8f, fill = true),
             textAlign = TextAlign.Center
         )
