@@ -7,32 +7,24 @@ import androidx.compose.ui.Modifier
 import java.util.*
 import com.example.motocast.R
 import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
-import com.example.motocast.ui.viewmodel.route_planner.TimePickerUiState
 
 @Composable
 fun TimePicker(
     context: Context,
     modifier: Modifier = Modifier,
-    updateTimeUiState: (TimePickerUiState) -> Unit,
-    hour: Int,
-    minute: Int,
+    startTime: Calendar,
+    updateStartTime: (Calendar) -> Unit,
 ) {
     val timePicker = remember {
         TimePickerDialog(context, { _, h, m ->
-            updateTimeUiState(TimePickerUiState(h, m))
-        }, hour, minute, true)
-    }
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, h)
+            calendar.set(Calendar.MINUTE, m)
+            updateStartTime(calendar)
+        }, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE), true)
 
-    var label = if (minute < 10) {
-        "${hour}:0${minute}"
-    } else {
-        "${hour}:${minute}"
     }
-    // If the time is now, show "Nå" instead of the time
-    val calendar = Calendar.getInstance()
-    if (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) == minute) {
-        label = "Nå"
-    }
+    val label = "${startTime.get(Calendar.HOUR_OF_DAY)}:${startTime.get(Calendar.MINUTE)}"
 
     DateAndTimeButton(
         modifier = modifier,

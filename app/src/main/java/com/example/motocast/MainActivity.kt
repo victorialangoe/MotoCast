@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                                 routePlannerViewModel = routePlannerViewModel,
                                 addressDataViewModel = addressDataViewModel,
                                 context = this,
-                                mapBottomOffset = 50
+                                mapBottomOffset = 50 // Bug when we change theme
                             )
                         }
                     }
