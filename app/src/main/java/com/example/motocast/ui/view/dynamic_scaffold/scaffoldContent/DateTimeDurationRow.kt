@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.motocast.util.badges.BasicBadge
 import com.example.motocast.R
+import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
 
 @Composable
 fun DateTimeDurationRow(
@@ -21,11 +21,22 @@ fun DateTimeDurationRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row() {
-            BasicBadge(leadingIcon = R.drawable.calendar, text = date)
-            Spacer(modifier = Modifier.width(10.dp))
-            BasicBadge(leadingIcon = R.drawable.clock, text = time)
+            DateAndTimeButton(
+                label = date,
+                icon = R.drawable.calendar,
+                iconDescription = "Calendar icon",
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            DateAndTimeButton(
+                label = time,
+                icon = R.drawable.clock,
+                iconDescription = "Clock icon",
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = duration, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = duration,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface)
     }
 }

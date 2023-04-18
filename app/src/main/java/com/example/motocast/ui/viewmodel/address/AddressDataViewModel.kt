@@ -33,6 +33,10 @@ class AddressDataViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(query = "")
     }
 
+    fun setQuery(query: String) {
+        _uiState.value = _uiState.value.copy(query = query)
+    }
+
     fun fetchAddressData(
         query: String,
         getAirDistanceFromLocation: (Location) -> Int?,

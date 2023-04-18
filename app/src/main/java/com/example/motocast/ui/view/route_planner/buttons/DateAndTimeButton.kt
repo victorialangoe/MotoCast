@@ -18,14 +18,14 @@ import com.example.motocast.ui.theme.Orange500Transparent
 
 @Composable
 fun DateAndTimeButton(
+    modifier: Modifier = Modifier,
     label: String,
-    onClick: () -> Unit,
+    onClick: () -> Unit? = {},
     icon: Int,
     iconDescription: String,
-    modifier: Modifier = Modifier,
 ) {
     Button(
-        onClick = onClick,
+        onClick = { onClick() },
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.buttonColors(
             containerColor = Orange500Transparent,

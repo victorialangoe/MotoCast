@@ -21,6 +21,7 @@ fun AppNavigation(
     weatherViewModel: WeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
     addressDataViewModel: AddressDataViewModel,
+    mapBottomOffset: Int,
     context: Context
 ) {
     val navController = rememberNavController()
@@ -46,7 +47,8 @@ fun AppNavigation(
                         onInit = {
                             mapLocationViewModel.loadMapView(context)
                         },
-                        geoJsonData = routePlannerViewModelUiState.value.geoJsonData
+                        geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
+                        bottomOffset = mapBottomOffset,
                     )
                 },
                 onNavigateToScreen = {
@@ -126,6 +128,7 @@ fun AppNavigation(
                 formerAddresses = addressViewModelUiState.value.formerAddresses,
                 addresses = addressViewModelUiState.value.addresses,
                 query = addressViewModelUiState.value.query,
+                setQuery = { query -> addressDataViewModel.setQuery(query) },
                 isFetching = addressViewModelUiState.value.isLoading,
                 setActiveDestinationIndex = { index ->
                     routePlannerViewModel.setActiveDestinationIndex(

@@ -3,6 +3,7 @@ package com.example.motocast.ui.view.route_planner.add_destinations
 import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ fun AddDestinationView(
     formerAddresses: List<Address>,
     addresses: List<Address>,
     query: String,
+    setQuery: (String) -> Unit,
     isFetching: Boolean,
     activeDestinationIndex: Int,
     popBackStack: () -> Unit,
@@ -33,7 +35,9 @@ fun AddDestinationView(
 ) {
 
     Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         AddDestinationSearchBar(
@@ -56,6 +60,7 @@ fun AddDestinationView(
             onValueChange = { query, address ->
                 updateDestination(activeDestinationIndex, address)
                 fetchAddressData(query)
+                setQuery(query)
             },
             onSetCurrentLocation = {
                 val location: Location? = getCurrentLocation()
@@ -76,7 +81,7 @@ fun AddDestinationView(
 
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxSize()
         ) {
@@ -98,6 +103,7 @@ fun AddDestinationView(
                     popBackStack()
                 }
             )
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
             DestinationResults(
                 addresses = addresses,

@@ -13,16 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.util.buttons.BasicButton
+import com.example.motocast.util.buttons.FilledButton
 
 @Composable
 fun EditRouteButton(onNavigateToScreen: () -> Unit) {
-    BasicButton(
+    FilledButton(
+        onClick = onNavigateToScreen,
+        text = "Endre rute",
         modifier = Modifier
             .fillMaxWidth()
-            .height(height = 55.dp),
-        text = "Endre rute",
-        onClick = { onNavigateToScreen() },
+            .height(55.dp)
     )
 }
-
-

@@ -26,14 +26,19 @@ fun CardTimePlace(location: String, time: Calendar?) {
     }
 
     Column {
-        Text(text = location,
-            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(
+            text = location,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
         if (date != null) {
-            Text(text = date, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                text = date,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }

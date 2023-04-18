@@ -11,7 +11,8 @@ fun MapView(
     mapView: MapView? = null,
     drawGeoJson: (String) -> Unit,
     onInit: () -> Unit,
-    ) {
+    bottomOffset: Int = 0,
+) {
 
     onInit()
 
@@ -20,9 +21,13 @@ fun MapView(
     }
 
     if (mapView != null) {
-        MapViewContent(mapView)
+        MapViewContent(mapView, bottomOffset)
     } else {
-        Text(text = "Loading map...", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = "Loading map...",
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 

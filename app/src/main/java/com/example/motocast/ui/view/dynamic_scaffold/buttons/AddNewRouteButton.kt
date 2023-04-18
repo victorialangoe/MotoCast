@@ -14,30 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.util.buttons.BasicButton
+import com.example.motocast.util.buttons.FilledButton
 
 @Composable
 fun AddNewRouteButton(onClick: () -> Unit) {
-    Row(
+    FilledButton(
+        onClick = onClick,
+        text = "Legg til ny rute",
         modifier = Modifier
             .fillMaxWidth()
-            .clip(shape = MaterialTheme.shapes.medium)
-            .background(color = MaterialTheme.colorScheme.surfaceTint)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        BasicButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height = 55.dp),
-            text = "Legg til ny rute",
-            onClick = onClick,
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AddNewRouteButtonPreview() {
-    AddNewRouteButton() {}
+            .height(55.dp)
+    )
 }

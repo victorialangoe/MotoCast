@@ -2,6 +2,7 @@ package com.example.motocast.ui.view.dynamic_scaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,10 +37,10 @@ fun DisplayWeather(
             style = MaterialTheme.typography.bodyMedium
         )
 
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(8.dp))
 
         symbolCode?.let { symbolCode ->
-            Image(
+            Icon(
                 painter = painterResource(
                     // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
                     id = context.resources.getIdentifier(

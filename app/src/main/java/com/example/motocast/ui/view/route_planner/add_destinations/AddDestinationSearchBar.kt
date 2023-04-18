@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.util.buttons.BackButton
+import com.example.motocast.util.buttons.CloseButton
 
 @Composable
 fun AddDestinationSearchBar(
@@ -32,7 +33,7 @@ fun AddDestinationSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceTint)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -55,7 +56,7 @@ fun AddDestinationSearchBar(
             modifier = Modifier
                 .weight(0.8f, fill = true)
                 .focusRequester(focusRequester),
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = MaterialTheme.shapes.small,
             textStyle = MaterialTheme.typography.bodyMedium,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.surface,
@@ -76,29 +77,22 @@ fun AddDestinationSearchBar(
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
                     contentDescription = "Søk etter adresse icon",
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
                 )
             },
             trailingIcon = {
                 if (query != "") {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_close_24),
-                        contentDescription = "Fjerne søk etter adresse icon",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable { onClear() }
-                    )
+                    CloseButton { onClear() }
                 } else {
                     // TODO: Implement search icon
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
                         contentDescription = "Søk etter adresse icon",
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(18.dp)
                             .clickable { onSetCurrentLocation() }
                     )
                 }

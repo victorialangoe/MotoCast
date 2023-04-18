@@ -33,6 +33,8 @@ fun RouteScaffoldContent(
         EditRouteButton(onButtonClick)
     }
 
+    Spacer(modifier = Modifier.height(8.dp))
+
     CardsColumn(waypoints = waypoints, context = context)
 }
 

@@ -36,10 +36,11 @@ fun DynamicScaffoldView(
     onNavigateToScreen: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val showRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames()
+    val cornerShape = MaterialTheme.shapes.medium
 
-    val cornerShape = RoundedCornerShape(16.dp)
-    val maxHeight = 700.dp
-    val minHeight = 300.dp
+    val maxHeight = if (showRoute) 600.dp else 150.dp
+    val minHeight = if (showRoute) 300.dp else 150.dp
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -73,18 +74,19 @@ fun DynamicScaffoldView(
                 DynamicScaffoldContentColum(
                     modifier = Modifier
                         .clip(cornerShape)
-                        .background(color = MaterialTheme.colorScheme.surface)
+                        .background(color = MaterialTheme.colorScheme.background)
                         .fillMaxSize()
                         .padding(16.dp),
                     homeScaffoldButtonOnClick = onNavigateToScreen,
                     routeScaffoldButtonOnClick = onNavigateToScreen,
                     routeText = routePlannerViewModel.getDestinationNamesAsString(),
-                    showRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
+                    showRoute = showRoute,
                     date = routePlannerViewModel.getStartDate(),
                     time = routePlannerViewModel.getStartTime(),
                     duration = routePlannerViewModel.getDuration(),
                     waypoints = waypoints,
-                    context = context
+                    context = context,
+                    showScroll = showRoute
                 )
 
             }

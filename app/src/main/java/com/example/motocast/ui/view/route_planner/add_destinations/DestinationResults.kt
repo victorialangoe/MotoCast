@@ -46,11 +46,14 @@ fun DestinationResults(
                 LazyRow {
                     // Search results
                     items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query, then by distance
+                        // Sort first by the address that matches the query
+                        // Then check if the municipality matches the query
+                        // Then by distance
                         { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
                         { it.distanceFromUser }
                     ))) {
-                        AddressResult(it, onResultClick)
+                        AddressResult(it, onResultClick, showInfo = false)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
@@ -59,11 +62,16 @@ fun DestinationResults(
                 LazyColumn {
                     // Search results
                     items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query, then by distance
+                        // Sort first by the address that matches the query
+                        // Then check if the municipality matches the query
+                        // Then by distance
                         { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
                         { it.distanceFromUser }
                     ))) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        if (it != addresses.first()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                         AddressResult(it, onResultClick)
                     }
                 }
@@ -85,9 +93,9 @@ fun DestinationResults(
                 },
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(vertical = 8.dp),
+                    .padding(bottom = 8.dp),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodySmall
             )
         }
 

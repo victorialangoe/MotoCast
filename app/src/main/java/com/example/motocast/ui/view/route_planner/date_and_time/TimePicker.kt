@@ -35,10 +35,10 @@ fun TimePicker(
     }
 
     DateAndTimeButton(
-        label,
+        modifier = modifier,
+        label = label,
         onClick = { timePicker.show() },
         icon = R.drawable.clock,
         iconDescription = "Klokke icon",
-        modifier = modifier
     )
 }

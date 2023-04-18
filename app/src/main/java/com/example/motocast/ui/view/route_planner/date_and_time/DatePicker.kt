@@ -38,16 +38,15 @@ fun DatePicker(
         calendar.get(Calendar.YEAR) == year &&
         calendar.get(Calendar.MONTH) == month &&
         calendar.get(Calendar.DAY_OF_MONTH) == day
-    )
-    {
+    ) {
         label = "I dag"
     }
 
     DateAndTimeButton(
-        label,
+        modifier = modifier,
+        label = label,
         onClick = { datePicker.show() },
         icon = R.drawable.calendar,
         iconDescription = "Kalender icon",
-        modifier = modifier
     )
 }

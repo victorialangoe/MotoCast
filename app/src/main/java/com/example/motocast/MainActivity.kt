@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var mapLocationViewModel: MapLocationViewModel
     private lateinit var routePlannerViewModel: RoutePlannerViewModel
     private lateinit var addressDataViewModel: AddressDataViewModel
+    val mapBottomOffset = 50 // 50dp
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +55,8 @@ class MainActivity : ComponentActivity() {
                                 weatherViewModel = weatherViewModel,
                                 routePlannerViewModel = routePlannerViewModel,
                                 addressDataViewModel = addressDataViewModel,
-                                context = this
+                                context = this,
+                                mapBottomOffset = mapBottomOffset
                             )
                         }
                     }

@@ -79,6 +79,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.15.sp
     ),
+
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,

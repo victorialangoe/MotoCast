@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +25,7 @@ fun BackButton(onClick: () -> Unit) {
         modifier = Modifier
             .size(40.dp)
             .background(Color.Transparent, CircleShape)
+            .clip(CircleShape)
             .clickable(onClick = onClick)
     ) {
         Icon(

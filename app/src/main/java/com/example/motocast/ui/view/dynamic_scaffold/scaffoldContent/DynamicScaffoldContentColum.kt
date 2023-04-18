@@ -21,6 +21,7 @@ fun DynamicScaffoldContentColum(
     routeScaffoldButtonOnClick: () -> Unit,
     homeScaffoldButtonOnClick: () -> Unit,
     routeText: String,
+    showScroll: Boolean = true,
     showRoute: Boolean,
     date: String,
     time: String,
@@ -34,15 +35,18 @@ fun DynamicScaffoldContentColum(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Little box
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
-                .clip(MaterialTheme.shapes.small)
-        )
-        Spacer (modifier = Modifier.height(8.dp))
+        if (showScroll){
+            // Little box
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(4.dp)
+                    .clip(MaterialTheme.shapes.extraLarge)
+
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+            )
+            Spacer (modifier = Modifier.height(8.dp))
+        }
 
         if (showRoute) RouteScaffoldContent(
             onButtonClick = routeScaffoldButtonOnClick,
