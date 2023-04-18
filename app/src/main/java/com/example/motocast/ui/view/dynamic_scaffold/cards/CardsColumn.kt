@@ -49,8 +49,7 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
                             .background(color = MaterialTheme.colorScheme.surface)
-                            .fillMaxWidth()
-                            .weight(0.9f),
+                            .fillMaxWidth(),
                         temperature = temperature.toInt(),
                         location = waypoint.name ?: "",
                         time = time,
