@@ -21,8 +21,7 @@ fun AddNewRouteButton(onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = MaterialTheme.shapes.medium)
-            .background(Color(0xFFF7F7F7))
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .background(Color(0xFFF7F7F7)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

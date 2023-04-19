@@ -24,7 +24,7 @@ fun MapViewContent(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 }
-                .padding(bottom = 180.dp)
+                .padding(bottom = 50.dp)
         )
 
 

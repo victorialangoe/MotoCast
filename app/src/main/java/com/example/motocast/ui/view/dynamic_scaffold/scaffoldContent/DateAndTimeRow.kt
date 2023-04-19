@@ -13,18 +13,14 @@ import com.example.motocast.R
 fun DateTimeDurationRow(
     date: String,
     time: String,
-    duration: String,
 ) {
     Row(modifier = Modifier
-        .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row() {
-            BasicBadge(leadingIcon = R.drawable.calendar, text = date)
-            Spacer(modifier = Modifier.width(10.dp))
-            BasicBadge(leadingIcon = R.drawable.clock, text = time)
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = duration)
+        BasicBadge(leadingIcon = R.drawable.calendar, text = date)
+        Spacer(modifier = Modifier.width(10.dp))
+        BasicBadge(leadingIcon = R.drawable.clock, text = time)
     }
 }
