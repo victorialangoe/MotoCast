@@ -42,8 +42,8 @@ fun DynamicScaffoldView(
     val showRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames()
     val cornerShape = MaterialTheme.shapes.large
 
-    val maxHeight = if (showRoute) 800.dp else 150.dp
-    val minHeight = if (showRoute) 300.dp else 150.dp
+    val maxHeight = if (showRoute) 800.dp else 200.dp
+    val minHeight = if (showRoute) 300.dp else 200.dp
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -62,7 +62,7 @@ fun DynamicScaffoldView(
             ) {
 
                 DynamicScaffoldViewTopBar(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     context = context,
                     weatherViewModel = weatherViewModel,
                     onLocateUserClick = {

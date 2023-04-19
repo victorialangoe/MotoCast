@@ -9,12 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.route_planner.buttons.AddFieldButton
-import com.example.motocast.ui.view.route_planner.buttons.ClearAllButton
-import com.example.motocast.ui.view.route_planner.buttons.CreateRouteButton
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.viewmodel.route_planner.Destination
+import com.example.motocast.util.views.buttons.BasicButton
+import com.example.motocast.util.views.buttons.ButtonType
 import java.util.*
 
 @Composable
@@ -63,8 +62,13 @@ fun RoutePlannerView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                AddFieldButton(
-                    addDestination = { addDestination() },
+                // This is the button that adds a new destination
+                BasicButton(
+                    onClick = {
+                        navigateTo("home_screen")
+                        addDestination()
+                    },
+                    text = if (destinations.size < 10) "Legg til stopp " else "Maks 10 stopp",
                     enabled = destinations.size < 10
                 )
 
@@ -76,19 +80,24 @@ fun RoutePlannerView(
                     updateStartTime = { updateStartTime(it) }
                 )
 
+                // Button for clearing all destinations
                 if (routesAdded) {
                     Spacer(modifier = Modifier.height(16.dp))
-                    ClearAllButton(clearAll = { clearAll() })
+                    BasicButton(
+                        buttonType = ButtonType.Transparent,
+                        onClick = { clearAll() },
+                        text = "Fjern alle stopp"
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                CreateRouteButton(
-                    startRoute = { startRoute() },
+                // Button for starting the route
+                BasicButton(
+                    onClick = { startRoute() },
+                    text = "Start rute",
                     enabled = enabledStartRoute
                 )
-
-
             }
         })
     }

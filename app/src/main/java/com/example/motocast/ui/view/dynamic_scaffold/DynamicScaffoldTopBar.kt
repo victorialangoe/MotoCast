@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.dynamic_scaffold.badges.CurrentWeatherBadge
 import com.example.motocast.ui.view.dynamic_scaffold.badges.LocateUserBadge
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
+import com.example.motocast.util.views.buttons.LocateUserButton
 
 @Composable
 fun DynamicScaffoldViewTopBar(
@@ -39,6 +40,6 @@ fun DynamicScaffoldViewTopBar(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        LocateUserBadge(onLocateUserClick = { onLocateUserClick() }, active = isTrackUserActive)
+        LocateUserButton(active = isTrackUserActive) { onLocateUserClick() }
     }
 }

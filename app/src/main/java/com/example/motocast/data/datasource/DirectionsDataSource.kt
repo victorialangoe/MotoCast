@@ -1,11 +1,9 @@
 package com.example.motocast.data.datasource
 
-import androidx.lifecycle.ViewModel
 import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.data.model.RouteSearchResult
-import com.example.motocast.util.DataHelper
-import retrofit2.Response
+import com.example.motocast.util.data.DataHelper
 
 class DirectionsDataSource : DataHelper() {
     private val directionsRetrofitService = DirectionsHelper().createDirectionsAPI()

@@ -3,7 +3,7 @@ package com.example.motocast.data.datasource;
 import ReverseGeocodingResult
 import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.geocoding.ReverseGeocodingHelper
-import com.example.motocast.util.DataHelper
+import com.example.motocast.util.data.DataHelper
 
 class ReverseGeocodingSource: DataHelper() {
     private val reverseGeocodingRetrofitService = ReverseGeocodingHelper().createReverseGeocodingAPI()

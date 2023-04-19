@@ -1,9 +1,8 @@
 package com.example.motocast.data.datasource
 
 import LongTermWeatherData
-import androidx.lifecycle.ViewModel
 import com.example.motocast.data.api.location_forecast.LocationForecastHelper
-import com.example.motocast.util.DataHelper
+import com.example.motocast.util.data.DataHelper
 
 
 class LocationForecastDataSource: DataHelper() {

@@ -1,4 +1,4 @@
-package com.example.motocast.util.buttons
+package com.example.motocast.util.views.buttons
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,22 +20,22 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CloseButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .size(20.dp)
-            .background(Color.Transparent, CircleShape)
-            .clip(CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = "Back",
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(2.dp)
-        )
-    }
+    BasicButton(
+        modifier = modifier,
+        content = { _, contentSize ->
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Lukk knapp",
+                modifier = Modifier
+                    .size(contentSize)
+            )
+        },
+        onClick = onClick,
+        circle = true,
+        buttonSize = ButtonSize.Small,
+        buttonType = ButtonType.Transparent,
+    )
 }
-

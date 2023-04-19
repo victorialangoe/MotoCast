@@ -1,7 +1,7 @@
 package com.example.motocast.data.api.geocoding
 
 import com.example.motocast.BuildConfig
-import com.example.motocast.util.DataHelper
+import com.example.motocast.util.data.DataHelper
 
 class ReverseGeocodingHelper: DataHelper() {
     fun createReverseGeocodingAPI(): ReverseGeocodingApi? {

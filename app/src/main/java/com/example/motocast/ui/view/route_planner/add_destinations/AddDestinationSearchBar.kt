@@ -16,8 +16,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
-import com.example.motocast.util.buttons.BackButton
-import com.example.motocast.util.buttons.CloseButton
+import com.example.motocast.util.views.buttons.BackButton
+import com.example.motocast.util.views.buttons.CloseButton
 
 @Composable
 fun AddDestinationSearchBar(

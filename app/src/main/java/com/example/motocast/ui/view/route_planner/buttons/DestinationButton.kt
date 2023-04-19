@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.route_planner.Destination
-import com.example.motocast.util.buttons.CloseButton
+import com.example.motocast.util.views.buttons.CloseButton
 
 
 @Composable

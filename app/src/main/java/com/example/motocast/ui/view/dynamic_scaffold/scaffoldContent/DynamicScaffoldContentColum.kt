@@ -29,7 +29,6 @@ fun DynamicScaffoldContentColum(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (showScroll) {
@@ -42,11 +41,11 @@ fun DynamicScaffoldContentColum(
 
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         if (showRoute) RouteScaffoldContent(
-            onButtonClick = routeScaffoldButtonOnClick,
+            onEditButtonClick = routeScaffoldButtonOnClick,
             isLoading = isRouteLoading,
             date = date,
             time = time,
@@ -56,7 +55,7 @@ fun DynamicScaffoldContentColum(
             settingsNavigateTo = settingsNavigateTo
         )
         else HomeScaffoldContent(
-            onButtonClick = homeScaffoldButtonOnClick,
+            onStartButtonClick = homeScaffoldButtonOnClick,
             settingsNavigateTo = settingsNavigateTo
         )
 

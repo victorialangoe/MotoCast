@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import com.example.motocast.util.buttons.BackButton
+import com.example.motocast.util.views.buttons.BackButton
 
 @Composable
 fun Header(

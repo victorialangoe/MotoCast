@@ -1,4 +1,4 @@
-package com.example.motocast.util
+package com.example.motocast.util.data
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

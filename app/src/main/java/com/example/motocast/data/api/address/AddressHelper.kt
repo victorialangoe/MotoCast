@@ -1,11 +1,7 @@
 package com.example.motocast.data.api.address
 
-import android.util.Log
 import com.example.motocast.BuildConfig
-import com.example.motocast.util.DataHelper
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.motocast.util.data.DataHelper
 
 class AddressHelper: DataHelper() {
 
