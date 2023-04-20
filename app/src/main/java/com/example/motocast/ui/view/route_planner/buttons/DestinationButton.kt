@@ -18,6 +18,7 @@ fun DestinationButton(
     destinations: List<Destination>,
     editDestination: () -> Unit,
     removeDestination: () -> Unit,
+    enabledRemove: Boolean,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -68,9 +69,10 @@ fun DestinationButton(
                     },
                 )
                 if (destinations.size > 2) {
-                    CloseButton {
-                        removeDestination()
-                    }
+                    CloseButton(
+                        onClick = removeDestination,
+                        enabled = enabledRemove,
+                    )
                 }
             }
 

@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CloseButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     BasicButton(
         modifier = modifier,
-        content = { _, contentSize, _ ->
+        content = { _, contentSize, _, _ ->
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Lukk knapp",
@@ -34,6 +35,7 @@ fun CloseButton(
             )
         },
         onClick = onClick,
+        enabled = enabled,
         circle = true,
         buttonSize = ButtonSize.Small,
         buttonType = ButtonType.Transparent,

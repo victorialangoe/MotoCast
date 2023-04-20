@@ -14,7 +14,10 @@ import androidx.compose.ui.unit.sp
 import java.util.*
 
 @Composable
-fun CardTimePlace(location: String, time: Calendar?) {
+fun CardTimePlace(
+    modifier: Modifier = Modifier,
+    location: String,
+    time: Calendar?) {
 
     val date = time?.let {
         val day = it.get(Calendar.DAY_OF_MONTH)
@@ -25,7 +28,9 @@ fun CardTimePlace(location: String, time: Calendar?) {
         "$day. $month ${String.format("%02d", hour)}:${String.format("%02d", minute)}"
     }
 
-    Column {
+    Column(
+        modifier = modifier,
+    ){
         Text(
             text = location,
             style = MaterialTheme.typography.bodyMedium,

@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.viewmodel.route_planner.Destination
+import com.example.motocast.util.views.Header
 import com.example.motocast.util.views.buttons.BasicButton
 import com.example.motocast.util.views.buttons.ButtonType
 import java.util.*
@@ -29,7 +32,8 @@ fun RoutePlannerView(
     destinations: List<Destination>,
     clearAll: () -> Unit,
     startTime: Calendar,
-    context: Context
+    context: Context,
+    isLoading: Boolean
 ) {
 
     Column(
@@ -55,7 +59,8 @@ fun RoutePlannerView(
                         destinationIndex = destinationIndex,
                         destinations = destinations,
                         editDestination = { editDestination(destinationIndex) },
-                        removeDestination = { removeDestination(destinationIndex) }
+                        removeDestination = { removeDestination(destinationIndex) },
+                        enabledRemove = destinations.size > 2 && !isLoading
                     )
                 }
 
@@ -77,7 +82,8 @@ fun RoutePlannerView(
                 DateTimePicker(
                     context = context,
                     startTime = startTime,
-                    updateStartTime = { updateStartTime(it) }
+                    updateStartTime = { updateStartTime(it) },
+                    enabled = !isLoading
                 )
 
                 // Button for clearing all destinations
@@ -86,7 +92,8 @@ fun RoutePlannerView(
                     BasicButton(
                         buttonType = ButtonType.Transparent,
                         onClick = { clearAll() },
-                        text = "Fjern alle stopp"
+                        text = "Fjern alle stopp",
+                        enabled = !isLoading
                     )
                 }
 
@@ -95,8 +102,23 @@ fun RoutePlannerView(
                 // Button for starting the route
                 BasicButton(
                     onClick = { startRoute() },
-                    text = "Start rute",
-                    enabled = enabledStartRoute
+                    enabled = enabledStartRoute && !isLoading,
+                    content = { textStyle, dp, color, textColor ->
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                color = color,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Start rute",
+                                style = textStyle,
+                                color = color,
+                                modifier = Modifier.padding(dp)
+                            )
+                        }
+                    }
+
                 )
             }
         })

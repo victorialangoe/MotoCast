@@ -20,15 +20,16 @@ import com.example.motocast.R
 
 @Composable
 fun DisplayWeather(
+    modifier: Modifier = Modifier,
     temperature: Int,
     fare: Boolean,
     symbolCode: String?,
     context: android.content.Context
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
+        modifier = modifier.padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
 
         Text(

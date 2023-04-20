@@ -97,4 +97,5 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     testImplementation "androidx.compose.ui:ui-test-junit4:1.4.1"
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:3.1.0'
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
 }

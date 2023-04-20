@@ -79,6 +79,7 @@ class MainActivity : ComponentActivity() {
         // Start fetching data when the user resumes the activity
         weatherViewModel.startFetchingNowCastData { mapLocationViewModel.getCurrentLocation() }
         mapLocationViewModel.startLocationTracking()
+
     }
 
     override fun onPause() {

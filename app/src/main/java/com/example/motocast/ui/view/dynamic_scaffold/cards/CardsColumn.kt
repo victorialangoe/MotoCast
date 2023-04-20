@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                 val weather = waypoint.weatherUiState
                 val time = waypoint.timestamp
                 val temperature = weather?.temperature ?: 0
+                val alert = weather?.alerts
 
                 if (waypoint != waypoints.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -53,6 +55,7 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                         temperature = temperature.toInt(),
                         location = waypoint.name ?: "",
                         time = time,
+                        alert = alert?.features?.firstOrNull()?.properties?.title ?: "",
                         iconSymbol = weather?.symbolCode ?: "",
                         context = context
                     )

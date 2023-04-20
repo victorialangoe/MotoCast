@@ -1,7 +1,6 @@
 package com.example.motocast.ui.view
 
 import android.content.Context
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
@@ -17,7 +16,11 @@ import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
+import com.example.motocast.ui.viewmodel.weather.WeatherUiState
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
@@ -34,11 +37,11 @@ fun AppNavigation(
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
     val mapLocationViewModelUiState = mapLocationViewModel.uiState.collectAsState()
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
+    val weatherUiStateS = weatherViewModel.uiState.collectAsState()
 
     AppTheme(
         darkTheme = settingsViewModelUiState.value.darkMode,
     ) {
-
         NavHost(navController = navController, startDestination = "home_screen") {
             composable("home_screen") {
                 DynamicScaffoldView(
@@ -105,19 +108,33 @@ fun AppNavigation(
                     },
                     navigateTo = { screen -> navController.navigate(screen) },
                     startRoute = {
-                        routePlannerViewModel.start(
-                            { navController.navigate("home_screen") },
-                            {
-                                mapLocationViewModel.fitCameraToRouteAndWaypoints(
-                                    routePlannerViewModelUiState.value.destinations
-                                )
-                            }
-                        )
-                        mapLocationViewModel.trackUserOnMap(
-                            routeExists = true,
-                            destinations = routePlannerViewModelUiState.value.destinations,
-                            track = false
-                        )
+                        CoroutineScope(Dispatchers.Main).launch {
+
+                            routePlannerViewModel.start(
+                                { navController.navigate("home_screen") },
+                                {
+                                    mapLocationViewModel.fitCameraToRouteAndWaypoints(
+                                        routePlannerViewModelUiState.value.destinations
+                                    )
+                                },
+                                getWeatherData = { lat: Double, lon: Double, time: Calendar, callback: (WeatherUiState) -> Unit ->
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        weatherViewModel.getWeatherData(
+                                            lat,
+                                            lon,
+                                            time
+                                        ) { weatherUiState ->
+                                            weatherUiState?.let { callback(it) }
+                                        }
+                                    }
+                                },
+                            )
+                            mapLocationViewModel.trackUserOnMap(
+                                routeExists = true,
+                                destinations = routePlannerViewModelUiState.value.destinations,
+                                track = false
+                            )
+                        }
                     },
                     removeDestination = { index -> routePlannerViewModel.removeDestination(index) },
                     updateStartTime = { time: Calendar ->
@@ -131,19 +148,23 @@ fun AppNavigation(
                     context = context,
                     enabledStartRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
                     routesAdded = routePlannerViewModel.checkIfSomeDestinationsHaveNames(),
+                    isLoading = routePlannerViewModelUiState.value.isLoading,
                 )
             }
             composable("add_destination_screen") {
                 AddDestinationView(
                     fetchAddressData = { query ->
-                        addressDataViewModel.fetchAddressData(
-                            query,
-                            getAirDistanceFromLocation = { location ->
-                                mapLocationViewModel.getAirDistanceFromLocation(
-                                    location
-                                )
-                            }
-                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            addressDataViewModel.fetchAddressData(
+                                query,
+                                getAirDistanceFromLocation = { location ->
+                                    mapLocationViewModel.getAirDistanceFromLocation(
+                                        location
+                                    )
+                                }
+                            )
+                        }
                     },
                     clearQuery = { addressDataViewModel.clearQuery() },
                     clearResults = { addressDataViewModel.clearResults() },
@@ -169,6 +190,7 @@ fun AppNavigation(
                     activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                     popBackStack = { navController.popBackStack() },
                     getCurrentLocation = { mapLocationViewModel.getCurrentLocation() },
+                    navigateTo = { screen -> navController.navigate(screen) },
                 )
             }
             composable("settings_screen") {

@@ -3,30 +3,26 @@ package com.example.motocast.data.datasource
 import LongTermWeatherData
 import com.example.motocast.data.api.location_forecast.LocationForecastHelper
 import com.example.motocast.util.data.DataHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
-class LocationForecastDataSource: DataHelper() {
+class LocationForecastDataSource : DataHelper() {
     private val metRetrofitService = LocationForecastHelper().createLongTermWeatherDataAPI()
-    fun getLongTermWeatherData(
+
+    suspend fun getLongTermWeatherData(
         latitude: Double,
         longitude: Double,
-        onSuccess: (LongTermWeatherData) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        if (metRetrofitService != null) {
+    ): LongTermWeatherData? {
+        return withContext(Dispatchers.IO) {
             fetchData(
-                apiCall = { metRetrofitService.getWeatherData(latitude, longitude).execute() },
-                onSuccess = { longTermWeatherData: LongTermWeatherData ->
-                    onSuccess(
-                        longTermWeatherData
-                    )
+                apiCall = {
+                    metRetrofitService?.getWeatherData(latitude, longitude)?.execute()
                 },
-                onError = { errorMessage: String -> onError(errorMessage) }
+                onSuccess = { longTermWeatherData: LongTermWeatherData -> longTermWeatherData },
+                onError = { Throwable("Error: ${it.message}") }
             )
-        } else {
-            onError("Error: metRetrofitService is null")
+
         }
     }
-
 }
-

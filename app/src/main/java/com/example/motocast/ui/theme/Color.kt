@@ -15,6 +15,16 @@ val Orange500 = Color(0xFFFF7043)
 val Orange500Transparent = Color(0x30FF7043)
 val Orange700 = Color(0xFFF4511E)
 
+val red500 = Color(0xFFf44336)
+val red700 = Color(0xFFd32f2f)
+val red900 = Color(0xFFb71c1c)
+
+val green500 = Color(0xFF4caf50)
+val green700 = Color(0xFF388e3c)
+val green900 = Color(0xFF1b5e20)
+
+
+
 val LightPrimary = Color(0xFFF57C00)
 val LightSecondary = Color(0xFFD84315)
 val LightBackground = Color(0xFFFFFFFF)

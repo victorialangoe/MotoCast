@@ -2,44 +2,48 @@ package com.example.motocast.util.data
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-open class DataHelper: ViewModel() {
+open class DataHelper : ViewModel() {
 
 
-    fun <T> fetchData(
-        apiCall: suspend () -> Response<T>,
-        onSuccess: (T) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val response = apiCall()
-
+    suspend fun <T> fetchData(
+        apiCall: () -> Response<T>?,
+        onSuccess: (T) -> T,
+        onError: (Error) -> Unit
+    ): T? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiCall()
+                if (response != null) {
                     if (response.isSuccessful) {
                         val data = response.body()
                         if (data != null) {
                             onSuccess(data)
                         } else {
-                            Log.d("Empty response", response.toString())
-                            onError("Empty response")
+                            onError(Error("Error: data is null"))
+                            null
                         }
                     } else {
+                        val errorMessage = "Error: ${response.code()} ${response.message()}"
                         Log.d("Error", response.toString())
-                        onError("Error: ${response.code()} ${response.message()}")
+                        onError(Error(errorMessage))
+                        null
                     }
-                } catch (e: Exception) {
-                    Log.d("Exception", e.toString())
-                    onError(e.localizedMessage ?: "Unknown error")
+                } else {
+                    throw Exception("Error: response is null")
                 }
+
+            } catch (e: Exception) {
+                val errorMessage = "Error: ${e.message}"
+                Log.d("Exception", e.toString())
+                onError(Error(errorMessage))
+                null
             }
         }
     }
@@ -55,11 +59,11 @@ open class DataHelper: ViewModel() {
 
             // Optional API key header
             apiKey?.let { key ->
-                    clientBuilder.addInterceptor { chain ->
-                        val requestBuilder = chain.request().newBuilder()
-                        requestBuilder.header("X-Gravitee-API-Key", key)
-                        chain.proceed(requestBuilder.build())
-                    }
+                clientBuilder.addInterceptor { chain ->
+                    val requestBuilder = chain.request().newBuilder()
+                    requestBuilder.header("X-Gravitee-API-Key", key)
+                    chain.proceed(requestBuilder.build())
+                }
             }
 
             // Optional custom headers
@@ -81,7 +85,7 @@ open class DataHelper: ViewModel() {
 
             retrofit.create(apiClass)
         } catch (e: Exception) {
-            Log.d("DataHelper","Error: ${e}")
+            Log.d("DataHelper", "Error: ${e}")
             null
         }
     }

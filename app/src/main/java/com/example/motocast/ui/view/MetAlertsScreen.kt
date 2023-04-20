@@ -21,12 +21,6 @@ fun MetAlertsScreen(viewModel: MetAlertsDataSource) {
     var metAlertsData by remember { mutableStateOf<MetAlertsDataModel?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getMetAlertsData(
-            onSuccess = { data -> metAlertsData = data },
-            onError = { errorMessage -> error = errorMessage }
-        )
-    }
 
     if (error != null) {
         Text(text = "Error: $error")

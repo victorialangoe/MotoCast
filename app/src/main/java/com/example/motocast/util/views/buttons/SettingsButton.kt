@@ -23,7 +23,7 @@ fun SettingsButton(
     onClick: () -> Unit,
 ) {
     BasicButton(
-        content = { _, contentSize, _ ->
+        content = { _, contentSize, _ , _ ->
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = "Innstillinger Ikon",

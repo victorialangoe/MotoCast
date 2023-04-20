@@ -11,6 +11,7 @@ import java.util.Calendar
 fun DateTimePicker(
     context: Context,
     startTime: Calendar,
+    enabled: Boolean = true,
     updateStartTime: (Calendar) -> Unit,
 ) {
     Row(
@@ -21,14 +22,16 @@ fun DateTimePicker(
             context = context,
             startTime = startTime,
             updateStartTime = updateStartTime,
-            modifier = Modifier.weight(1f, true)
+            modifier = Modifier.weight(1f, true),
+            enabled = enabled
         )
         Spacer(modifier = Modifier.width(16.dp))
         TimePicker(
             context = context,
             startTime = startTime,
             updateStartTime = updateStartTime,
-            modifier = Modifier.weight(1f, true)
+            modifier = Modifier.weight(1f, true),
+            enabled = enabled
         )
     }
 }

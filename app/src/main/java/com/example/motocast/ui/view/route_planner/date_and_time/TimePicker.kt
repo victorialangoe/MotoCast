@@ -13,6 +13,7 @@ fun TimePicker(
     context: Context,
     modifier: Modifier = Modifier,
     startTime: Calendar,
+    enabled: Boolean = true,
     updateStartTime: (Calendar) -> Unit,
 ) {
     val timePicker = remember {
@@ -29,6 +30,7 @@ fun TimePicker(
     DateAndTimeButton(
         modifier = modifier,
         label = label,
+        enabled = enabled,
         onClick = { timePicker.show() },
         icon = R.drawable.clock,
         iconDescription = "Klokke icon",

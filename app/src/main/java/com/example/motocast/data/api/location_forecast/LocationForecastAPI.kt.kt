@@ -1,4 +1,4 @@
-package com.example.motocast.data.api
+package com.example.motocast.data.api.location_forecast
 
 import LongTermWeatherData
 import com.example.motocast.data.model.NowCastDataModel

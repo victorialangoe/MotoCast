@@ -1,6 +1,5 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import ReverseGeocodingResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.DirectionsDataSource
@@ -10,7 +9,6 @@ import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.ui.viewmodel.weather.WeatherUiState
-import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -21,13 +19,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.internal.format
 import java.time.Duration
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+
 
 class RoutePlannerViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
-    private val viewModelScope = CoroutineScope(Dispatchers.Main)
 
     val uiState = _uiState.asStateFlow()
     private val reverseGeocodingDataSource = ReverseGeocodingSource()
+    private val directionsDataSource = DirectionsDataSource()
 
 
     fun getTotalDestinations(): Int {
@@ -170,13 +171,26 @@ class RoutePlannerViewModel : ViewModel() {
      */
     private fun getDurationAsString(durationInSek: Long): String {
         val duration = Duration.ofSeconds(durationInSek)
-        return "Varighet: " + when {
-            duration.toDays() > 0 -> "${duration.toDays()} ${if (duration.toDays() == 1L) "dag" else "dager"}"
-            duration.toHours() > 0 -> "${duration.toHours()} ${if (duration.toHours() == 1L) "time" else "timer"}"
-            duration.toMinutes() > 0 -> "${duration.toMinutes()} min"
-            else -> "$durationInSek sek"
+        // 1 dag og 2 timer, 3 minutter og 4 sekunder
+
+        val days = duration.toDays()
+        val hours = duration.toHours() % 24
+        val minutes = duration.toMinutes() % 60
+
+        return if (days > 0) {
+            days.toString() + " dag" + (if (days > 1) "er" else "") + " og " +
+                    hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
+                    minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
+        } else {
+           if (hours > 0) {
+                hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
+                        minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
+            } else {
+                minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
+            }
         }
     }
+
 
     private fun getDestinationsCoordinatesAsString(): String {
         val currentUiState = _uiState.value
@@ -209,7 +223,8 @@ class RoutePlannerViewModel : ViewModel() {
                 val step = stepsArray[stepIndex]
                 val geometry = step.geometry
                 // Convert the list of coordinates to a list of Point objects
-                val coordinatesList = geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
+                val coordinatesList =
+                    geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
                 // Create a LineString from the list of Point objects
                 val lineString = LineString.fromLngLats(coordinatesList)
 
@@ -229,17 +244,18 @@ class RoutePlannerViewModel : ViewModel() {
     private suspend fun addWaypointsToUiState(
         legs: List<Leg>,
         waypoints: List<Waypoint>,
-        startTime: Calendar
-    ) = coroutineScope {
+        startTime: Calendar,
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
 
-        val weatherViewModel = WeatherViewModel() // TODO: remove this (should be injected)
+        ) = coroutineScope {
+
         val routeWithWaypoint = createRouteWithWaypoints(waypoints, startTime)
         updateTimeStampForLegs(legs, routeWithWaypoint, startTime)
         val additionalWaypoints = addWaypointsOnLegs(legs)
         routeWithWaypoint.addAll(additionalWaypoints)
 
-        updateRouteTimeStamps( routeWithWaypoint, startTime)
-        updateRouteWeather(routeWithWaypoint, weatherViewModel)
+        updateRouteTimeStamps(routeWithWaypoint, startTime)
+        updateRouteWeather(routeWithWaypoint, getWeatherData)
         // sort the routes by start time
         routeWithWaypoint.sortBy {
             it.timeFromStart
@@ -271,18 +287,38 @@ class RoutePlannerViewModel : ViewModel() {
 
     private suspend fun updateRouteWeather(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
-        weatherViewModel: WeatherViewModel
-    ) {
-        // Update the weather of the routes
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
+    ) = coroutineScope {
+        val updateJobs = mutableListOf<Job>()
+
         for (routeIndex in routeWithWaypoint.indices) {
             val route = routeWithWaypoint[routeIndex]
-            val weather = getWeatherData(weatherViewModel, route)
-            val updatedRoute = route.copy(
-                weatherUiState = weather
-            )
-            routeWithWaypoint[routeIndex] = updatedRoute
+
+            if (route.latitude != null && route.longitude != null && route.timestamp != null) {
+                val job = launch {
+                    suspendCoroutine<Unit> { continuation ->
+                        getWeatherData(
+                            route.latitude,
+                            route.longitude,
+                            route.timestamp
+                        ) { weather ->
+                            val updatedRoute = route.copy(
+                                weatherUiState = weather
+                            )
+                            routeWithWaypoint[routeIndex] = updatedRoute
+                            continuation.resume(Unit)
+                        }
+                    }
+                }
+                updateJobs.add(job)
+            } else {
+                Log.d("Weather", "Weather data not received")
+            }
         }
+
+        updateJobs.forEach { it.join() }
     }
+
     suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
     ): MutableList<RouteWithWaypoint> {
@@ -292,13 +328,13 @@ class RoutePlannerViewModel : ViewModel() {
         val hourInSeconds = 3600.0
         val tempRoutes = mutableListOf<RouteWithWaypoint>()
 
-        for (legIndex in legs.indices){
-            for (stepIndex in legs[legIndex].steps.indices){
+        for (legIndex in legs.indices) {
+            for (stepIndex in legs[legIndex].steps.indices) {
                 val step = legs[legIndex].steps[stepIndex]
 
                 timeFromStart += step.duration
                 timeCounter += step.duration
-                if (timeCounter > hourInSeconds){
+                if (timeCounter > hourInSeconds) {
                     val name = getReverseGeocodedName(
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0]
@@ -319,7 +355,6 @@ class RoutePlannerViewModel : ViewModel() {
         }
         return tempRoutes
     }
-
 
 
     private fun updateRouteTimeStamps(
@@ -362,97 +397,71 @@ class RoutePlannerViewModel : ViewModel() {
         }
     }
 
-    private suspend fun getWeatherData(
-        weatherViewModel: WeatherViewModel,
-        route: RouteWithWaypoint
-    ): WeatherUiState? {
-        return if (route.latitude != null && route.longitude != null && route.timestamp != null) {
-            weatherViewModel.getWeatherData(
-                latitude = route.latitude,
-                longitude = route.longitude,
-                timestamp = route.timestamp
-            )
+    private suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
+        val response = reverseGeocodingDataSource.getReverseGeocodingData(longitude, latitude)
 
-        } else null
-    }
-
-    suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
-        val nameDeferred = CompletableDeferred<String?>()
-
-        reverseGeocodingDataSource.getReverseGeocodingData(
-            longitude,
-            latitude,
-            onSuccess = { response: ReverseGeocodingResult ->
-                Log.d("RouteViewModel", "Reverse geocoding response: ${response.features}")
-                var name = response.features.firstOrNull()?.placeName
-                name = name?.replace(", Norge", "") ?: name
-                nameDeferred.complete(name)
-            },
-            onError = { error: String ->
-                Log.e("RouteViewModel", error)
-                nameDeferred.complete(null)
-            }
-        )
-
-        return nameDeferred.await()
+        return if (response != null) {
+            Log.d("RouteViewModel", "Reverse geocoding response: ${response.features}")
+            val name = response.features.firstOrNull()?.placeName
+            name?.replace(", Norge", "") ?: name
+        } else {
+            throw Exception("Reverse geocoding response is null")
+        }
     }
 
 
     /**
      * Starts the route planning
      */
-    fun start(navigateTo: () -> Unit, fitCameraToRouteAndWaypoints: () -> Unit) {
+    suspend fun start(
+        navigateTo: () -> Unit,
+        fitCameraToRouteAndWaypoints: () -> Unit,
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
+    ) {
         _uiState.value = _uiState.value.copy(isLoading = true)
 
-        val directionsDataSource = DirectionsDataSource()
 
-        val currentUiState = _uiState.value
         if (!checkIfAllDestinationsHaveNames()) {
-            _uiState.value = currentUiState.copy(error = "All destinations must have a name")
+            _uiState.value = _uiState.value.copy(error = "All destinations must have a name")
             return
         }
 
-        // removes null to avoid null pointer exception
-        val destinations = currentUiState.destinations
+        if (_uiState.value.destinations.size >= 2) {
 
-        //needs 2 destinations to get a route
-        if (destinations.size >= 2) {
-            directionsDataSource.getDirectionsData(
-                getDestinationsCoordinatesAsString(),
-                onSuccess = { routeSearchResult: RouteSearchResult ->
-                    viewModelScope.launch {
-                        // Set loading to true
-                        val geoJsonData = convertRouteSearchResultToGeoJSON(routeSearchResult)
+            val response = directionsDataSource.getDirectionsData(
+                getDestinationsCoordinatesAsString()
+            )
+            if (response != null) {
 
-                        withContext(Dispatchers.Main) {
-                            addGeoJsonDataToUiState(geoJsonData)
-                            fitCameraToRouteAndWaypoints()
+                // Set loading to true
+                val geoJsonData = convertRouteSearchResultToGeoJSON(response)
 
-                            val waypoints = routeSearchResult.waypoints
-                            val legs = routeSearchResult.routes[0].legs
-                            val duration = routeSearchResult.routes[0].duration
-                            _uiState.value = _uiState.value.copy(
-                                durationAsString = getDurationAsString(duration.toLong())
-                            )
+                withContext(Dispatchers.Main) {
+                    addGeoJsonDataToUiState(geoJsonData)
+                    fitCameraToRouteAndWaypoints()
 
-                            addWaypointsToUiState(
-                                legs,
-                                waypoints,
-                                startTime = _uiState.value.startTime
-                            )
-                        }
-                    }
-                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    val waypoints = response.waypoints
+                    val legs = response.routes[0].legs
+                    val duration = response.routes[0].duration
+                    _uiState.value = _uiState.value.copy(
+                        durationAsString = getDurationAsString(duration.toLong())
+                    )
 
-                },
-                onError = { error: String ->
-                    Log.d("RoutePlannerViewModel", "Error: $error")
-                    _uiState.value = currentUiState.copy(error = error, isLoading = false)
-                })
-
+                    addWaypointsToUiState(
+                        legs,
+                        waypoints,
+                        startTime = _uiState.value.startTime,
+                        getWeatherData = getWeatherData
+                    )
+                }
+            }
+            _uiState.value = _uiState.value.copy(isLoading = false)
+        } else {
+            _uiState.value = _uiState.value.copy(
+                error = "You need at least two destinations",
+                isLoading = false
+            )
         }
-
         navigateTo()
     }
 }
-

@@ -4,25 +4,25 @@ import ReverseGeocodingResult
 import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.geocoding.ReverseGeocodingHelper
 import com.example.motocast.util.data.DataHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ReverseGeocodingSource: DataHelper() {
     private val reverseGeocodingRetrofitService = ReverseGeocodingHelper().createReverseGeocodingAPI()
 
-    fun getReverseGeocodingData(
+    suspend fun getReverseGeocodingData(
         longitude: Double,
-        latitude: Double,
-        onSuccess: (ReverseGeocodingResult) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        if (reverseGeocodingRetrofitService != null) {
+        latitude: Double
+    ): ReverseGeocodingResult? {
+        return withContext(Dispatchers.IO) {
             fetchData(
-                apiCall = { reverseGeocodingRetrofitService.getReverseGeocode(longitude, latitude, BuildConfig.MAPBOX_ACCESS_TOKEN ).execute() },
-                onSuccess = { reverseGeocodingData: ReverseGeocodingResult -> onSuccess(reverseGeocodingData) },
-                onError = { errorMessage: String -> onError(errorMessage) }
+                apiCall = {
+                    reverseGeocodingRetrofitService?.getReverseGeocode(longitude, latitude, BuildConfig.MAPBOX_ACCESS_TOKEN )
+                        ?.execute()
+                },
+                onSuccess = { reverseGeocodingData: ReverseGeocodingResult -> reverseGeocodingData },
+                onError = { Throwable("Error: ${it.message}") }
             )
-        } else {
-            onError("Error: reverseGeocodingRetrofitService is null")
         }
     }
-
 }

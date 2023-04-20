@@ -3,24 +3,23 @@ package com.example.motocast.data.datasource
 import AddressSearchResult
 import com.example.motocast.data.api.address.AddressHelper
 import com.example.motocast.util.data.DataHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class AddressDataSource: DataHelper() {
     private val addressRetrofitService = AddressHelper().createAddressHelperDataAPI()
 
-    fun getAddressData(
+    suspend fun getAddressData(
         query: String,
-        onSuccess: (AddressSearchResult) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        if (addressRetrofitService != null) {
+    ): AddressSearchResult? {
+        return withContext(Dispatchers.IO) {
             fetchData(
-                apiCall = { addressRetrofitService.searchAddress(query).execute() },
-                onSuccess = { addressData: AddressSearchResult -> onSuccess(addressData) },
-                onError = { errorMessage: String -> onError(errorMessage) }
+                apiCall = { addressRetrofitService?.searchAddress(query)?.execute() },
+                onSuccess = { addressData: AddressSearchResult -> addressData },
+                onError = { Throwable("Error: ${it.message}") }
             )
-        } else {
-            onError("Error: addressRetrofitService is null")
         }
     }
 }
+
 

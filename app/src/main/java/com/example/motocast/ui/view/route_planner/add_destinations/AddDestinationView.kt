@@ -30,6 +30,7 @@ fun AddDestinationView(
     isFetching: Boolean,
     activeDestinationIndex: Int,
     popBackStack: () -> Unit,
+    navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
     getCurrentLocation: () -> Location?,
 ) {
@@ -47,7 +48,7 @@ fun AddDestinationView(
                 clearResults()
             },
             onBack = {
-                popBackStack()
+                navigateTo("route_planner")
                 clearResults()
                 // Minus 1 before removing the destination, since the active destination is the one we are currently editing
                 val currentDestinations = getTotalDestinations() - 1
@@ -100,7 +101,7 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
+                    navigateTo("route_planner")
                 }
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
@@ -120,7 +121,7 @@ fun AddDestinationView(
                     addFormerAddress(address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
+                    navigateTo("route_planner")
                 }
             )
         }
