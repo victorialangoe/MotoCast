@@ -33,6 +33,10 @@ class AddressDataViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(query = "")
     }
 
+    fun setQuery(query: String) {
+        _uiState.value = _uiState.value.copy(query = query)
+    }
+
     fun fetchAddressData(
         query: String,
         getAirDistanceFromLocation: (Location) -> Int?,
@@ -65,10 +69,13 @@ class AddressDataViewModel : ViewModel() {
                         distanceFromUser = distanceFromUser
                     )
                 }
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    addresses = addresses
-                )
+                _uiState.value = _uiState.value.copy(addresses = addresses)
+                // wait for 500 second before setting isLoading to false to avoid flickering
+                Timer().schedule(object : TimerTask() {
+                    override fun run() {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
+                }, 200)
             },
             onError = {
                 Log.d("AddressDataViewModel", "Error: $it")

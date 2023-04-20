@@ -1,14 +1,8 @@
 package com.example.motocast.data.datasource
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.api.metalerts.MetAlertsHelper
 import com.example.motocast.data.model.MetAlertsDataModel
-import com.example.motocast.ui.view.getWeatherIcon
-import com.example.motocast.util.DataHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.motocast.util.data.DataHelper
 
 class MetAlertsDataSource: DataHelper() {
     private val metRetrofitService = MetAlertsHelper().createMetAlertsAPI()

@@ -4,18 +4,17 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.route_planner.buttons.AddFieldButton
-import com.example.motocast.ui.view.route_planner.buttons.ClearAllButton
-import com.example.motocast.ui.view.route_planner.buttons.CreateRouteButton
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.viewmodel.route_planner.Destination
-import java.util.Calendar
+import com.example.motocast.util.views.buttons.BasicButton
+import com.example.motocast.util.views.buttons.ButtonType
+import java.util.*
 
 @Composable
 fun RoutePlannerView(
@@ -26,6 +25,7 @@ fun RoutePlannerView(
     removeDestination: (Int) -> Unit,
     updateStartTime: (Calendar) -> Unit,
     enabledStartRoute: Boolean,
+    routesAdded: Boolean,
     destinations: List<Destination>,
     clearAll: () -> Unit,
     startTime: Calendar,
@@ -34,13 +34,15 @@ fun RoutePlannerView(
 
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(
+                MaterialTheme.colorScheme.background
+            )
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        RouteHeader(onClick = { navigateTo("home_screen") })
+        Header(onClick = { navigateTo("home_screen") }, text = "Ruteplanlegger")
         // This makes the content scrollable
         LazyColumn(content = {
             item {
@@ -48,19 +50,27 @@ fun RoutePlannerView(
 
                 // This is where all the added destinations will be shown (if any)
                 destinations.forEachIndexed { destinationIndex, _ ->
-                        Spacer(modifier = Modifier.height(16.dp)) // Add a gap between the items
-                        DestinationButton(
-                            destinationIndex = destinationIndex,
-                            destinations = destinations,
-                            editDestination = { editDestination(destinationIndex) },
-                            removeDestination = { removeDestination(destinationIndex) }
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(8.dp)) // Add a gap between the items
+                    DestinationButton(
+                        destinationIndex = destinationIndex,
+                        destinations = destinations,
+                        editDestination = { editDestination(destinationIndex) },
+                        removeDestination = { removeDestination(destinationIndex) }
+                    )
+                }
 
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                AddFieldButton { addDestination() }
+                // This is the button that adds a new destination
+                BasicButton(
+                    onClick = {
+                        navigateTo("home_screen")
+                        addDestination()
+                    },
+                    text = if (destinations.size < 10) "Legg til stopp " else "Maks 10 stopp",
+                    enabled = destinations.size < 10
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -70,16 +80,24 @@ fun RoutePlannerView(
                     updateStartTime = { updateStartTime(it) }
                 )
 
+                // Button for clearing all destinations
+                if (routesAdded) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    BasicButton(
+                        buttonType = ButtonType.Transparent,
+                        onClick = { clearAll() },
+                        text = "Fjern alle stopp"
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                CreateRouteButton(
-                    startRoute = { startRoute() },
+                // Button for starting the route
+                BasicButton(
+                    onClick = { startRoute() },
+                    text = "Start rute",
                     enabled = enabledStartRoute
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ClearAllButton(clearAll = { clearAll() })
             }
         })
     }

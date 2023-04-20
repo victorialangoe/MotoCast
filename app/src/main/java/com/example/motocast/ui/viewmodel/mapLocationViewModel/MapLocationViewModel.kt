@@ -8,9 +8,11 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import android.view.Gravity
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.motocast.data.datasource.DirectionsDataSource
+import com.example.motocast.ui.theme.LightPrimary
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.google.android.gms.location.*
 import com.mapbox.geojson.Point
@@ -75,7 +77,7 @@ class MapLocationViewModel(
                                 _uiState.value = _uiState.value.copy(isLoading = false)
                             }
                         mapView.logo.updateSettings {
-                            position = Gravity.TOP or Gravity.RIGHT
+                            position = Gravity.TOP or Gravity.END
 
                         }
 
@@ -171,7 +173,8 @@ class MapLocationViewModel(
             // Check if the layer exists, otherwise create and add the layer
             if (style.getLayer(layerId) == null) {
                 val lineLayer = lineLayer(layerId, sourceId) {
-                    lineColor("#00b4d8")
+                    var hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
+                    lineColor(hexColor)
                     lineWidth(5.0)
                 }
                 style.addLayerBelow(lineLayer, "road-intersection")

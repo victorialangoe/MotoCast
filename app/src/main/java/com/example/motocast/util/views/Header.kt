@@ -3,17 +3,18 @@ package com.example.motocast.ui.view.route_planner
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import com.example.motocast.util.BackButton
+import com.example.motocast.util.views.buttons.BackButton
 
 @Composable
-fun RouteHeader(
+fun Header(
     onClick: () -> Unit,
+    text: String,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -21,8 +22,9 @@ fun RouteHeader(
 
         BackButton(onClick = onClick)
         Text(
-            fontSize = 25.sp,
-            text = "Ruteplanlegger",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            text = text,
             modifier = Modifier.weight(0.8f, fill = true),
             textAlign = TextAlign.Center
         )

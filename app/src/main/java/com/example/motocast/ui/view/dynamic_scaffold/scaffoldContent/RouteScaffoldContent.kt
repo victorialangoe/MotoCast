@@ -1,38 +1,73 @@
 package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.view.dynamic_scaffold.buttons.EditRouteButton
 import com.example.motocast.ui.view.dynamic_scaffold.cards.CardsColumn
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 
 @Composable
 fun RouteScaffoldContent(
-    onButtonClick: () -> Unit,
-    routeText: String,
+    isLoading: Boolean,
     time: String,
     date: String,
     duration: String,
     waypoints: List<RouteWithWaypoint>,
-    context: Context
+    context: Context,
 ) {
     Column(
         modifier = Modifier
-        .fillMaxWidth()
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        RouteText(routeText)
-        Spacer(modifier = Modifier.height(16.dp))
-        DateTimeDurationRow(date, time, duration)
-        Spacer(modifier = Modifier.height(16.dp))
-        EditRouteButton(onButtonClick)
+        // TODO: Make this a composable
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (isLoading) {
+                // Material3 ProgressIndicator
+                CircularProgressIndicator(
+                    modifier = Modifier.size(14.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Text(
+                    text = duration,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp),
+            color = MaterialTheme.colorScheme.surface,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        DateTimeRow(date, time, duration, isLoading)
+        Spacer(modifier = Modifier.height(8.dp))
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp),
+            color = MaterialTheme.colorScheme.surface,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CardsColumn(waypoints = waypoints, context = context, isLoading = isLoading)
+
     }
-
-    CardsColumn(waypoints = waypoints, context = context)
 }
-

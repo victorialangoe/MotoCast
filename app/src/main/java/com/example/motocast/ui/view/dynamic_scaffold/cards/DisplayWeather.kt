@@ -2,6 +2,8 @@ package com.example.motocast.ui.view.dynamic_scaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,33 +28,32 @@ fun DisplayWeather(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
 
         Text(
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
             text = "$temperature °C",
-            style = when (temperature > 0) {
-            true -> TextStyle(color = Color(0xffe74c3c)) // this is red
-            false -> TextStyle(color = Color(0xff3498db)) // this is blue
-        })
+            style = MaterialTheme.typography.bodyMedium
+        )
 
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(8.dp))
 
-        symbolCode?.let { symbolCode ->
-            Image(
-                painter = painterResource(
-                    // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
-                    id = context.resources.getIdentifier(
-                        symbolCode,
-                        "drawable",
-                        context.packageName
-                    )
-                ),
-                contentDescription = symbolCode,
-                modifier = Modifier.size(30.dp)
-            )
+        if (symbolCode != null && symbolCode.isNotEmpty()) {
+            symbolCode.let { symbolCode ->
+                Image(
+                    painter = painterResource(
+                        // TODO: This is a hack to get the symbol code from the string resource. We might want to change this.
+                        id = context.resources.getIdentifier(
+                            symbolCode,
+                            "drawable",
+                            context.packageName
+                        )
+                    ),
+                    contentDescription = symbolCode,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
     }
 

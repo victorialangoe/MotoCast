@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.example.motocast.R
+import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
 import java.util.*
 
 
@@ -61,10 +62,10 @@ fun DatePicker(
     val labelToShow = if (isToday) "I dag" else label
 
     DateAndTimeButton(
-        labelToShow,
+        modifier = modifier,
+        label = labelToShow,
         onClick = { datePicker.show() },
         icon = R.drawable.calendar,
         iconDescription = "Kalender icon",
-        modifier = modifier
     )
 }

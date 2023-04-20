@@ -22,6 +22,7 @@ data class RoutePlannerUiState (
     val error: String? = null,
     val geoJsonData: String? = null,
     val duration: Double = 0.0, // in seconds
+    val durationAsString: String = "",
     val distance: Double = 0.0, // in meters
     val waypoints: List<RouteWithWaypoint> = listOf(),
 )
@@ -32,7 +33,7 @@ data class RouteWithWaypoint (
     val longitude: Double?,
     val timeFromStart: Double?,
     val timestamp: Calendar?,
-    var weatherUiState: WeatherUiState? = null,
+    val weatherUiState: WeatherUiState? = null,
 )
 
 data class Destination (

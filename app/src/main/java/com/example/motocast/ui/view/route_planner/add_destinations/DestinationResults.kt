@@ -1,9 +1,12 @@
 package com.example.motocast.ui.view.route_planner.add_destinations
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,11 +48,14 @@ fun DestinationResults(
                 LazyRow {
                     // Search results
                     items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query, then by distance
+                        // Sort first by the address that matches the query
+                        // Then check if the municipality matches the query
+                        // Then by distance
                         { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
                         { it.distanceFromUser }
                     ))) {
-                        AddressResult(it, onResultClick)
+                        AddressResult(it, onResultClick, showInfo = false)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
@@ -58,11 +64,16 @@ fun DestinationResults(
                 LazyColumn {
                     // Search results
                     items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query, then by distance
+                        // Sort first by the address that matches the query
+                        // Then check if the municipality matches the query
+                        // Then by distance
                         { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
+                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
                         { it.distanceFromUser }
                     ))) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        if (it != addresses.first()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                         AddressResult(it, onResultClick)
                     }
                 }
@@ -74,17 +85,37 @@ fun DestinationResults(
         modifier = Modifier
             .fillMaxWidth()
     ) {
+        if (isLoading) {
+            // Show a loading indicator
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.surface,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(8.dp)
+                )
+            }
+        }
+
         // This is the title of the search results
-        if (showTitle || addresses.isNotEmpty()) {
+        if (showTitle && !isLoading) {
             Text(
-                text = when {
-                    isLoading -> "Laster..."
-                    addresses.isEmpty() -> "Ingen treff"
-                    else -> title
+                text = if (addresses.isEmpty()) {
+                    "Ingen treff"
+                } else {
+                    title
                 },
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(vertical = 8.dp)
+                    .padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall
             )
         }
 

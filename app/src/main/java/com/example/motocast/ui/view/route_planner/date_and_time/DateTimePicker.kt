@@ -16,7 +16,6 @@ fun DateTimePicker(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 8.dp)
     ) {
         DatePicker(
             context = context,

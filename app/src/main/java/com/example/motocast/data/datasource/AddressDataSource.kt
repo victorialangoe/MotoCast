@@ -1,10 +1,8 @@
 package com.example.motocast.data.datasource
 
 import AddressSearchResult
-import android.util.Log
-import androidx.lifecycle.ViewModel
 import com.example.motocast.data.api.address.AddressHelper
-import com.example.motocast.util.DataHelper
+import com.example.motocast.util.data.DataHelper
 
 class AddressDataSource: DataHelper() {
     private val addressRetrofitService = AddressHelper().createAddressHelperDataAPI()

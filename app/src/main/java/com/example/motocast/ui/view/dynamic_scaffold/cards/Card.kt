@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import java.util.Calendar
 
 @Composable
 fun Card(
+    modifier: Modifier = Modifier,
     temperature: Int,
     location: String,
     time: Calendar?,
@@ -23,10 +25,7 @@ fun Card(
 ) {
 
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = Color(0xfff7f7f7))
-            .fillMaxWidth()
+        modifier = modifier
     )
     {
         Row(
