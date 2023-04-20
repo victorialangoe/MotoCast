@@ -152,6 +152,7 @@ class RoutePlannerViewModel : ViewModel() {
                 )
     }
 
+
     /**
      * This method returns the start time in the format: HH:mm
      */
@@ -162,6 +163,7 @@ class RoutePlannerViewModel : ViewModel() {
         // add 0 in front of hour and minute if they are less than 10
         return format("%02d:%02d", hour, minute)
     }
+
 
     /**
      * This method returns the duration of the trip. // TODO: remove dummy value
@@ -232,13 +234,40 @@ class RoutePlannerViewModel : ViewModel() {
 
         val weatherViewModel = WeatherViewModel() // TODO: remove this (should be injected)
         val routeWithWaypoint = createRouteWithWaypoints(waypoints, startTime)
+        updateTimeStampForLegs(legs, routeWithWaypoint, startTime)
+        val additionalWaypoints = addWaypointsOnLegs(legs)
+        routeWithWaypoint.addAll(additionalWaypoints)
 
-        updateRouteDurations(legs, routeWithWaypoint)
-        updateRouteTimeStamps(legs, routeWithWaypoint, startTime)
+        updateRouteTimeStamps( routeWithWaypoint, startTime)
         updateRouteWeather(routeWithWaypoint, weatherViewModel)
+        // sort the routes by start time
+        routeWithWaypoint.sortBy {
+            it.timeFromStart
+        }
 
         _uiState.value = _uiState.value.copy(waypoints = routeWithWaypoint)
     }
+
+    private fun updateTimeStampForLegs(
+        legs: List<Leg>,
+        routeWithWaypoint: MutableList<RouteWithWaypoint>,
+        startTime: Calendar
+    ) {
+        // Update the timestamps of the routes
+        var timeFromStart = 0.0
+        for (legIndex in legs.indices) {
+            val leg = legs[legIndex]
+            val route = routeWithWaypoint[legIndex + 1]
+            timeFromStart += leg.duration
+            val time = startTime.clone() as Calendar
+            time.add(Calendar.SECOND, timeFromStart.toInt())
+            val updatedRoute = route.copy(
+                timeFromStart = timeFromStart,
+            )
+            routeWithWaypoint[legIndex + 1] = updatedRoute
+        }
+    }
+
 
     private suspend fun updateRouteWeather(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
@@ -254,38 +283,59 @@ class RoutePlannerViewModel : ViewModel() {
             routeWithWaypoint[routeIndex] = updatedRoute
         }
     }
-    private fun updateRouteDurations(
+    suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
-        routeWithWaypoint: MutableList<RouteWithWaypoint>
-    ) {
-        // Update the durations of the routes
-        for (legIndex in legs.indices) {
-            val leg = legs[legIndex]
-            val route = routeWithWaypoint[legIndex + 1]
-            val updatedRoute = route.copy(
-                timeFromStart = leg.duration
-            )
-            routeWithWaypoint[legIndex + 1] = updatedRoute
+    ): MutableList<RouteWithWaypoint> {
+        // Update the timestamps of the routes
+        var timeFromStart = 0.0
+        var timeCounter = 0.0
+        val hourInSeconds = 3600.0
+        val tempRoutes = mutableListOf<RouteWithWaypoint>()
+
+        for (legIndex in legs.indices){
+            for (stepIndex in legs[legIndex].steps.indices){
+                val step = legs[legIndex].steps[stepIndex]
+
+                timeFromStart += step.duration
+                timeCounter += step.duration
+                if (timeCounter > hourInSeconds){
+                    val name = getReverseGeocodedName(
+                        latitude = step.maneuver.location[1],
+                        longitude = step.maneuver.location[0]
+                    )
+                    timeCounter = 0.0
+                    val newRoute = RouteWithWaypoint(
+                        name = name,
+                        timeFromStart = timeFromStart,
+                        weatherUiState = null,
+                        timestamp = null,
+                        latitude = step.maneuver.location[1],
+                        longitude = step.maneuver.location[0],
+                    )
+                    Log.d("addWaypointsOnLegs", "newRoute: $newRoute")
+                    tempRoutes.add(newRoute)
+                }
+            }
         }
+        return tempRoutes
     }
 
+
+
     private fun updateRouteTimeStamps(
-        legs: List<Leg>,
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
         // Update the timestamps of the routes
-        var timeFromStart = 0.0
-        for (legIndex in legs.indices) {
-            val leg = legs[legIndex]
-            val route = routeWithWaypoint[legIndex + 1]
-            timeFromStart += leg.duration
+        for (waypointIndex in routeWithWaypoint.indices) {
+            val waypoint = routeWithWaypoint[waypointIndex]
+
             val timestamp = startTime.clone() as Calendar
-            timestamp.add(Calendar.SECOND, timeFromStart.toInt())
-            val updatedRoute = route.copy(
+            timestamp.add(Calendar.SECOND, waypoint.timeFromStart?.toInt() ?: 0)
+            val updatedRoute = waypoint.copy(
                 timestamp = timestamp
             )
-            routeWithWaypoint[legIndex + 1] = updatedRoute
+            routeWithWaypoint[waypointIndex] = updatedRoute
         }
     }
 
@@ -295,20 +345,15 @@ class RoutePlannerViewModel : ViewModel() {
     ): MutableList<RouteWithWaypoint> {
 
         return coroutineScope {
-
             val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
                 async {
-                    val name = getReverseGeocodedName(
-                        longitude = waypoint.location[0],
-                        latitude = waypoint.location[1]
-                    )
 
                     val route = RouteWithWaypoint(
-                        name = name,
+                        name = _uiState.value.destinations[index].name,
                         longitude = waypoint.location[0],
                         latitude = waypoint.location[1],
                         timestamp = if (index == 0) startTime else null,
-                        timeFromStart = null,
+                        timeFromStart = 0.0
                     )
                     route
                 }
