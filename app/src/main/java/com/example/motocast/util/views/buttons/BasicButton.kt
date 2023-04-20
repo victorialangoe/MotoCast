@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 enum class ButtonType {
     Filled,
     Outlined,
+    White,
     Transparent,
 }
 
@@ -27,7 +28,8 @@ fun BasicButton(
     content: @Composable (
         textStyle: TextStyle,
         contentSize: Dp,
-    ) -> Unit = { _, _ -> },
+        color: Color,
+    ) -> Unit = { _, _, _ -> },
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -49,6 +51,12 @@ fun BasicButton(
             disabledContentColor = MaterialTheme.colorScheme.onSurface,
         )
         ButtonType.Transparent -> ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface,
+        )
+        ButtonType.White -> ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
@@ -89,6 +97,13 @@ fun BasicButton(
         ButtonSize.Large -> 40.dp
     }
 
+    val contentColor = when (buttonType) {
+        ButtonType.Filled -> MaterialTheme.colorScheme.onPrimary
+        ButtonType.Outlined -> MaterialTheme.colorScheme.primary
+        ButtonType.Transparent -> MaterialTheme.colorScheme.onSurface
+        ButtonType.White -> MaterialTheme.colorScheme.onSurface
+    }
+
     Button(
         onClick = onClick,
         modifier = buttonModifier,
@@ -108,6 +123,7 @@ fun BasicButton(
                 content(
                     textStyle = textStyle,
                     contentSize = contentSize,
+                    color = contentColor,
                 )
             }
         },

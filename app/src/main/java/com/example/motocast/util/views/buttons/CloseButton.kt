@@ -25,7 +25,7 @@ fun CloseButton(
 ) {
     BasicButton(
         modifier = modifier,
-        content = { _, contentSize ->
+        content = { _, contentSize, _ ->
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Lukk knapp",

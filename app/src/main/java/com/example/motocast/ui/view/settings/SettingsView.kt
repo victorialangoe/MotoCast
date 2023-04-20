@@ -9,13 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.route_planner.Header
-import com.example.motocast.ui.viewmodel.settings.ScreenMode
 
 @Composable
 fun SettingsView(
     popBackStack: () -> Unit,
-    setScreenMode: (ScreenMode) -> Unit,
-    screenMode: ScreenMode
+    setDarkMode: (Boolean) -> Unit,
+    darkMode: Boolean,
 ) {
 
     Column(
@@ -41,7 +40,10 @@ fun SettingsView(
                 .padding(16.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            ChooseScreenMode(setScreenMode, screenMode)
+            ChooseScreenMode(
+                darkMode = darkMode,
+                setDarkMode = setDarkMode
+            )
         }
     }
 }

@@ -22,7 +22,7 @@ import com.example.motocast.ui.theme.Orange500
 fun TextAndSwitch(
     text: String,
     checked: Boolean,
-    setScreenMode: () -> Unit,
+    setDarkMode: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -32,11 +32,10 @@ fun TextAndSwitch(
         Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.weight(1f)) // Spacer to push the switch to the right
         Switch(
-            enabled = !checked,
             checked = checked,
-            onCheckedChange = { setScreenMode() },
+            onCheckedChange = { setDarkMode(it) },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Orange500,
+                checkedThumbColor = MaterialTheme.colorScheme.background,
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
                 uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
                 uncheckedTrackColor = MaterialTheme.colorScheme.surface,
@@ -46,7 +45,7 @@ fun TextAndSwitch(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Selected screen mode icon",
-                        tint = MaterialTheme.colorScheme.surface,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(2.dp)
                     )
                 }

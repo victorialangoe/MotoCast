@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
 
         }
 
-        settingsViewModel = SettingsViewModel()
+        settingsViewModel = SettingsViewModel(this.applicationContext)
         addressDataViewModel = AddressDataViewModel()
         routePlannerViewModel = RoutePlannerViewModel()
         weatherViewModel = WeatherViewModel()

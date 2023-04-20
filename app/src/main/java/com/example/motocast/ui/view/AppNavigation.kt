@@ -16,7 +16,6 @@ import com.example.motocast.ui.view.settings.SettingsView
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
-import com.example.motocast.ui.viewmodel.settings.ScreenMode
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import java.util.*
@@ -37,13 +36,7 @@ fun AppNavigation(
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
 
     AppTheme(
-        darkTheme = when (settingsViewModelUiState.value.screenMode) {
-            ScreenMode.DARK -> true
-            ScreenMode.LIGHT -> false
-            ScreenMode.PREFER_SYSTEM -> {
-                isSystemInDarkTheme()
-            }
-        }
+        darkTheme = settingsViewModelUiState.value.darkMode,
     ) {
 
         NavHost(navController = navController, startDestination = "home_screen") {
@@ -53,9 +46,27 @@ fun AppNavigation(
                     destinations = routePlannerViewModelUiState.value.destinations,
                     isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                     weatherViewModel = weatherViewModel,
+                    /*
+                    onStartButtonClick = {
+                        routePlannerViewModel.start(
+                            { navController.navigate("home_screen") },
+                            {
+                                mapLocationViewModel.fitCameraToRouteAndWaypoints(
+                                    routePlannerViewModelUiState.value.destinations
+                                )
+                            }
+                        )
+                        mapLocationViewModel.trackUserOnMap(
+                            routeExists = true,
+                            destinations = routePlannerViewModelUiState.value.destinations,
+                            track = false
+                        )
+                    },
+                     */
                     mapLocationViewModel = mapLocationViewModel,
                     routePlannerViewModel = routePlannerViewModel,
                     navigateToSettings = { navController.navigate("settings_screen") },
+                    onNavigateToScreen = { navController.navigate("route_planner") },
                     isRouteLoading = routePlannerViewModelUiState.value.isLoading,
                     duration = routePlannerViewModelUiState.value.durationAsString,
                     waypoints = routePlannerViewModelUiState.value.waypoints,
@@ -74,9 +85,7 @@ fun AppNavigation(
                             bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
                         )
                     },
-                    onNavigateToScreen = {
-                        navController.navigate("route_planner")
-                    })
+                )
             }
             composable("route_planner") {
                 RoutePlannerView(
@@ -165,12 +174,8 @@ fun AppNavigation(
             composable("settings_screen") {
                 SettingsView(
                     popBackStack = { navController.popBackStack() },
-                    setScreenMode = { screenMode ->
-                        settingsViewModel.setScreenMode(
-                            screenMode
-                        )
-                    },
-                    screenMode = settingsViewModelUiState.value.screenMode,
+                    setDarkMode = { settingsViewModel.setDarkMode(it) },
+                    darkMode = settingsViewModelUiState.value.darkMode
                 )
             }
         }

@@ -13,25 +13,27 @@ fun LocateUserButton(
     modifier: Modifier = Modifier,
     active: Boolean,
     buttonSize: ButtonSize = ButtonSize.Small,
-    buttonType: ButtonType = ButtonType.Transparent,
+    buttonType: ButtonType = ButtonType.White,
     onClick: () -> Unit,
 ) {
     BasicButton(
         modifier = modifier,
-        content = { _, contentSize ->
+        content = { _, contentSize, color ->
             if (active) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.baseline_my_location_24),
                     contentDescription = "Aktiv posisjon sporing icon",
                     modifier = modifier
-                        .size(contentSize)
+                        .size(contentSize),
+                    tint = color,
                 )
             } else {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
                     contentDescription = "Inaktiv posisjon sporing icon",
                     modifier = modifier
-                        .size(contentSize)
+                        .size(contentSize),
+                    tint = color,
                 )
             }
         },
