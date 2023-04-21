@@ -8,6 +8,7 @@ import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
 import com.example.motocast.ui.viewmodel.address.Address
+import com.example.motocast.ui.viewmodel.weather.RouteWeatherUiState
 import com.example.motocast.ui.viewmodel.weather.WeatherUiState
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -245,7 +246,7 @@ class RoutePlannerViewModel : ViewModel() {
         legs: List<Leg>,
         waypoints: List<Waypoint>,
         startTime: Calendar,
-        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (routeWeatherUiState: RouteWeatherUiState) -> Unit) -> Unit,
 
         ) = coroutineScope {
 
@@ -287,7 +288,7 @@ class RoutePlannerViewModel : ViewModel() {
 
     private suspend fun updateRouteWeather(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
-        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (routeWeatherUiState: RouteWeatherUiState) -> Unit) -> Unit,
     ) = coroutineScope {
         val updateJobs = mutableListOf<Job>()
 
@@ -303,7 +304,7 @@ class RoutePlannerViewModel : ViewModel() {
                             route.timestamp
                         ) { weather ->
                             val updatedRoute = route.copy(
-                                weatherUiState = weather
+                                weather = weather
                             )
                             routeWithWaypoint[routeIndex] = updatedRoute
                             continuation.resume(Unit)
@@ -343,7 +344,7 @@ class RoutePlannerViewModel : ViewModel() {
                     val newRoute = RouteWithWaypoint(
                         name = name,
                         timeFromStart = timeFromStart,
-                        weatherUiState = null,
+                        weather = null,
                         timestamp = null,
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0],
@@ -416,7 +417,7 @@ class RoutePlannerViewModel : ViewModel() {
     suspend fun start(
         navigateTo: () -> Unit,
         fitCameraToRouteAndWaypoints: () -> Unit,
-        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (weatherUiState: WeatherUiState) -> Unit) -> Unit,
+        getWeatherData: (latitude: Double, longitude: Double, timestamp: Calendar, callback: (routeWeatherUiState: RouteWeatherUiState) -> Unit) -> Unit,
     ) {
         _uiState.value = _uiState.value.copy(isLoading = true)
 

@@ -9,6 +9,7 @@ import com.example.motocast.data.datasource.LocationForecastDataSource
 import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
 import com.example.motocast.data.model.MetAlertsDataModel
+import com.example.motocast.data.model.Properties
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -95,7 +96,7 @@ class WeatherViewModel : ViewModel() {
         latitude: Double,
         longitude: Double,
         timestamp: Calendar,
-        callback: (WeatherUiState?) -> Unit
+        callback: (RouteWeatherUiState?) -> Unit
     ) {
 
         if (_uiState.value.alerts == null) {
@@ -103,10 +104,6 @@ class WeatherViewModel : ViewModel() {
             fetchAlerts()
         }
 
-        val alerts = _uiState.value.alerts
-        if (checkIfCoordinatesAreInAlertsArea(latitude, longitude)){
-
-        }
 
         val hoursFromNow = calculateHoursFromNow(timestamp)
         Log.d("WeatherViewModel", "Hours from now: $hoursFromNow")
@@ -114,16 +111,33 @@ class WeatherViewModel : ViewModel() {
             val result = when {
                 hoursFromNow < 2 -> {
                     withContext(Dispatchers.IO) {
-                        fetchNowCastData(latitude, longitude)?.copy(alerts = alerts) ?: WeatherUiState()
+                        fetchNowCastData(latitude, longitude)
                     }
                 }
                 else -> {
                     withContext(Dispatchers.IO) {
-                        fetchLocationForecastData(latitude, longitude, timestamp)?.copy(alerts = alerts)
+                        fetchLocationForecastData(latitude, longitude, timestamp)
                     }
                 }
             }
-            callback(result)
+            // Check for alerts
+            val alert = checkForAlerts(latitude, longitude, timestamp)
+            // Convert the result to RouteWeatherUiState
+            if (result != null) {
+                val routeWeatherUiState = RouteWeatherUiState(
+                    isLoading = false,
+                    symbolCode = result.symbolCode,
+                    temperature = result.temperature,
+                    windSpeed = result.windSpeed,
+                    windDirection = result.windDirection,
+                    error = null,
+                    updatedAt = result.updatedAt,
+                    alert = alert
+                )
+                callback(routeWeatherUiState)
+            } else {
+                callback(null)
+            }
         } catch (e: Exception) {
             Log.e("WeatherViewModel", "Error: $e")
             callback(null)
@@ -160,23 +174,52 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    private fun checkIfCoordinatesAreInAlertsArea(latitude: Double, longitude: Double): Boolean {
+    private fun stringToCalendar(inputString: String): Calendar {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val date = format.parse(inputString)
+        return Calendar.getInstance().apply {
+            time = date
+        }
+    }
+
+    private fun checkForAlerts(
+        latitude: Double,
+        longitude: Double,
+        timestamp: Calendar
+    ): Properties? {
         val alerts = _uiState.value.alerts
         Log.d("WeatherViewModel - Check", "Alerts: ${alerts?.features?.size}")
         if (alerts != null) {
             for (alert in alerts.features) {
-                Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
-                val jtsCoordinates =
-                    alert.geometry.coordinates[0].map { Coordinate(it[0], it[1]) }.toTypedArray()
-                val geometryFactory = GeometryFactory()
-                val polygon = geometryFactory.createPolygon(jtsCoordinates)
-                val point = geometryFactory.createPoint(Coordinate(longitude, latitude))
-                Log.d("WeatherViewModel", "Alert: ${alert.properties.title}")
-                return point.within(polygon)
+                // Check if the timestamp is between the start and end time interval
+                val interval = alert.`when`.interval
+                val startTime = stringToCalendar(interval.first())
+                val endTime = stringToCalendar(interval.last())
+                if (timestamp.before(endTime) && timestamp.after(startTime)) {
+                    // The timestamp is not between the start and end time interval
+                    Log.d("WeatherViewModel - Check", "Timestamp is" +
+                            " between start and end time")
+                    alert.geometry.coordinates.map { coordinates ->
+                        val jtsCoordinates = coordinates.map { coordinate ->
+                            Coordinate(coordinate[0], coordinate[1])
+                        }.toTypedArray()
+
+                        val geometryFactory = GeometryFactory()
+                        val polygon = geometryFactory.createPolygon(jtsCoordinates)
+                        val point = geometryFactory.createPoint(Coordinate(longitude, latitude))
+
+                        if (point.within(polygon)) {
+                            Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
+                            return alert.properties
+                        }
+                    }
+
+                } else {
+                    Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
+                }
             }
         }
-        Log.d("WeatherViewModel", "No alerts for this location")
-        return false
+        return null
     }
 
 

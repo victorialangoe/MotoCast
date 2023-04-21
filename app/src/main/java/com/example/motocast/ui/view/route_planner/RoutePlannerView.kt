@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,27 +98,20 @@ fun RoutePlannerView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Button for starting the route
                 BasicButton(
                     onClick = { startRoute() },
+                    text = if (isLoading) null else "Start rute",
                     enabled = enabledStartRoute && !isLoading,
-                    content = { textStyle, dp, color, textColor ->
+                    content = { _, _, color, _ ->
                         if (isLoading) {
                             CircularProgressIndicator(
                                 color = color,
                                 modifier = Modifier.size(24.dp)
                             )
-                        } else {
-                            Text(
-                                text = "Start rute",
-                                style = textStyle,
-                                color = color,
-                                modifier = Modifier.padding(dp)
-                            )
                         }
                     }
-
                 )
+                
             }
         })
     }

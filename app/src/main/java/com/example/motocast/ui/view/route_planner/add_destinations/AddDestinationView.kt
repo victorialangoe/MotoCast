@@ -33,6 +33,7 @@ fun AddDestinationView(
     navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
     getCurrentLocation: () -> Location?,
+    searchResultsCompareBy: (query: String) -> Comparator<Address>
 ) {
 
     Column(
@@ -102,7 +103,8 @@ fun AddDestinationView(
                     clearResults()
                     clearQuery()
                     navigateTo("route_planner")
-                }
+                },
+                searchResultsCompareBy = searchResultsCompareBy
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
@@ -122,7 +124,8 @@ fun AddDestinationView(
                     clearResults()
                     clearQuery()
                     navigateTo("route_planner")
-                }
+                },
+                searchResultsCompareBy = searchResultsCompareBy
             )
         }
     }

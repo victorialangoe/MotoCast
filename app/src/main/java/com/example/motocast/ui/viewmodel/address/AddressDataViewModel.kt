@@ -35,6 +35,23 @@ class AddressDataViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(query = query)
     }
 
+    private fun cleanAndNormalize(str: String): String {
+        return str.lowercase()
+            .replace("å", "a")
+            .replace("ø", "o")
+            .replace("æ", "ae")
+    }
+    fun searchResultsCompareBy(query: String): Comparator<Address> {
+        return compareBy<Address> {
+            if (cleanAndNormalize(it.addressText) == cleanAndNormalize(query)) 0 else 1
+        }.thenBy {
+            if (cleanAndNormalize(it.municipality ?: "") == cleanAndNormalize(query)) 0 else 1
+        }.thenBy {
+            it.distanceFromUser
+        }
+    }
+
+
     suspend fun fetchAddressData(
         query: String,
         getAirDistanceFromLocation: (Location) -> Int?,

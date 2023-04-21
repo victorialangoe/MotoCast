@@ -35,6 +35,7 @@ fun DestinationResults(
     maxResults: Int = 5,
     isLoading: Boolean,
     onResultClick: (address: Address) -> Unit,
+    searchResultsCompareBy: (query: String) -> Comparator<Address>
 ) {
     // Only show the first 5 results (If maxResults is not specified)
     addresses.take(maxResults)
@@ -47,14 +48,7 @@ fun DestinationResults(
             if (row) {
                 LazyRow {
                     // Search results
-                    items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query
-                        // Then check if the municipality matches the query
-                        // Then by distance
-                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
-                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
-                        { it.distanceFromUser }
-                    ))) {
+                    items(addresses.sortedWith(searchResultsCompareBy(query))) {
                         AddressResult(it, onResultClick, showInfo = false)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
@@ -63,14 +57,7 @@ fun DestinationResults(
             } else {
                 LazyColumn {
                     // Search results
-                    items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query
-                        // Then check if the municipality matches the query
-                        // Then by distance
-                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
-                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
-                        { it.distanceFromUser }
-                    ))) {
+                    items(addresses.sortedWith(searchResultsCompareBy(query))) {
                         if (it != addresses.first()) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }

@@ -16,6 +16,7 @@ import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
+import com.example.motocast.ui.viewmodel.weather.RouteWeatherUiState
 import com.example.motocast.ui.viewmodel.weather.WeatherUiState
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -117,7 +118,7 @@ fun AppNavigation(
                                         routePlannerViewModelUiState.value.destinations
                                     )
                                 },
-                                getWeatherData = { lat: Double, lon: Double, time: Calendar, callback: (WeatherUiState) -> Unit ->
+                                getWeatherData = { lat: Double, lon: Double, time: Calendar, callback: (RouteWeatherUiState) -> Unit ->
                                     CoroutineScope(Dispatchers.IO).launch {
                                         weatherViewModel.getWeatherData(
                                             lat,
@@ -191,6 +192,9 @@ fun AppNavigation(
                     popBackStack = { navController.popBackStack() },
                     getCurrentLocation = { mapLocationViewModel.getCurrentLocation() },
                     navigateTo = { screen -> navController.navigate(screen) },
+                    searchResultsCompareBy ={ string ->
+                        addressDataViewModel.searchResultsCompareBy(string)
+                    },
                 )
             }
             composable("settings_screen") {

@@ -39,10 +39,10 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
         LazyColumn {
             items(waypoints) { waypoint ->
 
-                val weather = waypoint.weatherUiState
+                val weather = waypoint.weather
                 val time = waypoint.timestamp
                 val temperature = weather?.temperature ?: 0
-                val alert = weather?.alerts
+                val alert = weather?.alert
 
                 if (waypoint != waypoints.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -55,7 +55,7 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                         temperature = temperature.toInt(),
                         location = waypoint.name ?: "",
                         time = time,
-                        alert = alert?.features?.firstOrNull()?.properties?.title ?: "",
+                        alert = alert?.title ?: "",
                         iconSymbol = weather?.symbolCode ?: "",
                         context = context
                     )
