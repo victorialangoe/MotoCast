@@ -34,6 +34,7 @@ data class RouteWithWaypoint (
     val longitude: Double?,
     val timeFromStart: Double?,
     val timestamp: Calendar?,
+    val isInDestination: Boolean = false,
     val weather: RouteWeatherUiState? = null,
 )
 

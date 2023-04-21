@@ -9,7 +9,6 @@ import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.ui.viewmodel.weather.RouteWeatherUiState
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -22,6 +21,7 @@ import java.time.Duration
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.roundToLong
 
 
 class RoutePlannerViewModel : ViewModel() {
@@ -183,7 +183,7 @@ class RoutePlannerViewModel : ViewModel() {
                     hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
                     minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
         } else {
-           if (hours > 0) {
+            if (hours > 0) {
                 hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
                         minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
             } else {
@@ -270,6 +270,11 @@ class RoutePlannerViewModel : ViewModel() {
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
+        // Set the first
+        routeWithWaypoint[0] = routeWithWaypoint[0].copy(
+            isInDestination = true,
+        )
+
         // Update the timestamps of the routes
         var timeFromStart = 0.0
         for (legIndex in legs.indices) {
@@ -280,6 +285,7 @@ class RoutePlannerViewModel : ViewModel() {
             time.add(Calendar.SECOND, timeFromStart.toInt())
             val updatedRoute = route.copy(
                 timeFromStart = timeFromStart,
+                isInDestination = true,
             )
             routeWithWaypoint[legIndex + 1] = updatedRoute
         }
@@ -320,7 +326,7 @@ class RoutePlannerViewModel : ViewModel() {
         updateJobs.forEach { it.join() }
     }
 
-    suspend fun addWaypointsOnLegs(
+    private suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
     ): MutableList<RouteWithWaypoint> {
         // Update the timestamps of the routes
@@ -369,7 +375,7 @@ class RoutePlannerViewModel : ViewModel() {
             val timestamp = startTime.clone() as Calendar
             timestamp.add(Calendar.SECOND, waypoint.timeFromStart?.toInt() ?: 0)
             val updatedRoute = waypoint.copy(
-                timestamp = timestamp
+                timestamp = timestamp,
             )
             routeWithWaypoint[waypointIndex] = updatedRoute
         }
@@ -384,13 +390,16 @@ class RoutePlannerViewModel : ViewModel() {
             val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
                 async {
 
+
+
                     val route = RouteWithWaypoint(
                         name = _uiState.value.destinations[index].name,
                         longitude = waypoint.location[0],
                         latitude = waypoint.location[1],
                         timestamp = if (index == 0) startTime else null,
-                        timeFromStart = 0.0
+                        timeFromStart = 0.0,
                     )
+
                     route
                 }
             }

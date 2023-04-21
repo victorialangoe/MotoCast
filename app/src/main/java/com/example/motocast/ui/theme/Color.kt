@@ -9,21 +9,20 @@ import androidx.compose.ui.graphics.Color
  * We have both dark and light color palettes.
  */
 
-val Orange200 = Color(0xFFFFAB91)
 val Orange300 = Color(0xFFFF8A65)
 val Orange500 = Color(0xFFFF7043)
 val Orange500Transparent = Color(0x30FF7043)
+
 val Orange700 = Color(0xFFF4511E)
 
-val red500 = Color(0xFFf44336)
-val red700 = Color(0xFFd32f2f)
-val red900 = Color(0xFFb71c1c)
+val Orange100 = Color(0xFFFFE0B2)
 
-val green500 = Color(0xFF4caf50)
-val green700 = Color(0xFF388e3c)
-val green900 = Color(0xFF1b5e20)
-
-
+val Yellow100 = Color(0xFFFFF9C4)
+val Yellow700 = Color(0xFFFFD600)
+val Yellow700Transparent = Color(0x30FFD600)
+val Red100 = Color(0xFFFFEBEE)
+val Red700 = Color(0xFFD50000)
+val Red700Transparent = Color(0x30D50000)
 
 val LightPrimary = Color(0xFFF57C00)
 val LightSecondary = Color(0xFFD84315)

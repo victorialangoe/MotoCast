@@ -22,6 +22,6 @@ data class RouteWeatherUiState (
     val windDirection: Double? = null,
     val error: String? = null,
     val updatedAt: String? = null,
-    val alert: Properties? = null // From the MetAlertsDataModel
+    val alerts: List<Properties>? = null // From the MetAlertsDataModel
 )
 

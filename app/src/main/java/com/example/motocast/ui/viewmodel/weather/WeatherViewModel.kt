@@ -121,7 +121,7 @@ class WeatherViewModel : ViewModel() {
                 }
             }
             // Check for alerts
-            val alert = checkForAlerts(latitude, longitude, timestamp)
+            checkForAlerts(latitude, longitude, timestamp)
             // Convert the result to RouteWeatherUiState
             if (result != null) {
                 val routeWeatherUiState = RouteWeatherUiState(
@@ -132,7 +132,7 @@ class WeatherViewModel : ViewModel() {
                     windDirection = result.windDirection,
                     error = null,
                     updatedAt = result.updatedAt,
-                    alert = alert
+                    alerts = checkForAlerts(latitude, longitude, timestamp)
                 )
                 callback(routeWeatherUiState)
             } else {
@@ -186,9 +186,9 @@ class WeatherViewModel : ViewModel() {
         latitude: Double,
         longitude: Double,
         timestamp: Calendar
-    ): Properties? {
+    ): List<Properties>? {
         val alerts = _uiState.value.alerts
-        Log.d("WeatherViewModel - Check", "Alerts: ${alerts?.features?.size}")
+        val alertsFound = mutableListOf<Properties>()
         if (alerts != null) {
             for (alert in alerts.features) {
                 // Check if the timestamp is between the start and end time interval
@@ -209,8 +209,7 @@ class WeatherViewModel : ViewModel() {
                         val point = geometryFactory.createPoint(Coordinate(longitude, latitude))
 
                         if (point.within(polygon)) {
-                            Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
-                            return alert.properties
+                            alertsFound.add(alert.properties)
                         }
                     }
 
@@ -219,7 +218,7 @@ class WeatherViewModel : ViewModel() {
                 }
             }
         }
-        return null
+        return alertsFound
     }
 
 
