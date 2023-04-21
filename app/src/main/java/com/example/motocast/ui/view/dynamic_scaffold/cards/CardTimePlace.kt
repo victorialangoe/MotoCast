@@ -7,14 +7,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import java.util.*
 
 @Composable
-fun CardTimePlace(location: String, time: Calendar?) {
+fun CardTimePlace(
+    modifier: Modifier = Modifier,
+    location: String,
+    isInDestination: Boolean,
+    time: Calendar?
+) {
 
     val date = time?.let {
         val day = it.get(Calendar.DAY_OF_MONTH)
@@ -25,10 +28,16 @@ fun CardTimePlace(location: String, time: Calendar?) {
         "$day. $month ${String.format("%02d", hour)}:${String.format("%02d", minute)}"
     }
 
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         Text(
             text = location,
-            style = MaterialTheme.typography.bodyMedium,
+            style = if (!isInDestination) {
+                MaterialTheme.typography.bodyMedium
+            } else {
+                MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+            },
             color = MaterialTheme.colorScheme.onSurface,
         )
 
@@ -38,7 +47,8 @@ fun CardTimePlace(location: String, time: Calendar?) {
             Text(
                 text = date,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface)
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

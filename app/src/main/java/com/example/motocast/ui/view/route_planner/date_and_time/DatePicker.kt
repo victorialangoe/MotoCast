@@ -16,6 +16,7 @@ fun DatePicker(
     modifier: Modifier = Modifier,
     updateStartTime: (Calendar) -> Unit,
     startTime: Calendar,
+    enabled: Boolean = true,
 ) {
     val datePicker = remember {
         DatePickerDialog(
@@ -66,6 +67,7 @@ fun DatePicker(
         label = labelToShow,
         onClick = { datePicker.show() },
         icon = R.drawable.calendar,
+        enabled = enabled,
         iconDescription = "Kalender icon",
     )
 }

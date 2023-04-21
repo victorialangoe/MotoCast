@@ -30,8 +30,10 @@ fun AddDestinationView(
     isFetching: Boolean,
     activeDestinationIndex: Int,
     popBackStack: () -> Unit,
+    navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
     getCurrentLocation: () -> Location?,
+    searchResultsCompareBy: (query: String) -> Comparator<Address>
 ) {
 
     Column(
@@ -47,7 +49,7 @@ fun AddDestinationView(
                 clearResults()
             },
             onBack = {
-                popBackStack()
+                navigateTo("route_planner")
                 clearResults()
                 // Minus 1 before removing the destination, since the active destination is the one we are currently editing
                 val currentDestinations = getTotalDestinations() - 1
@@ -100,8 +102,9 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
-                }
+                    navigateTo("route_planner")
+                },
+                searchResultsCompareBy = searchResultsCompareBy
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
@@ -120,8 +123,9 @@ fun AddDestinationView(
                     addFormerAddress(address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
-                }
+                    navigateTo("route_planner")
+                },
+                searchResultsCompareBy = searchResultsCompareBy
             )
         }
     }

@@ -15,8 +15,6 @@ import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
 fun DateTimeRow(
     date: String,
     time: String,
-    duration: String,
-    isLoading: Boolean,
 ) {
     Row(modifier = Modifier
         .fillMaxWidth(),

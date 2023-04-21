@@ -29,7 +29,8 @@ fun BasicButton(
         textStyle: TextStyle,
         contentSize: Dp,
         color: Color,
-    ) -> Unit = { _, _, _ -> },
+        textColor: Color,
+    ) -> Unit = { _, _, _, _ -> },
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -104,6 +105,13 @@ fun BasicButton(
         ButtonType.White -> MaterialTheme.colorScheme.onSurface
     }
 
+    val textColor = when (buttonType) {
+        ButtonType.Filled -> MaterialTheme.colorScheme.onPrimary
+        ButtonType.Outlined -> MaterialTheme.colorScheme.primary
+        ButtonType.Transparent -> MaterialTheme.colorScheme.onSurface
+        ButtonType.White -> MaterialTheme.colorScheme.onSurface
+    }
+
     Button(
         onClick = onClick,
         modifier = buttonModifier,
@@ -124,6 +132,7 @@ fun BasicButton(
                     textStyle = textStyle,
                     contentSize = contentSize,
                     color = contentColor,
+                    textColor = textColor,
                 )
             }
         },

@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.route_planner
+package com.example.motocast.util.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

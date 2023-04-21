@@ -8,18 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.motocast.R
-import com.example.motocast.ui.theme.Orange300
-import com.example.motocast.ui.theme.Orange500
-import com.example.motocast.ui.theme.Orange500Transparent
+import com.example.motocast.data.model.Properties
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 @Composable
@@ -38,9 +32,11 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
         LazyColumn {
             items(waypoints) { waypoint ->
 
-                val weather = waypoint.weatherUiState
+                val weather = waypoint.weather
                 val time = waypoint.timestamp
                 val temperature = weather?.temperature ?: 0
+                val alerts: List<Properties> = weather?.alerts ?: listOf()
+                val isInDestination = waypoint.isInDestination
 
                 if (waypoint != waypoints.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -53,6 +49,8 @@ fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading:
                         temperature = temperature.toInt(),
                         location = waypoint.name ?: "",
                         time = time,
+                        alerts = alerts,
+                        isInDestination = isInDestination,
                         iconSymbol = weather?.symbolCode ?: "",
                         context = context
                     )

@@ -4,24 +4,26 @@ import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.directions.DirectionsHelper
 import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.util.data.DataHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DirectionsDataSource : DataHelper() {
     private val directionsRetrofitService = DirectionsHelper().createDirectionsAPI()
 
-    fun getDirectionsData(
+    suspend fun getDirectionsData(
         coordinates: String,
-        onSuccess: (RouteSearchResult) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        if (directionsRetrofitService != null) {
+    ): RouteSearchResult? {
+        return withContext(Dispatchers.IO) {
             fetchData(
-                apiCall = { directionsRetrofitService.getDirections(coordinates = coordinates, accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN).execute()},
-                onSuccess = { directionsData: RouteSearchResult -> onSuccess(directionsData) },
-                onError = { errorMessage: String -> onError(errorMessage) }
+                apiCall = {
+                    directionsRetrofitService?.getDirections(
+                        coordinates = coordinates,
+                        accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
+                    )?.execute()
+                },
+                onSuccess = { directionsData: RouteSearchResult -> directionsData },
+                onError = { Throwable("Error: ${it.message}") }
             )
-        } else {
-            onError("Error: directionsRetrofitService is null")
         }
     }
-
 }

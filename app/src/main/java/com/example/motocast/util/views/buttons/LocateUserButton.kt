@@ -18,7 +18,7 @@ fun LocateUserButton(
 ) {
     BasicButton(
         modifier = modifier,
-        content = { _, contentSize, color ->
+        content = { _, contentSize, color, _ ->
             if (active) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.baseline_my_location_24),

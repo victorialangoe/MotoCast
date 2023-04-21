@@ -2,7 +2,6 @@ package com.example.motocast.data.api.location_forecast
 
 
 import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.LongTermWeatherDataAPI
 import com.example.motocast.util.data.DataHelper
 
 class LocationForecastHelper: DataHelper() {

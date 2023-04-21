@@ -6,16 +6,19 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.data.datasource.LocationForecastDataSource
+import com.example.motocast.data.datasource.MetAlertsDataSource
 import com.example.motocast.data.datasource.NowCastDataSource
+import com.example.motocast.data.model.MetAlertsDataModel
+import com.example.motocast.data.model.Properties
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
 import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Provides the data to the NowCastScreen via the uiState variable.
@@ -26,8 +29,9 @@ class WeatherViewModel : ViewModel() {
     private var job: Job? = null
     private val nowCastDataSource = NowCastDataSource()
     private val locationForecastDataSource = LocationForecastDataSource()
+    private val metAlertsDataSource = MetAlertsDataSource()
 
-    val uiState: StateFlow<WeatherUiState> = _uiState
+    val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
 
 
     /**
@@ -89,35 +93,134 @@ class WeatherViewModel : ViewModel() {
      * @param timestamp The timestamp of the time we want to get the weather data for
      */
     suspend fun getWeatherData(
-        longitude: Double,
         latitude: Double,
-        timestamp: Calendar
-    ): WeatherUiState? {
+        longitude: Double,
+        timestamp: Calendar,
+        callback: (RouteWeatherUiState?) -> Unit
+    ) {
+
+        if (_uiState.value.alerts == null) {
+            Log.d("WeatherViewModel", "Fetching alerts")
+            fetchAlerts()
+        }
+
 
         val hoursFromNow = calculateHoursFromNow(timestamp)
         Log.d("WeatherViewModel", "Hours from now: $hoursFromNow")
-
-        return try {
-            when {
-                hoursFromNow < 2 -> fetchNowCastData(latitude, longitude)
-                else -> fetchLocationForecastData(latitude, longitude, timestamp)
+        try {
+            val result = when {
+                hoursFromNow < 2 -> {
+                    withContext(Dispatchers.IO) {
+                        fetchNowCastData(latitude, longitude)
+                    }
+                }
+                else -> {
+                    withContext(Dispatchers.IO) {
+                        fetchLocationForecastData(latitude, longitude, timestamp)
+                    }
+                }
+            }
+            // Check for alerts
+            checkForAlerts(latitude, longitude, timestamp)
+            // Convert the result to RouteWeatherUiState
+            if (result != null) {
+                val routeWeatherUiState = RouteWeatherUiState(
+                    isLoading = false,
+                    symbolCode = result.symbolCode,
+                    temperature = result.temperature,
+                    windSpeed = result.windSpeed,
+                    windDirection = result.windDirection,
+                    error = null,
+                    updatedAt = result.updatedAt,
+                    alerts = checkForAlerts(latitude, longitude, timestamp)
+                )
+                callback(routeWeatherUiState)
+            } else {
+                callback(null)
             }
         } catch (e: Exception) {
             Log.e("WeatherViewModel", "Error: $e")
-            null
+            callback(null)
         }
+
     }
 
     private fun updateNowCastData(latitude: Double, longitude: Double) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val nowCastData = fetchNowCastData(latitude, longitude)
-                _uiState.value = nowCastData
+                val result = fetchNowCastData(latitude, longitude)
+                if (result != null) {
+                    _uiState.value = result
+                }
             } catch (e: Exception) {
                 Log.e("NowCastViewModel", "Error: $e")
             }
         }
     }
+
+    private fun setAlerts(alerts: MetAlertsDataModel) {
+        _uiState.value = _uiState.value.copy(
+            alerts = alerts
+        )
+    }
+
+    private suspend fun fetchAlerts() {
+        val response = metAlertsDataSource.getMetAlertsData()
+        response?.let {
+            Log.d("WeatherViewModel", "Alerts: ${it.features.size}")
+            setAlerts(it)
+        } ?: run {
+            Log.e("WeatherViewModel", "Error: Failed to fetch alerts")
+        }
+    }
+
+    private fun stringToCalendar(inputString: String): Calendar {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val date = format.parse(inputString)
+        return Calendar.getInstance().apply {
+            time = date
+        }
+    }
+
+    private fun checkForAlerts(
+        latitude: Double,
+        longitude: Double,
+        timestamp: Calendar
+    ): List<Properties>? {
+        val alerts = _uiState.value.alerts
+        val alertsFound = mutableListOf<Properties>()
+        if (alerts != null) {
+            for (alert in alerts.features) {
+                // Check if the timestamp is between the start and end time interval
+                val interval = alert.`when`.interval
+                val startTime = stringToCalendar(interval.first())
+                val endTime = stringToCalendar(interval.last())
+                if (timestamp.before(endTime) && timestamp.after(startTime)) {
+                    // The timestamp is not between the start and end time interval
+                    Log.d("WeatherViewModel - Check", "Timestamp is" +
+                            " between start and end time")
+                    alert.geometry.coordinates.map { coordinates ->
+                        val jtsCoordinates = coordinates.map { coordinate ->
+                            Coordinate(coordinate[0], coordinate[1])
+                        }.toTypedArray()
+
+                        val geometryFactory = GeometryFactory()
+                        val polygon = geometryFactory.createPolygon(jtsCoordinates)
+                        val point = geometryFactory.createPoint(Coordinate(longitude, latitude))
+
+                        if (point.within(polygon)) {
+                            alertsFound.add(alert.properties)
+                        }
+                    }
+
+                } else {
+                    Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
+                }
+            }
+        }
+        return alertsFound
+    }
+
 
     /**
      * Fetch the data from the API and update the UI.
@@ -125,29 +228,24 @@ class WeatherViewModel : ViewModel() {
     private suspend fun fetchNowCastData(
         latitude: Double,
         longitude: Double
-    ): WeatherUiState = suspendCoroutine { continuation ->
-        nowCastDataSource.getNowCastData(
-            latitude,
-            longitude,
-            onSuccess = { response ->
-                continuation.resume(
-                    WeatherUiState(
-                        isLoading = false,
-                        symbolCode = response.properties.timeseries.first().data.next_1_hours.summary.symbol_code,
-                        temperature = response.properties.timeseries.first().data.instant.details.air_temperature,
-                        windSpeed = response.properties.timeseries.first().data.instant.details.wind_speed,
-                        windDirection = response.properties.timeseries.first().data.instant.details.wind_from_direction,
-                        updatedAt = response.properties.meta.updated_at
-                    )
-                )
-            },
-            onError = { error ->
-                Log.e("NowCastViewModel", "Error: $error")
-                continuation.resumeWithException(Exception(error))
-            }
-        )
-    }
+    ): WeatherUiState? {
+        val response = nowCastDataSource.getNowCastData(latitude, longitude)
 
+        return if (response != null) {
+            val firstTimeseries = response.properties.timeseries.first().data
+            WeatherUiState(
+                isLoading = false,
+                symbolCode = firstTimeseries.next_1_hours.summary.symbol_code,
+                temperature = firstTimeseries.instant.details.air_temperature,
+                windSpeed = firstTimeseries.instant.details.wind_speed,
+                windDirection = firstTimeseries.instant.details.wind_from_direction,
+                updatedAt = response.properties.meta.updated_at
+            )
+        } else {
+            Log.e("NowCastViewModel", "Error: Failed to fetch data")
+            null
+        }
+    }
 
     /**
      * Fetch LocationForecast data from the API based on the timestamp, latitude and longitude.
@@ -162,38 +260,32 @@ class WeatherViewModel : ViewModel() {
         latitude: Double,
         longitude: Double,
         timestamp: Calendar
-    ): WeatherUiState = suspendCoroutine { continuation ->
-        locationForecastDataSource.getLongTermWeatherData(
-            latitude,
-            longitude,
-            onSuccess = { response: LongTermWeatherData ->
-                val zeroedTimestamp = getZeroedTimestamp(timestamp)
+    ): WeatherUiState {
+        val response = locationForecastDataSource.getLongTermWeatherData(latitude, longitude)
 
-                val data: Data? = findClosestWeatherData(response, zeroedTimestamp)
+        if (response != null) {
+            val zeroedTimestamp = getZeroedTimestamp(timestamp)
+            val data: Data? = findClosestWeatherData(response, zeroedTimestamp)
 
-                if (data != null) {
-                    continuation.resume(
-                        WeatherUiState(
-                            isLoading = false,
-                            symbolCode = if (data.next_1_hours != null) {
-                                data.next_1_hours.summary.symbol_code
-                            } else {
-                                data.next_6_hours.summary.symbol_code
-                            },
-                            temperature = data.instant.details.air_temperature,
-                            windSpeed = data.instant.details.wind_speed,
-                            windDirection = data.instant.details.wind_from_direction,
-                            updatedAt = response.properties.meta.updated_at
-                        )
-                    )
-                } else {
-                    continuation.resumeWithException(Exception("No data found"))
-                }
-            },
-            onError = { error ->
-                continuation.resumeWithException(Exception(error))
+            if (data != null) {
+                return WeatherUiState(
+                    isLoading = false,
+                    symbolCode = if (data.next_1_hours != null) {
+                        data.next_1_hours.summary.symbol_code
+                    } else {
+                        data.next_6_hours.summary.symbol_code
+                    },
+                    temperature = data.instant.details.air_temperature,
+                    windSpeed = data.instant.details.wind_speed,
+                    windDirection = data.instant.details.wind_from_direction,
+                    updatedAt = response.properties.meta.updated_at
+                )
+            } else {
+                throw Exception("No data found for timestamp: ${formatToISO8601(zeroedTimestamp)}")
             }
-        )
+        } else {
+            throw Exception("Error: Failed to fetch data")
+        }
     }
 
 

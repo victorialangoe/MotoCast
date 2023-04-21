@@ -23,6 +23,7 @@ fun DateAndTimeButton(
     onClick: () -> Unit? = {},
     icon: Int,
     iconDescription: String,
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = { onClick() },
@@ -31,6 +32,7 @@ fun DateAndTimeButton(
             containerColor = Orange500Transparent,
             contentColor = Orange500,
         ),
+        enabled = enabled,
         modifier = modifier
     ) {
         Row(

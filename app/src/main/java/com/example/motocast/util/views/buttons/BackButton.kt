@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BackButton(onClick: () -> Unit) {
     BasicButton(
-        content = { _, contentSize, _ ->
+        content = { _, contentSize, _ , _ ->
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
