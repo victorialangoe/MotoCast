@@ -1,6 +1,6 @@
 import com.google.gson.annotations.SerializedName
 
-data class ReverseGeocodingResult(
+data class ReverseGeocodingDataModel(
     val type: String,
     val query: List<Double>,
     val features: List<ReverseGeocodingFeature>,

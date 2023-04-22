@@ -4,9 +4,9 @@ import com.example.motocast.BuildConfig
 import com.example.motocast.util.data.DataHelper
 
 class NowCastHelper: DataHelper() {
-    fun createNowCastAPI(): NowCastAPI? {
+    fun createNowCastAPI(): NowCastApi? {
         return createAPI(
-            apiClass = NowCastAPI::class.java,
+            apiClass = NowCastApi::class.java,
             baseUrl = BuildConfig.MET_API_BASE_URL,
             apiKey = BuildConfig.MET_API_KEY,
             headers = mapOf("X-Gravitee-API-Key" to BuildConfig.MET_API_KEY)

@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.address.Address
-import kotlin.reflect.KFunction2
 
 @Composable
 fun AddDestinationView(
@@ -32,8 +30,7 @@ fun AddDestinationView(
     popBackStack: () -> Unit,
     navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
-    getCurrentLocation: () -> Location?,
-    searchResultsCompareBy: (query: String) -> Comparator<Address>
+    getCurrentLocation: (Location?),
 ) {
 
     Column(
@@ -65,7 +62,7 @@ fun AddDestinationView(
                 setQuery(query)
             },
             onSetCurrentLocation = {
-                val location: Location? = getCurrentLocation()
+                val location: Location? = getCurrentLocation
                 location?.let {
                     val address = Address(
                         addressText = "Min posisjon",
@@ -104,7 +101,6 @@ fun AddDestinationView(
                     clearQuery()
                     navigateTo("route_planner")
                 },
-                searchResultsCompareBy = searchResultsCompareBy
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
@@ -125,7 +121,6 @@ fun AddDestinationView(
                     clearQuery()
                     navigateTo("route_planner")
                 },
-                searchResultsCompareBy = searchResultsCompareBy
             )
         }
     }

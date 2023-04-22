@@ -1,7 +1,5 @@
 package com.example.motocast.ui.viewmodel
 
-import android.location.Location
-import com.example.motocast.data.datasource.AddressDataSource
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import junit.framework.TestCase.assertEquals
@@ -78,10 +76,8 @@ class TestAddressViewModel {
 
             // Call fetchAddressData() to add addresses to the list
             addressDataViewModel.fetchAddressData(
-                query = "123 Example Street",
-                getAirDistanceFromLocation = { location: Location -> 1000 },
-
-                )
+                query = "123 Example Street"
+            )
 
 
 

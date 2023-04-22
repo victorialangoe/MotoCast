@@ -35,7 +35,6 @@ fun DestinationResults(
     maxResults: Int = 5,
     isLoading: Boolean,
     onResultClick: (address: Address) -> Unit,
-    searchResultsCompareBy: (query: String) -> Comparator<Address>
 ) {
     // Only show the first 5 results (If maxResults is not specified)
     addresses.take(maxResults)
@@ -48,7 +47,7 @@ fun DestinationResults(
             if (row) {
                 LazyRow {
                     // Search results
-                    items(addresses.sortedWith(searchResultsCompareBy(query))) {
+                    items(addresses) {
                         AddressResult(it, onResultClick, showInfo = false)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
@@ -57,7 +56,7 @@ fun DestinationResults(
             } else {
                 LazyColumn {
                     // Search results
-                    items(addresses.sortedWith(searchResultsCompareBy(query))) {
+                    items(addresses) {
                         if (it != addresses.first()) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }

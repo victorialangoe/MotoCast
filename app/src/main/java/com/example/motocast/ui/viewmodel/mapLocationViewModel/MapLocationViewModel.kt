@@ -1,17 +1,13 @@
 package com.example.motocast.ui.viewmodel.mapLocationViewModel
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.motocast.data.datasource.DirectionsDataSource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.motocast.domain.use_cases.GetLocationUseCase
 import com.example.motocast.ui.theme.LightPrimary
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.google.android.gms.location.*
@@ -33,28 +29,21 @@ import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.*
 
 
-/**
- * ViewModel for MapLocationViewModel. Map and Location related functions are here,
- * they are merged together because they are closely related and need to be used together.
- */
-class MapLocationViewModel(
-    private val activity: Activity,
-) : LocationCallback() {
+@HiltViewModel
+class MapLocationViewModel @Inject constructor(
+    private val getLocationUseCase: GetLocationUseCase,
+) : ViewModel() {
 
-    private val locationRequest: LocationRequest by lazy { createRequest() }
     private val _uiState = MutableStateFlow(MapLocationUiState())
-    private val locationClient: FusedLocationProviderClient by lazy {
-        LocationServices.getFusedLocationProviderClient(activity.applicationContext)
-    }
-    private var timeInterval = 100L // 100 milliseconds
-    private val minimalDistance = 1f // 0 meters
     val uiState = _uiState.asStateFlow()
-    private val directionsDataSource = DirectionsDataSource()
 
 
     /**
@@ -83,8 +72,7 @@ class MapLocationViewModel(
 
                     }
                 )
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.d("MapActivity", "Error: ${e}")
             }
         }
@@ -101,6 +89,7 @@ class MapLocationViewModel(
             Log.d("MapActivity", "Camera to user location")
 
             val location = getCurrentLocation()
+
 
             if (location != null) {
                 Log.d("MapActivity", "Location: ${location.latitude}, ${location.longitude}")
@@ -143,6 +132,7 @@ class MapLocationViewModel(
                 Log.d("MapActivity", "No location found")
             }
         }
+
         // set Loading to false
         _uiState.value = _uiState.value.copy(isLoading = false)
     }
@@ -212,67 +202,16 @@ class MapLocationViewModel(
         )
     }
 
-    /**
-     * This function checks if the user has granted the location permission.
-     */
-    private fun checkPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            activity.applicationContext,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    /**
-     * This function asks the user for the location permission.
-     */
-    private fun getPermission() {
-        ActivityCompat.requestPermissions(
-            activity,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            6969
-        )
-    }
-
-    /**
-     * Creates a LocationRequest object with the desired parameters.
-     * We can create another to update the parameters in the future.
-     */
-    private fun createRequest(): LocationRequest =
-        LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, timeInterval).apply {
-            setMinUpdateDistanceMeters(minimalDistance)
-            setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
-            setWaitForAccurateLocation(true)
-        }.build()
-
-    /**
-     * This function starts the location tracking. It checks if the user has granted the location
-     * permission and if so, it starts the location tracking. If the user has not granted the
-     * permission, it requests the permission.
-     */
-    fun startLocationTracking() {
-        if (checkPermission()) {
-            // get current location
-            locationClient.requestLocationUpdates(locationRequest, this, Looper.getMainLooper())
-            val location = getCurrentLocation()
-            if (location != null) {
-
-                cameraToUserLocation()
-            }
-        } else {
-            getPermission()
-        }
-    }
-
-    fun stopLocationTracking() {
-        locationClient.flushLocations()
-        locationClient.removeLocationUpdates(this)
-    }
 
     /**
      * This function is called when the user clicks on the "Track user on map" button.
      * It toggles the value of the trackUserOnMap variable.
      */
-    fun trackUserOnMap(routeExists: Boolean, destinations: List<Destination>, track : Boolean? = null) {
+    fun trackUserOnMap(
+        routeExists: Boolean,
+        destinations: List<Destination>,
+        track: Boolean? = null
+    ) {
         _uiState.value = _uiState.value.copy(
             trackUserOnMap = track ?: !_uiState.value.trackUserOnMap
         )
@@ -284,99 +223,14 @@ class MapLocationViewModel(
         }
     }
 
-    /**
-     * This function is called when the user clicks on the "Get current location" button.
-     * It checks if the user has granted the location permission and if so, it gets the last
-     * known location. If the user has not granted the permission, it requests the permission.
-     */
     fun getCurrentLocation(): Location? {
-        if (checkPermission()) {
-            return _uiState.value.lastLocation
-        } else {
-            getPermission()
-        }
-        return null
-    }
-
-    /**
-     * Returns the distance between the user's location and the given location.
-     * @param lat1 latitude of the given location
-     * @param lon1 longitude of the given location
-     * @param location user's location
-     * @return returns distance in meters
-     */
-    fun getAirDistanceFromLocation(location: Location): Int? {
-        if (_uiState.value.lastLocation != null) {
-            try {
-                val lat1 = location.latitude
-                val lon1 = location.longitude
-
-                val lat2 = _uiState.value.lastLocation!!.latitude
-                val lon2 = _uiState.value.lastLocation!!.longitude
-
-                val earthRadius = 6371 // kilometers
-                val dLat = Math.toRadians(lat2 - lat1)
-                val dLon = Math.toRadians(lon2 - lon1)
-                val lat1Rad = Math.toRadians(lat1)
-                val lat2Rad = Math.toRadians(lat2)
-
-                val a = sin(dLat / 2) * sin(dLat / 2) +
-                        sin(dLon / 2) * sin(dLon / 2) * cos(lat1Rad) * cos(lat2Rad)
-                val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-                val distance = earthRadius * c * 1000 // meters
-
-                return distance.toInt()
-            } catch (e: Exception) {
-                Log.e("LocationViewModel", "Error calculating distance: ${e.message}")
-                return null
-            }
-        }
-        return null
-    }
-
-    /**
-     * This function is called when the location is updated. It checks if the new location is
-     * different enough from the last location to update the map.
-     */
-    override fun onLocationResult(result: LocationResult) {
-        super.onLocationResult(result)
-        if (_uiState.value.isLoading) {
-            return
-        }
-
-        _uiState.value = _uiState.value.copy(isLoading = true)
-
-
-        val location = result.lastLocation
-        val lastLocation = _uiState.value.lastLocation
-
-
-
-        if (lastLocation != null && location != null) {
-            val distance = location.distanceTo(lastLocation)
-            if (distance > minimalDistance) {
-                _uiState.value = _uiState.value.copy(lastLocation = location)
-                // If the user has selected the "Track user on map" option, the map will be moved
-                if (_uiState.value.trackUserOnMap) {
-                    cameraToUserLocation()
-                }
-            }
-        } else {
+        viewModelScope.launch {
+            val location = getLocationUseCase()
             _uiState.value = _uiState.value.copy(lastLocation = location)
         }
-
-        _uiState.value = _uiState.value.copy(isLoading = false)
+        return _uiState.value.lastLocation
     }
 
 
-    /**
-     * This function is called when the location availability changes. If the location is not
-     * available, it requests the location updates again.
-     */
-    override fun onLocationAvailability(availability: LocationAvailability) {
-        if (!checkPermission()) {
-            getPermission()
-        }
-    }
 }
 

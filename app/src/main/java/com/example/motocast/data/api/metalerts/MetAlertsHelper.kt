@@ -4,9 +4,9 @@ import com.example.motocast.BuildConfig
 import com.example.motocast.util.data.DataHelper
 
 class MetAlertsHelper: DataHelper() {
-    fun createMetAlertsAPI(): MetAlertsAPI? {
+    fun createMetAlertsAPI(): MetAlertsApi? {
         return createAPI(
-            apiClass = MetAlertsAPI::class.java,
+            apiClass = MetAlertsApi::class.java,
             baseUrl = BuildConfig.MET_API_BASE_URL,
             apiKey = BuildConfig.MET_API_KEY,
             headers = mapOf("X-Gravitee-API-Key" to BuildConfig.MET_API_KEY)

@@ -5,10 +5,11 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NowCastAPI {
+interface NowCastApi {
     @GET("nowcast/2.0/complete")
     fun getNowCastData(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double
     ): Call<NowCastDataModel>
+
 }

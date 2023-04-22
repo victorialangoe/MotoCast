@@ -1,8 +1,10 @@
 package com.example.motocast.ui.view
 
 import android.content.Context
+import android.location.Location
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,8 +18,6 @@ import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
-import com.example.motocast.ui.viewmodel.weather.RouteWeatherUiState
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
 import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,11 +26,11 @@ import java.util.*
 
 @Composable
 fun AppNavigation(
-    mapLocationViewModel: MapLocationViewModel,
-    weatherViewModel: WeatherViewModel,
-    routePlannerViewModel: RoutePlannerViewModel,
-    addressDataViewModel: AddressDataViewModel,
-    settingsViewModel: SettingsViewModel,
+    addressDataViewModel: AddressDataViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    weatherViewModel: WeatherViewModel = hiltViewModel(),
+    routePlannerViewModel: RoutePlannerViewModel = hiltViewModel(),
+    mapLocationViewModel: MapLocationViewModel = hiltViewModel(),
     context: Context
 ) {
     val navController = rememberNavController()
@@ -50,23 +50,6 @@ fun AppNavigation(
                     destinations = routePlannerViewModelUiState.value.destinations,
                     isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                     weatherViewModel = weatherViewModel,
-                    /*
-                    onStartButtonClick = {
-                        routePlannerViewModel.start(
-                            { navController.navigate("home_screen") },
-                            {
-                                mapLocationViewModel.fitCameraToRouteAndWaypoints(
-                                    routePlannerViewModelUiState.value.destinations
-                                )
-                            }
-                        )
-                        mapLocationViewModel.trackUserOnMap(
-                            routeExists = true,
-                            destinations = routePlannerViewModelUiState.value.destinations,
-                            track = false
-                        )
-                    },
-                     */
                     mapLocationViewModel = mapLocationViewModel,
                     routePlannerViewModel = routePlannerViewModel,
                     navigateToSettings = { navController.navigate("settings_screen") },
@@ -117,19 +100,9 @@ fun AppNavigation(
                                     mapLocationViewModel.fitCameraToRouteAndWaypoints(
                                         routePlannerViewModelUiState.value.destinations
                                     )
-                                },
-                                getWeatherData = { lat: Double, lon: Double, time: Calendar, callback: (RouteWeatherUiState) -> Unit ->
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        weatherViewModel.getWeatherData(
-                                            lat,
-                                            lon,
-                                            time
-                                        ) { weatherUiState ->
-                                            weatherUiState?.let { callback(it) }
-                                        }
-                                    }
-                                },
+                                }
                             )
+
                             mapLocationViewModel.trackUserOnMap(
                                 routeExists = true,
                                 destinations = routePlannerViewModelUiState.value.destinations,
@@ -158,12 +131,7 @@ fun AppNavigation(
                         CoroutineScope(Dispatchers.IO).launch {
 
                             addressDataViewModel.fetchAddressData(
-                                query,
-                                getAirDistanceFromLocation = { location ->
-                                    mapLocationViewModel.getAirDistanceFromLocation(
-                                        location
-                                    )
-                                }
+                                query
                             )
                         }
                     },
@@ -190,11 +158,8 @@ fun AppNavigation(
                     getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                     activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                     popBackStack = { navController.popBackStack() },
-                    getCurrentLocation = { mapLocationViewModel.getCurrentLocation() },
-                    navigateTo = { screen -> navController.navigate(screen) },
-                    searchResultsCompareBy ={ string ->
-                        addressDataViewModel.searchResultsCompareBy(string)
-                    },
+                    getCurrentLocation = mapLocationViewModel.getCurrentLocation(),
+                    navigateTo = { screen -> navController.navigate(screen) }
                 )
             }
             composable("settings_screen") {
