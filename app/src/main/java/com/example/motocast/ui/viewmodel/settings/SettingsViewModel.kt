@@ -25,6 +25,10 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setUserName(userName: String) {
+        _uiState.value = _uiState.value.copy(userName = userName)
+    }
+
     fun setDarkMode(darkMode: Boolean) {
         _uiState.value = _uiState.value.copy(darkMode = darkMode)
     }

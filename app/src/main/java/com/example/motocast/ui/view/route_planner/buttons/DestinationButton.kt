@@ -1,6 +1,5 @@
 package com.example.motocast.ui.view.route_planner.buttons
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.route_planner.Destination
-import com.example.motocast.util.views.buttons.CloseButton
+import com.example.motocast.ui.view.utils.buttons.CloseButton
 
 
 @Composable

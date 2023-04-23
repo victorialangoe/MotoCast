@@ -1,6 +1,5 @@
 package com.example.motocast.domain.use_cases
 
-import android.location.Location
 import android.util.Log
 import com.example.motocast.domain.repository.MotoCastRepository
 import com.example.motocast.domain.utils.Utils.filterSearchResults

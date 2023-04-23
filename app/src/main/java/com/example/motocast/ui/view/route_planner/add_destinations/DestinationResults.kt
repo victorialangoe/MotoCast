@@ -15,28 +15,26 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.address.Address
 
 /**
- * This is the search results for the destination search
- *
- * @param addresses The list of addresses that matches the search query
+ * Shows the results of a search
+ * @param addresses The addresses to show
  * @param title The title of the search results
- * @param query The search query
- * @param showTitle Whether or not to show the title of the search results
- * @param maxResults The maximum number of results to show (default is 5)
- * @param isLoading Whether or not the search is still loading
- * @param onResultClick The function to call when a search result is clicked
+ * @param row Whether to show the results in a row or a column
+ * @param showTitle Whether to show the title of the search results
+ * @param maxResults The maximum number of results to show
+ * @param isLoading Whether the results are loading
+ * @param onResultClick The function to call when a result is clicked
  */
 @Composable
 fun DestinationResults(
     addresses: List<Address>,
     title: String,
-    query: String,
     row: Boolean = false,
     showTitle: Boolean = true,
-    maxResults: Int = 5,
+    maxResults: Int = 10,
     isLoading: Boolean,
     onResultClick: (address: Address) -> Unit,
 ) {
-    // Only show the first 5 results (If maxResults is not specified)
+
     addresses.take(maxResults)
 
     val content: @Composable () -> Unit = {

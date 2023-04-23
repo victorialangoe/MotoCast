@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.motocast.util.views.buttons.BasicButton
-import com.example.motocast.util.views.buttons.SettingsButton
+import com.example.motocast.ui.view.utils.buttons.BasicButton
+import com.example.motocast.ui.view.utils.buttons.SettingsButton
 
 @Composable
 fun RouteAndSettingsRow(

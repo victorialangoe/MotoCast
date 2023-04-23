@@ -6,11 +6,13 @@ import ReverseGeocodingDataModel
 import android.app.Application
 import android.util.Log
 import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.address.AddressesApi
-import com.example.motocast.data.api.geocoding.ReverseGeocodingApi
-import com.example.motocast.data.api.location_forecast.LocationForecastApi
-import com.example.motocast.data.api.metalerts.MetAlertsApi
-import com.example.motocast.data.api.nowcast.NowCastApi
+import com.example.motocast.data.api.AddressesApi
+import com.example.motocast.data.api.DirectionsApi
+import com.example.motocast.data.api.ReverseGeocodingApi
+import com.example.motocast.data.api.LocationForecastApi
+import com.example.motocast.data.api.MetAlertsApi
+import com.example.motocast.data.api.NowCastApi
+import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 
@@ -24,6 +26,7 @@ class MotoCastRepositoryImp @Inject constructor(
     private val addressesApi: AddressesApi,
     private val nowCastApi: NowCastApi,
     private val reverseGeocodingApi: ReverseGeocodingApi,
+    private val directionsApi: DirectionsApi,
     private val metAlertsApi: MetAlertsApi,
     private val locationForecastApi: LocationForecastApi,
     private val appContext: Application
@@ -37,9 +40,11 @@ class MotoCastRepositoryImp @Inject constructor(
                 if (response.isSuccessful) {
                     response.body()
                 } else {
+                    Log.d("MotoCastRepositoryImp", "getAddresses: ${response.errorBody()}")
                     null
                 }
             } catch (e: Exception) {
+                Log.d("MotoCastRepositoryImp", "getAddresses: ${e.message}")
                 null
             }
         }
@@ -66,6 +71,30 @@ class MotoCastRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun getDirectionsData(
+        coordinates: String,
+    ): DirectionsDataModel? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response: Response<DirectionsDataModel> =
+                    directionsApi.getDirections(
+                        coordinates = coordinates,
+                        accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN).execute()
+                Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response}")
+                if (response.isSuccessful) {
+                    Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response.body()}")
+                    response.body()
+                } else {
+                    Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.d("MotoCastRepositoryImp", "getDirectionsData: ${e.message}")
+                null
+            }
+        }
+    }
+
     override suspend fun getNowCastData(latitude: Double, longitude: Double): NowCastDataModel? {
         return withContext(Dispatchers.IO) {
             try {
@@ -74,9 +103,11 @@ class MotoCastRepositoryImp @Inject constructor(
                 if (response.isSuccessful) {
                     response.body()
                 } else {
+                    Log.d("MotoCastRepositoryImp", "getNowCastData: ${response.errorBody()}")
                     null
                 }
             } catch (e: Exception) {
+                Log.d("MotoCastRepositoryImp", "getNowCastData: ${e.message}")
                 null
             }
         }
@@ -96,6 +127,7 @@ class MotoCastRepositoryImp @Inject constructor(
                 if (response.isSuccessful) {
                     response.body()
                 } else {
+                    Log.d("MotoCastRepositoryImp", "getLocationsForecastData: ${response.errorBody()}")
                     null
                 }
             } catch (e: Exception) {
@@ -112,6 +144,7 @@ class MotoCastRepositoryImp @Inject constructor(
                 if (response.isSuccessful) {
                     response.body()
                 } else {
+                    Log.d("MotoCastRepositoryImp", "getMetAlertsData: ${response.errorBody()}")
                     null
                 }
             } catch (e: Exception) {

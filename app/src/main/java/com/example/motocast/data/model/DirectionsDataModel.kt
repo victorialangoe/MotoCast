@@ -2,6 +2,13 @@ package com.example.motocast.data.model
 
 import com.google.gson.annotations.SerializedName
 
+data class DirectionsDataModel(
+    val routes: List<Route>,
+    val waypoints: List<Waypoint>,
+    val code: String,
+    val uuid: String
+)
+
 data class Route(
     @SerializedName("weight_name") val weightName: String,
     val weight: Double,
@@ -77,9 +84,3 @@ data class Waypoint(
     val location: List<Double>
 )
 
-data class RouteSearchResult(
-    val routes: List<Route>,
-    val waypoints: List<Waypoint>,
-    val code: String,
-    val uuid: String
-)

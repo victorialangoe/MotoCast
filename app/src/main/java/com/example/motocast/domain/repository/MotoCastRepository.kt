@@ -4,6 +4,7 @@ import AddressDataModel
 import LocationForecastDataModel
 import ReverseGeocodingDataModel
 import android.content.Context
+import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 import java.util.Calendar
@@ -12,6 +13,8 @@ interface MotoCastRepository {
     suspend fun getAddresses(query: String): AddressDataModel?
 
     suspend fun getReverseGeocoding(latitude: Double, longitude: Double): ReverseGeocodingDataModel?
+
+    suspend fun getDirectionsData(coordinates: String): DirectionsDataModel?
 
     suspend fun getNowCastData(latitude: Double, longitude: Double): NowCastDataModel?
 

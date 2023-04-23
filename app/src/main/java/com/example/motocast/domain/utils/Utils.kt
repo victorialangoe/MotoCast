@@ -1,6 +1,5 @@
 package com.example.motocast.domain.utils
 
-import android.location.Location
 import android.util.Log
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.Properties
@@ -57,7 +56,7 @@ object Utils {
     fun getAirDistanceFromLocation(
         latitude: Double?,
         longitude: Double?,
-        location: Location?
+        location: android.location.Location?
     ): Int? {
 
         if (latitude == null || longitude == null || location == null) return null
@@ -163,11 +162,11 @@ object Utils {
      * @return The duration formatted to a string in the format "1 dag og 2 timer, 3 minutter og 4 sekunder"
      */
     fun formatDurationAsTimeString(duration: Long): String {
-        val duration = Duration.ofSeconds(duration)
+        val durationAsDuration = Duration.ofSeconds(duration)
 
-        val days = duration.toDays()
-        val hours = duration.toHours() % 24
-        val minutes = duration.toMinutes() % 60
+        val days = durationAsDuration.toDays()
+        val hours = durationAsDuration.toHours() % 24
+        val minutes = durationAsDuration.toMinutes() % 60
 
         return if (days > 0) {
             days.toString() + " dag" + (if (days > 1) "er" else "") + " og " +
@@ -230,7 +229,7 @@ object Utils {
 
     private fun stringToCalendar(inputString: String): Calendar {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val date = format.parse(inputString)
+        val date = format.parse(inputString) ?: return Calendar.getInstance()
         return Calendar.getInstance().apply {
             time = date
         }

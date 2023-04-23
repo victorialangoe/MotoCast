@@ -9,14 +9,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.motocast.ui.view.dynamic_scaffold.badges.CurrentWeatherBadge
-import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
-import com.example.motocast.util.views.buttons.LocateUserButton
+import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
+import com.example.motocast.ui.view.utils.buttons.LocateUserButton
 
 @Composable
 fun DynamicScaffoldViewTopBar(
     modifier: Modifier = Modifier,
     context: Context,
-    weatherViewModel: WeatherViewModel,
+    weatherViewModel: CurrentWeatherViewModel,
     onLocateUserClick: () -> Unit,
     isTrackUserActive: Boolean,
 ) {

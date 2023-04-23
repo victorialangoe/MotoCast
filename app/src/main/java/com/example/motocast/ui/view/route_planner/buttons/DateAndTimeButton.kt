@@ -12,9 +12,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.motocast.ui.theme.Orange300
-import com.example.motocast.ui.theme.Orange500
-import com.example.motocast.ui.theme.Orange500Transparent
+import com.example.motocast.theme.Orange300
+import com.example.motocast.theme.Orange500
+import com.example.motocast.theme.Orange500Transparent
 
 @Composable
 fun DateAndTimeButton(

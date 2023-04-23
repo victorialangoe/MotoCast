@@ -6,8 +6,7 @@ import android.util.Log
 import com.example.motocast.domain.repository.MotoCastRepository
 import com.example.motocast.domain.utils.Utils.formatToISO8601
 import com.example.motocast.domain.utils.Utils.getZeroedTimestamp
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
-import java.text.SimpleDateFormat
+import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 import java.util.*
 
 class FetchLocationForecastDataUseCase(

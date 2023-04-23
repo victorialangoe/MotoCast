@@ -3,6 +3,9 @@ package com.example.motocast.ui.view.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +17,8 @@ import com.example.motocast.util.views.Header
 fun SettingsView(
     popBackStack: () -> Unit,
     setDarkMode: (Boolean) -> Unit,
+    setUserName: (String) -> Unit,
+    userName: String,
     darkMode: Boolean,
 ) {
 
@@ -31,7 +36,6 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.padding(16.dp))
 
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -45,5 +49,21 @@ fun SettingsView(
                 setDarkMode = setDarkMode
             )
         }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surface),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            ChooseUserName(
+                userName = userName,
+                setUserName = setUserName
+            )
+        }
     }
 }
+

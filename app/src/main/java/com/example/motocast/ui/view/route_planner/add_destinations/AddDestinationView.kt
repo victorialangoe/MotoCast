@@ -23,11 +23,10 @@ fun AddDestinationView(
     addFormerAddress: (Address) -> Unit,
     formerAddresses: List<Address>,
     addresses: List<Address>,
-    query: String,
     setQuery: (String) -> Unit,
+    query: String,
     isFetching: Boolean,
     activeDestinationIndex: Int,
-    popBackStack: () -> Unit,
     navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
     getCurrentLocation: (Location?),
@@ -40,11 +39,11 @@ fun AddDestinationView(
     ) {
 
         AddDestinationSearchBar(
-            query = query,
             onClear = {
                 clearQuery()
                 clearResults()
             },
+            query = query,
             onBack = {
                 navigateTo("route_planner")
                 clearResults()
@@ -73,7 +72,7 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
+                    navigateTo("route_planner")
                 }
             }
         )
@@ -90,7 +89,6 @@ fun AddDestinationView(
                 title = "Tidligere søk",
                 showTitle = false,
                 row = true,
-                query = query,
                 isLoading = false, //This is never loading
                 onResultClick = { address ->
                     // 1. Update the destination in the route planner
@@ -107,7 +105,6 @@ fun AddDestinationView(
             DestinationResults(
                 addresses = addresses,
                 title = "Søkeresultater",
-                query = query,
                 maxResults = 200,
                 isLoading = isFetching,
                 onResultClick = { address ->

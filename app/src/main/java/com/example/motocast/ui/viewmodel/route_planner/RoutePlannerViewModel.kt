@@ -2,17 +2,18 @@ package com.example.motocast.ui.viewmodel.route_planner
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.motocast.data.datasource.DirectionsDataSource
+import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.Leg
-import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
 import com.example.motocast.domain.repository.MotoCastRepository
+import com.example.motocast.domain.use_cases.FetchDirectionsDataUseCase
 import com.example.motocast.domain.use_cases.GetWeatherDataUseCase
 import com.example.motocast.domain.utils.Utils
 import com.example.motocast.domain.utils.Utils.formatDate
 import com.example.motocast.domain.utils.Utils.formatDurationAsTimeString
 import com.example.motocast.domain.utils.Utils.formatTime
 import com.example.motocast.ui.viewmodel.address.Address
+import com.mapbox.common.location.Location
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -29,16 +30,90 @@ import javax.inject.Inject
 class RoutePlannerViewModel @Inject constructor(
     private val motoCastRepository: MotoCastRepository,
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
+    private val getDirectionsDataUseCase: FetchDirectionsDataUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
     val uiState = _uiState.asStateFlow()
-    private val directionsDataSource = DirectionsDataSource()
 
+    fun getTotalDestinations(): Int {
+        return _uiState.value.destinations.size
+    }
+
+    private fun updateUiState(update: (RoutePlannerUiState) -> RoutePlannerUiState) {
+        _uiState.value = update(_uiState.value)
+    }
+
+    fun editDestination(index: Int, navigateTo: () -> Unit) {
+        setActiveDestinationIndex(index)
+        navigateTo()
+    }
+
+    fun setActiveDestinationIndex(index: Int) {
+        updateUiState { it.copy(activeDestinationIndex = index) }
+    }
+
+    fun updateStartTime(time: Calendar) {
+        updateUiState { it.copy(startTime = time) }
+        // TODO: only 9 days in the future is allowed
+    }
+
+    fun clear() {
+        _uiState.value = RoutePlannerUiState()
+        updateUiState { it.copy(startTime = Calendar.getInstance()) }
+    }
+
+    private fun addGeoJsonDataToUiState(geoJsonData: String) {
+        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
+    }
+
+    fun checkIfAllDestinationsHaveNames(): Boolean {
+        return Utils.checkIfAllDestinationsHaveNames(_uiState.value.destinations)
+    }
+
+    fun checkIfSomeDestinationsHaveNames(): Boolean {
+        return Utils.checkIfSomeDestinationsHaveNames(_uiState.value.destinations)
+    }
+
+    fun getStartDate(): String {
+        return formatDate(_uiState.value.startTime)
+    }
+
+    fun getStartTime(): String {
+        return formatTime(_uiState.value.startTime)
+    }
+
+    private fun getDurationAsString(durationInSek: Long): String {
+        return formatDurationAsTimeString(durationInSek)
+    }
+
+    private fun getDestinationsCoordinatesAsString(): String {
+        val currentUiState = _uiState.value
+        val destinations = currentUiState.destinations
+        val coordinates = mutableListOf<String>()
+        destinations.forEach {
+            if (it.latitude != null && it.longitude != null) {
+                val location: Location =
+                    Location.Builder().latitude(it.latitude).longitude(it.longitude).build()
+                coordinates.add("${location.longitude},${location.latitude}")
+            }
+        }
+        return coordinates.joinToString(";")
+    }
+
+    private suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
+        val response = motoCastRepository.getReverseGeocoding(
+            longitude = longitude,
+            latitude = latitude
+        ) ?: return null
+
+        val name = response.features.firstOrNull()?.placeName
+
+        return name?.replace(", Norge", "") ?: name
+    }
 
     fun updateDestination(index: Int, address: Address) {
-        val currentUiState = _uiState.value
-        val newDestinations = currentUiState.destinations.toMutableList()
+        val newDestinations = _uiState.value.destinations.toMutableList()
         val destination = newDestinations[index]
         newDestinations[index] = destination.copy(
             name = address.addressText,
@@ -82,12 +157,12 @@ class RoutePlannerViewModel @Inject constructor(
     /**
      * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
      *
-     * @param routeSearchResult the response from the Mapbox Directions API
-     * @return a GeoJSON string
+     * @param directionsDataModel The JSON response from the Mapbox Directions API
+     * @return A GeoJSON string
      */
-    private fun convertRouteSearchResultToGeoJSON(routeSearchResult: RouteSearchResult): String {
+    private fun convertRouteSearchResultToGeoJSON(directionsDataModel: DirectionsDataModel): String {
 
-        val routesArray = routeSearchResult.routes
+        val routesArray = directionsDataModel.routes
         val firstRoute = routesArray[0]
         val legsArray = firstRoute.legs
         val features = mutableListOf<Feature>()
@@ -206,6 +281,7 @@ class RoutePlannerViewModel @Inject constructor(
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0]
                     )
+
                     timeCounter = 0.0
                     val newRoute = RouteWithWaypoint(
                         name = name,
@@ -280,9 +356,12 @@ class RoutePlannerViewModel @Inject constructor(
 
         if (_uiState.value.destinations.size >= 2) {
 
-            val response = directionsDataSource.getDirectionsData(
+            val response = getDirectionsDataUseCase(
                 getDestinationsCoordinatesAsString()
             )
+
+            Log.d("start", "response: $response")
+
             if (response != null) {
 
                 val geoJsonData = convertRouteSearchResultToGeoJSON(response)
@@ -313,78 +392,5 @@ class RoutePlannerViewModel @Inject constructor(
             )
         }
         navigateTo()
-    }
-
-    fun getTotalDestinations(): Int {
-        return _uiState.value.destinations.size
-    }
-
-    private fun updateUiState(update: (RoutePlannerUiState) -> RoutePlannerUiState) {
-        _uiState.value = update(_uiState.value)
-    }
-
-
-    fun editDestination(index: Int, navigateTo: () -> Unit) {
-        setActiveDestinationIndex(index)
-        navigateTo()
-    }
-
-    fun setActiveDestinationIndex(index: Int) {
-        updateUiState { it.copy(activeDestinationIndex = index) }
-    }
-
-    fun updateStartTime(time: Calendar) {
-        updateUiState { it.copy(startTime = time) }
-        // TODO: only 9 days in the future is allowed
-    }
-
-    fun clear() {
-        _uiState.value = RoutePlannerUiState()
-        updateUiState { it.copy(startTime = Calendar.getInstance()) }
-    }
-
-    private fun addGeoJsonDataToUiState(geoJsonData: String) {
-        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
-    }
-
-    fun checkIfAllDestinationsHaveNames(): Boolean {
-        return Utils.checkIfAllDestinationsHaveNames(_uiState.value.destinations)
-    }
-
-    fun checkIfSomeDestinationsHaveNames(): Boolean {
-        return Utils.checkIfSomeDestinationsHaveNames(_uiState.value.destinations)
-    }
-
-    fun getStartDate(): String {
-        return formatDate(_uiState.value.startTime)
-    }
-
-    fun getStartTime(): String {
-        return formatTime(_uiState.value.startTime)
-    }
-
-    private fun getDurationAsString(durationInSek: Long): String {
-        return formatDurationAsTimeString(durationInSek)
-    }
-
-    private fun getDestinationsCoordinatesAsString(): String {
-        val currentUiState = _uiState.value
-        val destinations = currentUiState.destinations
-        val coordinates = mutableListOf<String>()
-        destinations.forEach {
-            coordinates.add("${it.longitude},${it.latitude}")
-        }
-        return coordinates.joinToString(";")
-    }
-
-    private suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
-        val response = motoCastRepository.getReverseGeocoding(
-            longitude = longitude,
-            latitude = latitude
-        ) ?: return null
-
-        val name = response.features.firstOrNull()?.placeName
-
-        return name?.replace(", Norge", "") ?: name
     }
 }
