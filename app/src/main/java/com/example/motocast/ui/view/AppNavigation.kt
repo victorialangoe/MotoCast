@@ -1,7 +1,6 @@
 package com.example.motocast.ui.view
 
 import android.content.Context
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
@@ -83,6 +82,8 @@ fun AppNavigation(
                             },
                             geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
                             bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
+                            waypoints = routePlannerViewModelUiState.value.waypoints,
+                            context = context,
                         )
                     },
                 )
