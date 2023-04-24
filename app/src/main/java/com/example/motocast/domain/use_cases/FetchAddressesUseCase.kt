@@ -1,19 +1,20 @@
 package com.example.motocast.domain.use_cases
 
 import android.util.Log
+import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.utils.Utils.filterSearchResults
 import com.example.motocast.domain.utils.Utils.getAirDistanceFromLocation
 import com.example.motocast.ui.viewmodel.address.Address
 
 class FetchAddressesUseCase(
-    private val motoCastRepositoryInterface: MotoCastRepositoryInterface,
+    private val repository: MotoCastRepository,
     private val getLocationUseCase: GetLocationUseCase,
 ) {
     suspend operator fun invoke(query: String): List<Address> {
         if (query.isEmpty()) return emptyList()
 
-        val response = motoCastRepositoryInterface.getAddresses(query) ?: run {
+        val response = repository.getAddresses(query) ?: run {
             Log.d("FetchAddressesUseCase", "invoke: null")
             return emptyList()
         }

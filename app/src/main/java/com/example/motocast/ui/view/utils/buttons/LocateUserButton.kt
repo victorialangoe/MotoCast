@@ -5,6 +5,7 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.example.motocast.R
 
@@ -21,16 +22,16 @@ fun LocateUserButton(
         content = { _, contentSize, color, _ ->
             if (active) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_my_location_24),
-                    contentDescription = "Aktiv posisjon sporing icon",
+                    imageVector = ImageVector.vectorResource(R.drawable.baseline_my_location_24),
+                    contentDescription = stringResource(R.string.active_posstion_icon),
                     modifier = modifier
                         .size(contentSize),
                     tint = color,
                 )
             } else {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
-                    contentDescription = "Inaktiv posisjon sporing icon",
+                    imageVector = ImageVector.vectorResource(R.drawable.baseline_location_searching_24),
+                    contentDescription = stringResource(R.string.inactive_posstion_icon),
                     modifier = modifier
                         .size(contentSize),
                     tint = color,

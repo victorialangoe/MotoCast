@@ -6,6 +6,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.motocast.R
 
 @Composable
 fun CloseButton(
@@ -18,7 +20,7 @@ fun CloseButton(
         content = { _, contentSize, _, _ ->
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Lukk knapp",
+                contentDescription = stringResource(R.string.close_button_icon),
                 modifier = Modifier
                     .size(contentSize)
             )

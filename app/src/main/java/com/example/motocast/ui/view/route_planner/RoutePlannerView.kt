@@ -9,13 +9,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
-import com.example.motocast.ui.viewmodel.route_planner.Destination
-import com.example.motocast.util.views.Header
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonType
+import com.example.motocast.ui.viewmodel.route_planner.Destination
+import com.example.motocast.util.views.Header
 import java.util.*
 
 @Composable
@@ -45,7 +47,10 @@ fun RoutePlannerView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Header(onClick = { navigateTo("home_screen") }, text = "Ruteplanlegger")
+        Header(
+            onClick = { navigateTo("home_screen") },
+            text = stringResource(R.string.route_planner)
+        )
         // This makes the content scrollable
         LazyColumn(content = {
             item {
@@ -72,7 +77,8 @@ fun RoutePlannerView(
                         navigateTo("home_screen")
                         addDestination()
                     },
-                    text = if (destinations.size < 10) "Legg til stopp " else "Maks 10 stopp",
+                    text = if (destinations.size < 10) stringResource(R.string.add_stopp)
+                    else stringResource(R.string.max_stops_reached),
                     enabled = destinations.size < 10
                 )
 
@@ -91,7 +97,7 @@ fun RoutePlannerView(
                     BasicButton(
                         buttonType = ButtonType.Transparent,
                         onClick = { clearAll() },
-                        text = "Fjern alle stopp",
+                        text = stringResource(R.string.remove_all_stops),
                         enabled = !isLoading
                     )
                 }
@@ -100,7 +106,7 @@ fun RoutePlannerView(
 
                 BasicButton(
                     onClick = { startRoute() },
-                    text = if (isLoading) null else "Start rute",
+                    text = if (isLoading) null else stringResource(R.string.start_route),
                     enabled = enabledStartRoute && !isLoading,
                     content = { _, _, color, _ ->
                         if (isLoading) {
@@ -111,7 +117,7 @@ fun RoutePlannerView(
                         }
                     }
                 )
-                
+
             }
         })
     }

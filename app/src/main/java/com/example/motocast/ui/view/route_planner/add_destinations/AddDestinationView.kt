@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
 
 @Composable
@@ -31,6 +33,8 @@ fun AddDestinationView(
     fetchAddressData: (String) -> Unit,
     getCurrentLocation: (Location?),
 ) {
+    val myLocationString = stringResource(R.string.my_location)
+
 
     Column(
         modifier = Modifier
@@ -64,7 +68,7 @@ fun AddDestinationView(
                 val location: Location? = getCurrentLocation
                 location?.let {
                     val address = Address(
-                        addressText = "Min posisjon",
+                        addressText = myLocationString,
                         municipality = null,
                         latitude = location.latitude,
                         longitude = location.longitude
@@ -86,7 +90,7 @@ fun AddDestinationView(
             // Former searches in the cache
             DestinationResults(
                 addresses = formerAddresses,
-                title = "Tidligere søk",
+                title = stringResource(R.string.former_searches),
                 showTitle = false,
                 row = true,
                 isLoading = false, //This is never loading
@@ -104,7 +108,7 @@ fun AddDestinationView(
             // This is current search results
             DestinationResults(
                 addresses = addresses,
-                title = "Søkeresultater",
+                title = stringResource(R.string.search_results),
                 maxResults = 200,
                 isLoading = isFetching,
                 onResultClick = { address ->

@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModel
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.Waypoint
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.use_cases.FetchDirectionsDataUseCase
+import com.example.motocast.domain.use_cases.GetGeocodedNameUseCase
 import com.example.motocast.domain.use_cases.GetWeatherDataUseCase
 import com.example.motocast.domain.utils.Utils
+import com.example.motocast.domain.utils.Utils.checkIfTimeIsMoreThan8DaysInFuture
 import com.example.motocast.domain.utils.Utils.formatDate
 import com.example.motocast.domain.utils.Utils.formatDurationAsTimeString
 import com.example.motocast.domain.utils.Utils.formatTime
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RoutePlannerViewModel @Inject constructor(
-    private val motoCastRepositoryInterface: MotoCastRepositoryInterface,
+    private val getGeocodedNameUseCase: GetGeocodedNameUseCase,
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
     private val getDirectionsDataUseCase: FetchDirectionsDataUseCase,
 ) : ViewModel() {
@@ -54,8 +55,11 @@ class RoutePlannerViewModel @Inject constructor(
     }
 
     fun updateStartTime(time: Calendar) {
-        updateUiState { it.copy(startTime = time) }
-        // TODO: only 9 days in the future is allowed
+        if (checkIfTimeIsMoreThan8DaysInFuture(time)) {
+            updateUiState { it.copy(startTime = Calendar.getInstance()) }
+        } else {
+            updateUiState { it.copy(startTime = time) }
+        }
     }
 
     fun clear() {
@@ -99,17 +103,6 @@ class RoutePlannerViewModel @Inject constructor(
             }
         }
         return coordinates.joinToString(";")
-    }
-
-    private suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
-        val response = motoCastRepositoryInterface.getReverseGeocoding(
-            longitude = longitude,
-            latitude = latitude
-        ) ?: return null
-
-        val name = response.features.firstOrNull()?.placeName
-
-        return name?.replace(", Norge", "") ?: name
     }
 
     fun updateDestination(index: Int, address: Address) {
@@ -277,7 +270,7 @@ class RoutePlannerViewModel @Inject constructor(
                 timeFromStart += step.duration
                 timeCounter += step.duration
                 if (timeCounter > hourInSeconds) {
-                    val name = getReverseGeocodedName(
+                    val name = getGeocodedNameUseCase(
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0]
                     )

@@ -13,9 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppNavigation(
-                context = this,
-            )
+            AppNavigation(context = this)
         }
     }
 }

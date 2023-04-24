@@ -6,6 +6,7 @@ import android.view.Gravity
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.use_cases.GetLocationUseCase
 import com.example.motocast.theme.LightPrimary
@@ -39,10 +40,9 @@ import kotlin.math.min
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val motoCastRepositoryInterface: MotoCastRepositoryInterface,
+    private val motoCastRepository: MotoCastRepository,
     private val getLocationUseCase: GetLocationUseCase,
 ) : ViewModel() {
-
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
@@ -61,7 +61,7 @@ class MapViewModel @Inject constructor(
     fun loadMapView() {
         viewModelScope.launch(Dispatchers.Main) {
 
-            val appContext = motoCastRepositoryInterface.getAppContext()
+            val appContext = motoCastRepository.getAppContext()
             val location = getLocationUseCase()
 
             if (_uiState.value.mapView == null) {

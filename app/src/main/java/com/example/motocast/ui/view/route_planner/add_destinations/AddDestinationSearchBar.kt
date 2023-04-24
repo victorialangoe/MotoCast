@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
@@ -77,7 +78,7 @@ fun AddDestinationSearchBar(
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
-                    contentDescription = "Søk etter adresse icon",
+                    contentDescription = stringResource(R.string.search_for_address_icon),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
@@ -89,7 +90,7 @@ fun AddDestinationSearchBar(
                 } else {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
-                        contentDescription = "Søk etter adresse icon",
+                        contentDescription = stringResource(R.string.search_for_address_icon),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .size(18.dp)

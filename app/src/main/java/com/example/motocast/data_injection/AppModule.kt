@@ -3,16 +3,11 @@ package com.example.motocast.data_injection
 import android.app.Application
 import android.content.Context
 import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.AddressesApi
-import com.example.motocast.data.api.DirectionsApi
-import com.example.motocast.data.api.ReverseGeocodingApi
-import com.example.motocast.data.api.LocationForecastApi
-import com.example.motocast.data.api.MetAlertsApi
-import com.example.motocast.data.api.NowCastApi
+import com.example.motocast.data.api.*
 import com.example.motocast.data.remote.RemoteDataSource
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.domain.*
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
+import com.example.motocast.domain.*
 import com.example.motocast.domain.use_cases.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -41,31 +36,7 @@ object AppModule {
         reverseGeocodingApi: ReverseGeocodingApi,
         locationForecastApi: LocationForecastApi,
         @ApplicationContext appContext: Application
-    ): MotoCastRepository{
-        return MotoCastRepository(
-            remoteDataSource = RemoteDataSource(
-                addressesApi = addressesApi,
-                directionsApi = directionsApi,
-                metAlertsApi = metAlertsApi,
-                nowCastApi = nowCastApi,
-                reverseGeocodingApi = reverseGeocodingApi,
-                locationForecastApi = locationForecastApi
-            ),
-            appContext = appContext
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideMotoCastRepositoryInterface(
-        addressesApi: AddressesApi,
-        directionsApi: DirectionsApi,
-        metAlertsApi: MetAlertsApi,
-        nowCastApi: NowCastApi,
-        reverseGeocodingApi: ReverseGeocodingApi,
-        locationForecastApi: LocationForecastApi,
-        @ApplicationContext appContext: Application
-    ): MotoCastRepositoryInterface{
+    ): MotoCastRepository {
         return MotoCastRepository(
             remoteDataSource = RemoteDataSource(
                 addressesApi = addressesApi,
@@ -113,7 +84,6 @@ object AppModule {
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.ADDRESS_API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
-
         return retrofit.create(AddressesApi::class.java)
     }
 
@@ -174,7 +144,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFetchAddressesUseCase(
-        repository: MotoCastRepositoryInterface,
+        repository: MotoCastRepository,
         getLocationUseCase: GetLocationUseCase,
     ) = FetchAddressesUseCase(
         repository,
@@ -183,34 +153,41 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideGetGeocodedNameUseCase(
+        repository: MotoCastRepository,
+    ) = GetGeocodedNameUseCase(
+        repository
+    )
+
+    @Provides
+    @Singleton
     fun provideGetSystemDarkModeEnabledUseCase(
-        repository: MotoCastRepositoryInterface
+        repository: MotoCastRepository
     ) = GetSystemDarkModeEnabledUseCase(repository)
 
     @Provides
     @Singleton
     fun provideFetchNowCastDataUseCase(
-        repository: MotoCastRepositoryInterface
+        repository: MotoCastRepository
     ) = FetchNowCastDataUseCase(repository)
 
     @Provides
     @Singleton
     fun provideFetchDirectionsDataUseCase(
-        repository: MotoCastRepositoryInterface
+        repository: MotoCastRepository
     ) = FetchDirectionsDataUseCase(repository)
 
     @Provides
     @Singleton
     fun provideFetchLocationForecastDataUseCase(
-        repository: MotoCastRepositoryInterface
+        repository: MotoCastRepository
     ) = FetchLocationForecastDataUseCase(repository)
-
 
 
     @Provides
     @Singleton
     fun provideGetWeatherDataUseCase(
-        repository: MotoCastRepositoryInterface,
+        repository: MotoCastRepository,
         fetchNowCastDataUseCase: FetchNowCastDataUseCase,
         fetchLocationForecastDataUseCase: FetchLocationForecastDataUseCase,
     ) = GetWeatherDataUseCase(
@@ -227,7 +204,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGetLocationUseCase(
-        repository: MotoCastRepositoryInterface,
+        repository: MotoCastRepository,
         fusedLocationProviderClient: FusedLocationProviderClient
     ) = GetLocationUseCase(repository, fusedLocationProviderClient)
 

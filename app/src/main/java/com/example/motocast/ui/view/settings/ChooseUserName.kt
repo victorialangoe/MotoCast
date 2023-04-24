@@ -8,7 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 
 @Composable
 fun ChooseUserName(
@@ -22,7 +24,7 @@ fun ChooseUserName(
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            text = "Brukernavn",
+            text = stringResource(R.string.user_name),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground
         )

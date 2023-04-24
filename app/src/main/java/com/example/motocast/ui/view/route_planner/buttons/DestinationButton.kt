@@ -5,8 +5,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.view.utils.buttons.CloseButton
 
@@ -46,9 +48,9 @@ fun DestinationButton(
                 Text(
                     modifier = Modifier.weight(0.1f),
                     text = when (destinationIndex) {
-                        0 -> "Fra"
-                        destinations.size - 1 -> "Til"
-                        else -> "Via"
+                        0 -> stringResource(R.string.from)
+                        destinations.size - 1 -> stringResource(R.string.to)
+                        else -> stringResource(R.string.via)
                     },
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyMedium,
@@ -61,10 +63,10 @@ fun DestinationButton(
                         fontWeight = FontWeight.Light,
                     ),
                     text = when (destinationIndex) {
-                        0 -> destinations[destinationIndex].name ?: "Legg til startpunkt"
+                        0 -> destinations[destinationIndex].name ?: stringResource(R.string.add_start_point)
                         destinations.size - 1 -> destinations[destinationIndex].name
-                            ?: "Legg til sluttpunkt"
-                        else -> destinations[destinationIndex].name ?: "Legg til via punkt"
+                            ?: stringResource(R.string.add_end_point)
+                        else -> destinations[destinationIndex].name ?: stringResource(R.string.add_via_point)
                     },
                 )
                 if (destinations.size > 2) {

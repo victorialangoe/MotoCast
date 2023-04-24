@@ -14,7 +14,6 @@ data class RoutePlannerUiState (
             timestamp = 0
         )
     },
-    // TODO: USE api level 33 ?
     val startTime: Calendar = Calendar.getInstance(),
     val activeDestinationIndex : Int = 0,
     val error: String? = null,

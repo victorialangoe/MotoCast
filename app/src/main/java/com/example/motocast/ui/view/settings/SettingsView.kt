@@ -3,15 +3,14 @@ package com.example.motocast.ui.view.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.util.views.Header
+import com.example.motocast.R
 
 @Composable
 fun SettingsView(
@@ -32,7 +31,7 @@ fun SettingsView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Header(onClick = { popBackStack() }, text = "Innstillinger")
+        Header(onClick = { popBackStack() }, text = stringResource(R.string.settings))
 
         Spacer(modifier = Modifier.padding(16.dp))
 

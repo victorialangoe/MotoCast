@@ -3,6 +3,7 @@ package com.example.motocast.domain.use_cases
 import LocationForecastData
 import LocationForecastDataModel
 import android.util.Log
+import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.utils.Utils.formatToISO8601
 import com.example.motocast.domain.utils.Utils.getZeroedTimestamp
@@ -10,7 +11,7 @@ import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 import java.util.*
 
 class FetchLocationForecastDataUseCase(
-    private val repository: MotoCastRepositoryInterface
+    private val repository: MotoCastRepository
 ) {
     suspend operator fun invoke(
         latitude: Double,

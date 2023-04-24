@@ -1,15 +1,16 @@
 package com.example.motocast.domain.use_cases
 
 import android.util.Log
+import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 
 class FetchNowCastDataUseCase(
-    private val motoCastRepositoryInterface: MotoCastRepositoryInterface
+    private val motoCastRepository: MotoCastRepository
 ) {
 
     suspend operator fun invoke(latitude: Double, longitude: Double): WeatherUiState? {
-        val response = motoCastRepositoryInterface.getNowCastData(latitude, longitude) ?: run {
+        val response = motoCastRepository.getNowCastData(latitude, longitude) ?: run {
             Log.d("FetchNowCastDataUseCase", "invoke: null")
             return null
         }

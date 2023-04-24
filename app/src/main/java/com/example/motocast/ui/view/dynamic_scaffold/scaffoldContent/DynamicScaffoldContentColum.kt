@@ -27,13 +27,15 @@ fun DynamicScaffoldContentColum(
 ) {
 
     Column(
-        modifier = modifier.fillMaxHeight().
-            clip(shape = RoundedCornerShape(
-                18.dp,
-                18.dp,
-                0.dp,
-                0.dp
-            )
+        modifier = modifier
+            .fillMaxHeight()
+            .clip(
+                shape = RoundedCornerShape(
+                    18.dp,
+                    18.dp,
+                    0.dp,
+                    0.dp
+                )
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
 
@@ -63,6 +65,5 @@ fun DynamicScaffoldContentColum(
             HomeScaffoldContent(
                 userName = userName,
             )
-
     }
 }

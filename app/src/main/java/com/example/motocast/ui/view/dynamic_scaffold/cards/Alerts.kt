@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.data.model.Properties
 import com.example.motocast.theme.*
 import com.example.motocast.ui.view.getWeatherIcon
@@ -57,7 +59,7 @@ fun Alerts(
                                 alert.awareness_level
                             )
                         ),
-                        contentDescription = "Alert",
+                        contentDescription = stringResource(R.string.alert_icon),
                         modifier = Modifier
                             .padding(16.dp)
                     )
@@ -70,7 +72,7 @@ fun Alerts(
                 }
                 Icon(
                     imageVector = Icons.Default.Info,
-                    contentDescription = "Alert",
+                    contentDescription = stringResource(R.string.info_icon),
                     tint = when (alert.awareness_level) {
                         "2; yellow; Moderate" -> if (isSystemInDarkTheme()) Yellow700 else MaterialTheme.colorScheme.onSurface
                         "3; orange; Severe" -> if (isSystemInDarkTheme()) Orange700 else MaterialTheme.colorScheme.onSurface

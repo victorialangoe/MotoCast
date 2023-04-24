@@ -57,13 +57,4 @@ fun DisplayWeather(
             }
         }
     }
-
-    if (fare) {
-        //Fare-condition
-        Spacer(modifier = Modifier.size(6.dp))
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.danger_windy),
-            contentDescription = "Danger windy icon",
-        )
-    }
 }

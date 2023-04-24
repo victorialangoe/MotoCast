@@ -18,7 +18,6 @@ import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 
 @Composable
 fun CardsColumn(waypoints: List<RouteWithWaypoint>, context: Context, isLoading: Boolean) {
-    Log.d("CardsColumn", "waypoints: $waypoints")
 
     if (isLoading) {
         CircularProgressIndicator(

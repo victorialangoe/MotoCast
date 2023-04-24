@@ -33,6 +33,19 @@ object Utils {
     }
 
     /**
+     * Checks if the time is more than 8 days in the future (the LocationForecast API only supports
+     * 8/9 days in the future)
+     * @param time The time to check
+     * @return True if the time is more than 8 days in the future, false otherwise
+     */
+    fun checkIfTimeIsMoreThan8DaysInFuture(time: Calendar): Boolean {
+        val now = Calendar.getInstance()
+        val timeInFuture = now.clone() as Calendar
+        timeInFuture.add(Calendar.DAY_OF_YEAR, 8)
+        return time.after(timeInFuture)
+    }
+
+    /**
      * Checks if any of the destinations have a name
      * @param destinations The destinations to check
      * @return True if any of the destinations have a name, false otherwise

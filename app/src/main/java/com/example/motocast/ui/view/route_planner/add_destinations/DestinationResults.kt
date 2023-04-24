@@ -16,13 +16,13 @@ import com.example.motocast.ui.viewmodel.address.Address
 
 /**
  * Shows the results of a search
- * @param addresses The addresses to show
+ * @param addresses The list of addresses to show
  * @param title The title of the search results
- * @param row Whether to show the results in a row or a column
- * @param showTitle Whether to show the title of the search results
+ * @param row Whether or not to show the results in a row
+ * @param showTitle Whether or not to show the title
  * @param maxResults The maximum number of results to show
- * @param isLoading Whether the results are loading
- * @param onResultClick The function to call when a result is clicked
+ * @param isLoading Whether or not the search is still loading
+ * @param onResultClick The callback to invoke when a result is clicked
  */
 @Composable
 fun DestinationResults(

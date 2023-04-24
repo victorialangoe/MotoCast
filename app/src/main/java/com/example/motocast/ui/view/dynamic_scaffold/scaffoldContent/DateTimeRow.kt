@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.view.route_planner.buttons.DateAndTimeButton
@@ -25,13 +26,13 @@ fun DateTimeRow(
             DateAndTimeButton(
                 label = date,
                 icon = R.drawable.calendar,
-                iconDescription = "Calendar icon",
+                iconDescription = stringResource(R.string.calendar_icon),
             )
             Spacer(modifier = Modifier.width(8.dp))
             DateAndTimeButton(
                 label = time,
                 icon = R.drawable.clock,
-                iconDescription = "Clock icon",
+                iconDescription = stringResource(R.string.clock_icon),
             )
         }
     }
