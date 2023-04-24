@@ -1,10 +1,10 @@
 package com.example.motocast.domain.use_cases
 
 import android.content.res.Configuration
-import com.example.motocast.domain.repository.MotoCastRepository
+import com.example.motocast.data.repository.MotoCastRepositoryInterface
 
 class GetSystemDarkModeEnabledUseCase(
-    private val repository: MotoCastRepository
+    private val repository: MotoCastRepositoryInterface
 ) {
     suspend operator fun invoke(): Boolean {
         val appContext = repository.getAppContext()

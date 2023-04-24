@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.Waypoint
-import com.example.motocast.domain.repository.MotoCastRepository
+import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.use_cases.FetchDirectionsDataUseCase
 import com.example.motocast.domain.use_cases.GetWeatherDataUseCase
 import com.example.motocast.domain.utils.Utils
@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RoutePlannerViewModel @Inject constructor(
-    private val motoCastRepository: MotoCastRepository,
+    private val motoCastRepositoryInterface: MotoCastRepositoryInterface,
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
     private val getDirectionsDataUseCase: FetchDirectionsDataUseCase,
 ) : ViewModel() {
@@ -102,7 +102,7 @@ class RoutePlannerViewModel @Inject constructor(
     }
 
     private suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
-        val response = motoCastRepository.getReverseGeocoding(
+        val response = motoCastRepositoryInterface.getReverseGeocoding(
             longitude = longitude,
             latitude = latitude
         ) ?: return null

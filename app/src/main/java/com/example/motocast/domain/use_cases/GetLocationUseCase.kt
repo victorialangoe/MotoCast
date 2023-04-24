@@ -6,7 +6,7 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.motocast.MainActivity
-import com.example.motocast.domain.repository.MotoCastRepository
+import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.CancellationException
@@ -14,7 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class GetLocationUseCase(
-    private val repository: MotoCastRepository,
+    private val repository: MotoCastRepositoryInterface,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
 ): LocationCallback() {
 

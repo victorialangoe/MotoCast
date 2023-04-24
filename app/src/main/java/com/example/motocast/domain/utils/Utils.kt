@@ -117,6 +117,12 @@ object Utils {
         return addresses.sortedWith(searchResultsCompareBy(query))
     }
 
+    /**
+     * Compares two addresses by how well they match the query.
+     * First by how well the address matches the query, then by how well the municipality matches the query,
+     * then by the distance from the user
+     * @param query The query to compare by
+     */
     private fun searchResultsCompareBy(query: String): Comparator<Address> {
         return compareBy<Address> {
             if (it.addressText == query) 0 else 1
@@ -227,6 +233,12 @@ object Utils {
         return alertsFound
     }
 
+
+    /**
+     * Converts a string on format "yyyy-MM-dd'T'HH:mm:ssXXX" to a calendar
+     * @param inputString The string to convert
+     * @return The calendar
+     */
     private fun stringToCalendar(inputString: String): Calendar {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val date = format.parse(inputString) ?: return Calendar.getInstance()

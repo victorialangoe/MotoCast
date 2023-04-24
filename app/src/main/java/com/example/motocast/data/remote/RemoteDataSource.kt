@@ -1,36 +1,28 @@
-package com.example.motocast.data.repository
+package com.example.motocast.data.remote
 
 import AddressDataModel
 import LocationForecastDataModel
 import ReverseGeocodingDataModel
-import android.app.Application
 import android.util.Log
 import com.example.motocast.BuildConfig
-import com.example.motocast.data.api.AddressesApi
-import com.example.motocast.data.api.DirectionsApi
-import com.example.motocast.data.api.ReverseGeocodingApi
-import com.example.motocast.data.api.LocationForecastApi
-import com.example.motocast.data.api.MetAlertsApi
-import com.example.motocast.data.api.NowCastApi
+import com.example.motocast.data.api.*
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
-
-import com.example.motocast.domain.repository.MotoCastRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import javax.inject.Inject
 
-class MotoCastRepositoryImp @Inject constructor(
-    private val addressesApi: AddressesApi,
-    private val nowCastApi: NowCastApi,
+class RemoteDataSource(
     private val reverseGeocodingApi: ReverseGeocodingApi,
+    private val addressesApi: AddressesApi,
     private val directionsApi: DirectionsApi,
-    private val metAlertsApi: MetAlertsApi,
     private val locationForecastApi: LocationForecastApi,
-    private val appContext: Application
-) : MotoCastRepository {
+    private val metAlertsApi: MetAlertsApi,
+    private val nowCastApi: NowCastApi,
+): RemoteDataSourceInterface {
+
+
 
     override suspend fun getAddresses(query: String): AddressDataModel? {
         return withContext(Dispatchers.IO) {
@@ -153,7 +145,4 @@ class MotoCastRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun getAppContext(): Application {
-        return appContext
-    }
 }

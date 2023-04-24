@@ -1,13 +1,13 @@
 package com.example.motocast.domain.use_cases
 
 import android.util.Log
-import com.example.motocast.domain.repository.MotoCastRepository
+import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.utils.Utils.getCorrectAlertsFromAlerts
 import com.example.motocast.ui.viewmodel.current_weather.RouteWeatherUiState
 import java.util.*
 
 class GetWeatherDataUseCase(
-    private val repository: MotoCastRepository,
+    private val repository: MotoCastRepositoryInterface,
     private val fetchLocationForecastDataUseCase: FetchLocationForecastDataUseCase,
     private val fetchNowCastDataUseCase: FetchNowCastDataUseCase,
 ) {

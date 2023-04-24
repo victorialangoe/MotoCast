@@ -1,4 +1,4 @@
-package com.example.motocast.domain.repository
+package com.example.motocast.data.repository
 
 import AddressDataModel
 import LocationForecastDataModel
@@ -7,9 +7,8 @@ import android.content.Context
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
-import java.util.Calendar
 
-interface MotoCastRepository {
+interface MotoCastRepositoryInterface {
     suspend fun getAddresses(query: String): AddressDataModel?
 
     suspend fun getReverseGeocoding(latitude: Double, longitude: Double): ReverseGeocodingDataModel?
