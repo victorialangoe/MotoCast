@@ -22,6 +22,14 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
+/**
+ * A repository class that implements [MotoCastRepositoryInterface] to manage data retrieval
+ * from the [RemoteDataSource] and provide the application context.
+ *
+ * @param remoteDataSource The remote data source for retrieving weather, geocoding, and other data.
+ * @param appContext The application context for context-related operations.
+ * @see MotoCastRepositoryInterface
+ */
 class MotoCastRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val appContext: Application

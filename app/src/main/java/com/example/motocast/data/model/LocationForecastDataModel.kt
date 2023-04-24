@@ -1,6 +1,6 @@
 /**
- * Data class for the location forecast data from the Met API.
- * This data class is used to parse the JSON data from the Met API.
+ * Data model for the location forecast data
+ * Link to the API documentation: [Location Forecast API](https://api.met.no/weatherapi/locationforecast/2.0/documentation)
  */
 data class LocationForecastDataModel(
     val type: String,

@@ -6,7 +6,6 @@ import com.example.motocast.BuildConfig
 import com.example.motocast.data.api.*
 import com.example.motocast.data.remote.RemoteDataSource
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.*
 import com.example.motocast.domain.use_cases.*
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -21,7 +20,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-
+/**
+ * This is the module where we provide all the dependencies for the app to use.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

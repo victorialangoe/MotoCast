@@ -21,7 +21,7 @@ object Utils {
     /**
      * Checks if all of the destinations have a name
      * @param destinations The destinations to check
-     * @return True if all of the destinations have a name, false otherwise
+     * @return [Boolean] True if all of the destinations have a name, false otherwise
      */
     fun checkIfAllDestinationsHaveNames(destinations: List<Destination>): Boolean {
         destinations.forEach {
@@ -36,7 +36,7 @@ object Utils {
      * Checks if the time is more than 8 days in the future (the LocationForecast API only supports
      * 8/9 days in the future)
      * @param time The time to check
-     * @return True if the time is more than 8 days in the future, false otherwise
+     * @return [Boolean] True if the time is more than 8 days in the future, false otherwise
      */
     fun checkIfTimeIsMoreThan8DaysInFuture(time: Calendar): Boolean {
         val now = Calendar.getInstance()
@@ -48,7 +48,7 @@ object Utils {
     /**
      * Checks if any of the destinations have a name
      * @param destinations The destinations to check
-     * @return True if any of the destinations have a name, false otherwise
+     * @return [Boolean] True if any of the destinations have a name, false otherwise
      */
     fun checkIfSomeDestinationsHaveNames(destinations: List<Destination>): Boolean {
         destinations.forEach {
@@ -64,7 +64,7 @@ object Utils {
      * @param latitude Latitude of the first location
      * @param longitude Longitude of the first location
      * @param location Location of the second location
-     * @return The distance between the two locations in meters or null if any of the parameters are null
+     * @return [Int] The distance between the two locations in meters
      */
     fun getAirDistanceFromLocation(
         latitude: Double?,
@@ -93,7 +93,7 @@ object Utils {
     /**
      * Formats a calendar to ISO8601 format
      * @param calendar The calendar to format
-     * @return The calendar formatted to ISO8601 format
+     * @return [String] The calendar formatted to ISO8601 format
      */
     fun formatToISO8601(calendar: Calendar): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
@@ -117,12 +117,11 @@ object Utils {
         return zeroedTimestamp
     }
 
-
     /**
      * Filters the search results and sorts them
      * @param query The query to filter by
      * @param addresses The addresses to filter
-     * @return The filtered and sorted addresses
+     * @return The filtered and sorted addresses as [List]
      */
     fun filterSearchResults(query: String, addresses: List<Address>): List<Address> {
         if (query.isEmpty()) return emptyList()

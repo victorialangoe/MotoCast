@@ -1,5 +1,9 @@
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data model for the MetAlerts API.
+ * Link to the API documentation: [Metalerts API](https://api.met.no/weatherapi/metalerts/1.1/documentation)
+ */
 data class AddressDataModel(
     @SerializedName("metadata")
     val metadata: AddressMetadata,
@@ -7,7 +11,6 @@ data class AddressDataModel(
     @SerializedName("adresser")
     val addresses: List<Address>
 )
-
 data class AddressMetadata(
     @SerializedName("side")
     val page: Int,

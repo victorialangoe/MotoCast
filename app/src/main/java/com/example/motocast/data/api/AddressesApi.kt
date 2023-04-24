@@ -7,6 +7,7 @@ import retrofit2.http.Query
 
 /**
  * Interface for the kartverket API for address data.
+ * Link to the API documentation: [Kartverket API](https://ws.geonorge.no/adresser/v1/)
  */
 interface AddressesApi {
     @GET("sok")

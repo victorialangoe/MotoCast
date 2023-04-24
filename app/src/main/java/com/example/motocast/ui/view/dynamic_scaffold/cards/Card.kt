@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.data.model.Properties
 import java.util.*
 
-
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
@@ -18,7 +17,6 @@ fun Card(
     location: String,
     alerts: List<Properties>,
     time: Calendar?,
-    fare: Boolean = false,
     iconSymbol: String,
     context: Context,
 ) {
@@ -44,7 +42,6 @@ fun Card(
             DisplayWeather(
                 modifier = Modifier.weight(0.3f),
                 temperature = temperature,
-                fare = fare,
                 symbolCode = iconSymbol,
                 context = context,
             )

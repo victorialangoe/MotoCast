@@ -1,16 +1,14 @@
 package com.example.motocast.ui.viewmodel.current_weather
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.domain.use_cases.FetchNowCastDataUseCase
 import com.example.motocast.domain.use_cases.GetLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,17 +20,26 @@ class CurrentWeatherViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
+    private var job: Job? = null
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            val location = getLocationUseCase()
-            if (location != null) {
-                fetchNowCastDataEvery5min(
-                    location.latitude,
-                    location.longitude
-                )
+    fun startFetchingNowCastData() {
+        job = CoroutineScope(Dispatchers.IO).launch(){
+            var location = getLocationUseCase()
+            // Location might be null if the user has not granted location permission
+            while (location == null) {
+                Log.d("CurrentWeatherViewModel", "Location is null")
+                delay(2000)
+                location = getLocationUseCase()
             }
+            fetchNowCastDataEvery5min(
+                location.latitude,
+                location.longitude
+            )
         }
+    }
+
+    fun stopFetchingNowCastData() {
+        job?.cancel()
     }
 
     private fun fetchNowCastDataEvery5min(
@@ -45,6 +52,7 @@ class CurrentWeatherViewModel @Inject constructor(
                     latitude,
                     longitude
                 )
+                Log.d("CurrentWeatherViewModel", "Weather data: $weatherData")
                 if (weatherData != null) {
                     _uiState.value = WeatherUiState(
                         symbolCode = weatherData.symbolCode,

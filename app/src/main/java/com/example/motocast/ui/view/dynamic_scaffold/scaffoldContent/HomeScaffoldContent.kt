@@ -12,9 +12,9 @@ fun HomeScaffoldContent(
     userName: String,
 ) {
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-        in 0..11 -> "${stringResource(R.string.good_morning)}, $userName"
-        in 12..17 -> "${stringResource(R.string.good_afternoon)}, $userName"
-        else -> "${stringResource(R.string.good_evening)}, $userName"
+        in 0..11 -> "${stringResource(R.string.good_morning)} $userName"
+        in 12..17 -> "${stringResource(R.string.good_afternoon)} $userName"
+        else -> "${stringResource(R.string.good_evening)} $userName"
     }
 
     Text(

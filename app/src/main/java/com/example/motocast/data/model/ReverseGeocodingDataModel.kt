@@ -1,5 +1,9 @@
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data model for the Mapbox API for reverse geocoding data.
+ * Link to the API documentation: [Mapbox Reverse Geocoding API](https://docs.mapbox.com/api/search/#reverse-geocoding)
+ */
 data class ReverseGeocodingDataModel(
     val type: String,
     val query: List<Double>,

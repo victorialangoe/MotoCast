@@ -18,7 +18,6 @@ import com.example.motocast.ui.view.dynamic_scaffold.cards.DisplayWeather
 @Composable
 fun CurrentWeatherBadge(
     temperature: Int,
-    fare: Boolean = false,
     iconSymbol: String,
     context: Context
 ) {
@@ -29,7 +28,6 @@ fun CurrentWeatherBadge(
     ) {
         DisplayWeather(
             temperature = temperature,
-            fare = fare,
             symbolCode = iconSymbol,
             context = context
         )

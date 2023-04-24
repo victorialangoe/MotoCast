@@ -17,7 +17,7 @@ import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonType
 import com.example.motocast.ui.viewmodel.route_planner.Destination
-import com.example.motocast.util.views.Header
+import com.example.motocast.ui.view.utils.components.Header
 import java.util.*
 
 @Composable

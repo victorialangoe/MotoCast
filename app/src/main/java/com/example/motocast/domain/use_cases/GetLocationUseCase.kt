@@ -7,13 +7,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.motocast.MainActivity
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
+/**
+ * Fetches location from the repository
+ *
+ * @param repository The repository to fetch the location from, as a [MotoCastRepository]
+ * @fuseLocationProviderClient The [fusedLocationProviderClient] to get the location from
+ * @return location as a [Location] or null
+ */
 class GetLocationUseCase(
     private val repository: MotoCastRepository,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
@@ -48,8 +54,11 @@ class GetLocationUseCase(
         }
     }
 
-
-
+    /**
+     * Checks if the app has permission to access the location
+     *
+     * @return true if the app has permission to access the location, false otherwise
+     */
     private suspend fun checkPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             repository.getAppContext(),
@@ -57,7 +66,9 @@ class GetLocationUseCase(
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-
+    /**
+     * Gets permission to access the location
+     */
     private suspend fun getPermission() {
         ActivityCompat.requestPermissions(
             repository.getAppContext() as MainActivity,
@@ -67,7 +78,6 @@ class GetLocationUseCase(
     }
 
     override fun onLocationResult(result: LocationResult) {}
-
 
     override fun onLocationAvailability(availability: LocationAvailability) {}
 

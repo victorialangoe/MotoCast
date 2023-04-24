@@ -2,27 +2,25 @@ package com.example.motocast.ui.view.dynamic_scaffold.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.motocast.R
 
+/**
+ * Displays the current weather in a card.
+ * @param modifier Modifier to be applied to the card.
+ * @param temperature The temperature to be displayed.
+ * @param symbolCode The symbol code of the weather icon.
+ * @param context The context of the application. (Hack to get the symbol code from the string resource)
+ */
 @Composable
 fun DisplayWeather(
     modifier: Modifier = Modifier,
     temperature: Int,
-    fare: Boolean,
     symbolCode: String?,
     context: android.content.Context
 ) {

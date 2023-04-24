@@ -2,6 +2,10 @@ package com.example.motocast.data.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data model for the Mapbox API for directions data.
+ * Link to the API documentation: [Mapbox Directions API](https://docs.mapbox.com/api/navigation/#directions)
+ */
 data class DirectionsDataModel(
     val routes: List<Route>,
     val waypoints: List<Waypoint>,

@@ -7,6 +7,11 @@ import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 
+/**
+ * Interface for the remote data source.
+ * Contains functions for getting data from the remote data source.
+ * @see RemoteDataSource
+ */
 interface RemoteDataSourceInterface {
     suspend fun getAddresses(query: String): AddressDataModel?
 

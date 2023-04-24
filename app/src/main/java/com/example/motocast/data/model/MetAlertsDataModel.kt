@@ -1,5 +1,9 @@
 package com.example.motocast.data.model
 
+/**
+ * Data model for the Metalerts API.
+ * Link to the API documentation: [Metalerts API](https://api.met.no/weatherapi/metalerts/1.1/documentation)
+ */
 data class MetAlertsDataModel(
     val features: List<Feature>,
     val lang: String,

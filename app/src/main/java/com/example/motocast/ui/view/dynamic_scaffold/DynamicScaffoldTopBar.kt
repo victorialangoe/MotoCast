@@ -30,7 +30,6 @@ fun DynamicScaffoldViewTopBar(
         if (weatherUiState.value.temperature != null && weatherUiState.value.symbolCode != null) {
             CurrentWeatherBadge(
                 context = context,
-                fare = false,
                 temperature =  weatherUiState.value.temperature!!.toInt(),
                 iconSymbol = weatherUiState.value.symbolCode!!
             )

@@ -5,6 +5,12 @@ import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 
+/**
+ * Fetches directions data from the repository and returns it as a [DirectionsDataModel].
+ *
+ * @param repository The repository to fetch the directions data from, as a [MotoCastRepository]
+ * @return directions data as a [DirectionsDataModel] or null
+ */
 class FetchDirectionsDataUseCase(
     private val repository: MotoCastRepository
 )

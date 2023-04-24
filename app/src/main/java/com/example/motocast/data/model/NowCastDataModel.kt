@@ -1,5 +1,9 @@
 package com.example.motocast.data.model
 
+/**
+ * Data model for the Nowcast API.
+ * Link to the API documentation: [Nowcast API](https://api.met.no/weatherapi/nowcast/2.0/documentation)
+ */
 data class NowCastDataModel(
     val type: String,
     val geometry: GeometryNowCast,

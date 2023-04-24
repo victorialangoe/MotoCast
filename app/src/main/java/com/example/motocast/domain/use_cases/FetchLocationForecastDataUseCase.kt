@@ -10,6 +10,11 @@ import com.example.motocast.domain.utils.Utils.getZeroedTimestamp
 import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 import java.util.*
 
+/**
+ * Fetches location forecast data from the repository
+ * @param repository The repository to fetch the location forecast data from, as a [MotoCastRepository]
+ * @return location forecast data as a [WeatherUiState] or null
+ */
 class FetchLocationForecastDataUseCase(
     private val repository: MotoCastRepository
 ) {

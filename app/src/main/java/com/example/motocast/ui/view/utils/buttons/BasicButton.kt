@@ -22,6 +22,15 @@ enum class ButtonSize {
     Large,
 }
 
+/**
+ * Created own button to be able to customize it more easily
+ *
+ * @param text Text to be displayed in the button
+ * @param content Content to be displayed in the button, with the following parameters custom styling.
+ * @param onClick Action to be executed when the button is clicked
+ * @param modifier Modifier to be applied to the button
+ *
+ */
 @Composable
 fun BasicButton(
     text: String? = null,

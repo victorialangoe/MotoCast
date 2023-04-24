@@ -1,4 +1,4 @@
-package com.example.motocast.util.views
+package com.example.motocast.ui.view.utils.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

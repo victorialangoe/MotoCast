@@ -8,6 +8,11 @@ import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 
+/**
+ * Interface for the motoCast repository.
+ * Contains functions for getting data from the repository and the application context.
+ * @see MotoCastRepository
+ */
 interface MotoCastRepositoryInterface {
     suspend fun getAddresses(query: String): AddressDataModel?
 

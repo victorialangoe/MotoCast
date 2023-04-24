@@ -5,6 +5,12 @@ import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 
+/**
+ * Fetches nowcast data from the repository
+ *
+ * @param repository The repository to fetch the nowcast data from, as a [MotoCastRepository]
+ * @return nowcast data as a [WeatherUiState] or null
+ */
 class FetchNowCastDataUseCase(
     private val motoCastRepository: MotoCastRepository
 ) {

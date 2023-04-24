@@ -7,6 +7,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.Call
 
+/**
+ * Interface for the Mapbox API for directions data.
+ * Link to the API documentation: [Mapbox Directions API](https://docs.mapbox.com/api/navigation/#directions)
+ */
 interface DirectionsApi {
     @GET("directions/v5/mapbox/driving/{coordinates}")
     fun getDirections(

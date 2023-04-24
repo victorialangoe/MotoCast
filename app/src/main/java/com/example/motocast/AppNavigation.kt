@@ -23,14 +23,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+/**
+ * The [AppNavigation] handles the navigation of the app.
+ *
+ * @param addressDataViewModel The [AddressDataViewModel] to use for the address data
+ * @param settingsViewModel The [SettingsViewModel] to use for the settings
+ * @param weatherViewModel The [CurrentWeatherViewModel] to use for the weather
+ * @param routePlannerViewModel The [RoutePlannerViewModel] to use for the route planner
+ * @param mapViewModel The [MapViewModel] to use for the map
+ * @param context The [Context] to use for the app. This is needed for the [DisplayWeather] composable
+ *
+ */
 @Composable
 fun AppNavigation(
-    addressDataViewModel: AddressDataViewModel = hiltViewModel(),
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
-    weatherViewModel: CurrentWeatherViewModel = hiltViewModel(),
-    routePlannerViewModel: RoutePlannerViewModel = hiltViewModel(),
-    mapViewModel: MapViewModel = hiltViewModel(),
-    context: Context
+    addressDataViewModel: AddressDataViewModel,
+    settingsViewModel: SettingsViewModel,
+    weatherViewModel: CurrentWeatherViewModel,
+    routePlannerViewModel: RoutePlannerViewModel,
+    mapViewModel: MapViewModel,
+    context: Context,
 ) {
     val navController = rememberNavController()
     val addressViewModelUiState = addressDataViewModel.uiState.collectAsState()

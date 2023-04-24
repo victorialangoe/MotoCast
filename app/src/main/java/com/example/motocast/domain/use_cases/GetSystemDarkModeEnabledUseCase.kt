@@ -4,6 +4,12 @@ import android.content.res.Configuration
 import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 
+/**
+ * Fetches system dark mode enabled from the repository
+ *
+ * @param repository The repository to fetch the system dark mode enabled from
+ * @return system dark mode enabled as a [Boolean]
+ */
 class GetSystemDarkModeEnabledUseCase(
     private val repository: MotoCastRepository
 ) {

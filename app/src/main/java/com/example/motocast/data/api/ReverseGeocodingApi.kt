@@ -6,6 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * Interface for the Mapbox API for reverse geocoding data.
+ * Link to the API documentation: [Mapbox Reverse Geocoding API](https://docs.mapbox.com/api/search/#reverse-geocoding)
+ */
 interface ReverseGeocodingApi {
     @GET("geocoding/v5/mapbox.places/{longitude},{latitude}.json")
     fun getReverseGeoCoding(

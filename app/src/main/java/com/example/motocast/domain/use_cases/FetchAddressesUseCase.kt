@@ -7,6 +7,13 @@ import com.example.motocast.domain.utils.Utils.filterSearchResults
 import com.example.motocast.domain.utils.Utils.getAirDistanceFromLocation
 import com.example.motocast.ui.viewmodel.address.Address
 
+/**
+ * Fetches addresses from the [repository] and returns them as a list of [Address].
+ *
+ * @param repository The repository to fetch the addresses from, as a [MotoCastRepository]
+ * @param getLocationUseCase The use case to get the user's location, as a [GetLocationUseCase]
+ * @return addresses as a list of [Address] or empty list
+ */
 class FetchAddressesUseCase(
     private val repository: MotoCastRepository,
     private val getLocationUseCase: GetLocationUseCase,

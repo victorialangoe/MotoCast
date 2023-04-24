@@ -32,6 +32,12 @@ private val DarkThemeColors = darkColorScheme(
     onError = DarkOnError
 )
 
+/**
+ * The [AppTheme] composable is used to set the theme of the app.
+ * It takes a [darkTheme] parameter, which is used to set the theme to dark or light.
+ * Everything inside the [AppTheme] composable will be themed accordingly, with the
+ * use of Material3 components.
+ */
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

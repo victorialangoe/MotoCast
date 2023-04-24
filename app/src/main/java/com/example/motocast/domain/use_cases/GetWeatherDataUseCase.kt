@@ -7,6 +7,15 @@ import com.example.motocast.domain.utils.Utils.getCorrectAlertsFromAlerts
 import com.example.motocast.ui.viewmodel.current_weather.RouteWeatherUiState
 import java.util.*
 
+/**
+ * Fetches weather data from the repository
+ *
+ * @param repository The repository to fetch the weather data from, as a [MotoCastRepository]
+ * @param fetchLocationForecastDataUseCase The use case to fetch location forecast data, as a
+ * [FetchLocationForecastDataUseCase]
+ * @param fetchNowCastDataUseCase The use case to fetch nowcast data, as a [FetchNowCastDataUseCase]
+ * @return weather data as a [RouteWeatherUiState] or null
+ */
 class GetWeatherDataUseCase(
     private val repository: MotoCastRepository,
     private val fetchLocationForecastDataUseCase: FetchLocationForecastDataUseCase,
@@ -40,6 +49,10 @@ class GetWeatherDataUseCase(
         else null
     }
 
+    /** Helper function to calculate the hours from now to the given timestamp
+     * @param timestamp The timestamp to calculate the hours from now to, as a [Calendar]
+     * @return The hours from now to the given timestamp, as a [Double]
+     */
     private fun calculateHoursFromNow(timestamp: Calendar?): Double {
         return timestamp?.let {
             val timeRightNow = Calendar.getInstance()
