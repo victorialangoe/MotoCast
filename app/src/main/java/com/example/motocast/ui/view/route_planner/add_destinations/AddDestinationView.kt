@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.address.Address
-import kotlin.reflect.KFunction2
 
 @Composable
 fun AddDestinationView(
@@ -25,15 +23,13 @@ fun AddDestinationView(
     addFormerAddress: (Address) -> Unit,
     formerAddresses: List<Address>,
     addresses: List<Address>,
-    query: String,
     setQuery: (String) -> Unit,
+    query: String,
     isFetching: Boolean,
     activeDestinationIndex: Int,
-    popBackStack: () -> Unit,
     navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
-    getCurrentLocation: () -> Location?,
-    searchResultsCompareBy: (query: String) -> Comparator<Address>
+    getCurrentLocation: (Location?),
 ) {
 
     Column(
@@ -43,11 +39,11 @@ fun AddDestinationView(
     ) {
 
         AddDestinationSearchBar(
-            query = query,
             onClear = {
                 clearQuery()
                 clearResults()
             },
+            query = query,
             onBack = {
                 navigateTo("route_planner")
                 clearResults()
@@ -65,7 +61,7 @@ fun AddDestinationView(
                 setQuery(query)
             },
             onSetCurrentLocation = {
-                val location: Location? = getCurrentLocation()
+                val location: Location? = getCurrentLocation
                 location?.let {
                     val address = Address(
                         addressText = "Min posisjon",
@@ -76,7 +72,7 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
+                    navigateTo("route_planner")
                 }
             }
         )
@@ -93,7 +89,6 @@ fun AddDestinationView(
                 title = "Tidligere søk",
                 showTitle = false,
                 row = true,
-                query = query,
                 isLoading = false, //This is never loading
                 onResultClick = { address ->
                     // 1. Update the destination in the route planner
@@ -104,14 +99,12 @@ fun AddDestinationView(
                     clearQuery()
                     navigateTo("route_planner")
                 },
-                searchResultsCompareBy = searchResultsCompareBy
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
             DestinationResults(
                 addresses = addresses,
                 title = "Søkeresultater",
-                query = query,
                 maxResults = 200,
                 isLoading = isFetching,
                 onResultClick = { address ->
@@ -125,7 +118,6 @@ fun AddDestinationView(
                     clearQuery()
                     navigateTo("route_planner")
                 },
-                searchResultsCompareBy = searchResultsCompareBy
             )
         }
     }

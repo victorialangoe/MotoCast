@@ -2,7 +2,7 @@
  * Data class for the location forecast data from the Met API.
  * This data class is used to parse the JSON data from the Met API.
  */
-data class LongTermWeatherData(
+data class LocationForecastDataModel(
     val type: String,
     val geometry: Geometry,
     val properties: Properties
@@ -35,10 +35,10 @@ data class Units(
 
 data class TimeSeries(
     val time: String,
-    val data: Data
+    val data: LocationForecastData
 )
 
-data class Data(
+data class LocationForecastData(
     val instant: Instant,
     val next_12_hours: Summary,
     val next_1_hours: SummaryWithDetails?,

@@ -20,6 +20,7 @@ fun DynamicScaffoldContentColum(
     showRoute: Boolean,
     date: String,
     time: String,
+    userName: String,
     duration: String,
     waypoints: List<RouteWithWaypoint>,
     context: Context
@@ -59,8 +60,9 @@ fun DynamicScaffoldContentColum(
             context = context,
         )
         else
-            HomeScaffoldContent()
-
+            HomeScaffoldContent(
+                userName = userName,
+            )
 
     }
 }

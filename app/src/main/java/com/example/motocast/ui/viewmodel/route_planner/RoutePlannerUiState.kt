@@ -1,9 +1,6 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import com.example.motocast.ui.viewmodel.weather.RouteWeatherUiState
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
-import com.mapbox.geojson.FeatureCollection
-import java.time.Duration
+import com.example.motocast.ui.viewmodel.current_weather.RouteWeatherUiState
 import java.util.*
 
 data class RoutePlannerUiState (

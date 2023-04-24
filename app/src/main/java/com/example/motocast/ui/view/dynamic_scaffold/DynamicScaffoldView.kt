@@ -3,7 +3,6 @@ package com.example.motocast.ui.view.dynamic_scaffold
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -12,15 +11,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent.DynamicScaffoldContentColum
 import com.example.motocast.ui.view.route_planner.buttons.RouteAndSettingsRow
-import com.example.motocast.ui.viewmodel.mapLocationViewModel.MapLocationViewModel
-import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
+import com.example.motocast.ui.viewmodel.map.MapViewModel
+import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
@@ -34,9 +32,10 @@ fun DynamicScaffoldView(
     waypoints: List<RouteWithWaypoint>,
     isTrackUserActive: Boolean,
     isRouteLoading: Boolean,
-    weatherViewModel: WeatherViewModel,
+    weatherViewModel: CurrentWeatherViewModel,
     routePlannerViewModel: RoutePlannerViewModel,
-    mapLocationViewModel: MapLocationViewModel,
+    userName: String,
+    mapViewModel: MapViewModel,
     duration: String,
     content: @Composable (Modifier) -> Unit,
     onNavigateToScreen: () -> Unit,
@@ -80,7 +79,7 @@ fun DynamicScaffoldView(
                         weatherViewModel = weatherViewModel,
                         onLocateUserClick = {
 
-                            mapLocationViewModel.trackUserOnMap(
+                            mapViewModel.trackUserOnMap(
                                 routeExists = routeExists,
                                 destinations = destinations
                             )
@@ -101,6 +100,7 @@ fun DynamicScaffoldView(
                         duration = duration,
                         waypoints = waypoints,
                         context = context,
+                        userName = userName,
                         showScroll = routeExists,
                     )
 

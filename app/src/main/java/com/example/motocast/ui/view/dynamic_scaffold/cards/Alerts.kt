@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.data.model.Properties
-import com.example.motocast.ui.theme.*
+import com.example.motocast.theme.*
 import com.example.motocast.ui.view.getWeatherIcon
 
 @Composable
