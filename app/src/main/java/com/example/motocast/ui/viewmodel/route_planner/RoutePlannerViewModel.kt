@@ -1,73 +1,49 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import ReverseGeocodingResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.motocast.data.datasource.DirectionsDataSource
-import com.example.motocast.data.datasource.ReverseGeocodingSource
+import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.Leg
-import com.example.motocast.data.model.RouteSearchResult
 import com.example.motocast.data.model.Waypoint
+import com.example.motocast.domain.use_cases.FetchDirectionsDataUseCase
+import com.example.motocast.domain.use_cases.GetGeocodedNameUseCase
+import com.example.motocast.domain.use_cases.GetWeatherDataUseCase
+import com.example.motocast.domain.utils.Utils
+import com.example.motocast.domain.utils.Utils.checkIfTimeIsMoreThan8DaysInFuture
+import com.example.motocast.domain.utils.Utils.formatDate
+import com.example.motocast.domain.utils.Utils.formatDurationAsTimeString
+import com.example.motocast.domain.utils.Utils.formatTime
 import com.example.motocast.ui.viewmodel.address.Address
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
-import com.example.motocast.ui.viewmodel.weather.WeatherViewModel
+import com.mapbox.common.location.Location
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import okhttp3.internal.format
-import java.time.Duration
 import java.util.*
+import javax.inject.Inject
 
-class RoutePlannerViewModel : ViewModel() {
+
+@HiltViewModel
+class RoutePlannerViewModel @Inject constructor(
+    private val getGeocodedNameUseCase: GetGeocodedNameUseCase,
+    private val getWeatherDataUseCase: GetWeatherDataUseCase,
+    private val getDirectionsDataUseCase: FetchDirectionsDataUseCase,
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
-    private val viewModelScope = CoroutineScope(Dispatchers.Main)
-
     val uiState = _uiState.asStateFlow()
-    private val reverseGeocodingDataSource = ReverseGeocodingSource()
-
 
     fun getTotalDestinations(): Int {
         return _uiState.value.destinations.size
     }
 
-    fun getDestinationNamesAsString(): String {
-        val currentUiState = _uiState.value
-        var destinationsString = ""
-        currentUiState.destinations.forEachIndexed { index, destination ->
-            if (index == 0) {
-                destinationsString += destination.name
-            } else {
-                destinationsString += " - ${destination.name}"
-            }
-        }
-        return destinationsString
+    private fun updateUiState(update: (RoutePlannerUiState) -> RoutePlannerUiState) {
+        _uiState.value = update(_uiState.value)
     }
-
-    /**
-     * This method adds a new destination to the list of destinations if the list is not full. (max 10 destinations)
-     * Sets the active destination to the last destination in the list. (the one that was just added)
-     * Navigates to the add destination screen. (the screen where the user can add a destination)
-     */
-    fun addDestination(navigateTo: () -> Unit) {
-        val currentUiState = _uiState.value
-        val newDestinations = currentUiState.destinations.toMutableList()
-        // max 5 destinations
-        if (newDestinations.size < 10) {
-            // insert new destination before the last item
-            val lastDestinationIndex = newDestinations.lastIndex
-            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0, 0))
-            _uiState.value = currentUiState.copy(destinations = newDestinations)
-            // set active destination to the new destination
-            setActiveDestinationIndex(lastDestinationIndex)
-            // Navigate to add destination screen
-            navigateTo()
-        }
-    }
-
 
     fun editDestination(index: Int, navigateTo: () -> Unit) {
         setActiveDestinationIndex(index)
@@ -75,107 +51,44 @@ class RoutePlannerViewModel : ViewModel() {
     }
 
     fun setActiveDestinationIndex(index: Int) {
-        val currentUiState = _uiState.value
-        _uiState.value = currentUiState.copy(activeDestinationIndex = index)
-    }
-
-    fun updateDestination(index: Int, address: Address) {
-        val currentUiState = _uiState.value
-        val newDestinations = currentUiState.destinations.toMutableList()
-        val destination = newDestinations[index]
-        newDestinations[index] = destination.copy(
-            name = address.addressText,
-            latitude = address.latitude,
-            longitude = address.longitude,
-        )
-        _uiState.value = currentUiState.copy(destinations = newDestinations)
-    }
-
-    fun removeDestination(index: Int) {
-        val currentUiState = _uiState.value
-        val newDestinations = currentUiState.destinations.toMutableList()
-        Log.d("RoutePlannerViewModel", "Removing destination at index $index")
-        Log.d("RoutePlannerViewModel", "Current destinations: ${newDestinations.size}")
-        // min 2 destinations
-        if (newDestinations.size > 2) {
-            newDestinations.removeAt(index)
-            _uiState.value = currentUiState.copy(destinations = newDestinations)
-        }
+        updateUiState { it.copy(activeDestinationIndex = index) }
     }
 
     fun updateStartTime(time: Calendar) {
-        val currentUiState = _uiState.value
-        _uiState.value = currentUiState.copy(startTime = time)
-        // TODO: only 9 days in the future is allowed
+        if (checkIfTimeIsMoreThan8DaysInFuture(time)) {
+            updateUiState { it.copy(startTime = Calendar.getInstance()) }
+        } else {
+            updateUiState { it.copy(startTime = time) }
+        }
     }
 
-    /**
-     * Clears all destinations and resets the start timestamp
-     */
     fun clear() {
         _uiState.value = RoutePlannerUiState()
-        _uiState.value = _uiState.value.copy(startTime = Calendar.getInstance())
+        updateUiState { it.copy(startTime = Calendar.getInstance()) }
+    }
+
+    private fun addGeoJsonDataToUiState(geoJsonData: String) {
+        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
     }
 
     fun checkIfAllDestinationsHaveNames(): Boolean {
-        val currentUiState = _uiState.value
-        currentUiState.destinations.forEach {
-            if (it.name == null || it.name == "") {
-                return false
-            }
-        }
-        return true
+        return Utils.checkIfAllDestinationsHaveNames(_uiState.value.destinations)
     }
 
     fun checkIfSomeDestinationsHaveNames(): Boolean {
-        val currentUiState = _uiState.value
-        currentUiState.destinations.forEach {
-            if (it.name != null && it.name != "") {
-                return true
-            }
-        }
-        return false
+        return Utils.checkIfSomeDestinationsHaveNames(_uiState.value.destinations)
     }
 
-    /**
-     * This method returns the start date in the format: dd MMMM
-     */
     fun getStartDate(): String {
-        val startTime = _uiState.value.startTime
-        return (
-                startTime.get(Calendar.DAY_OF_MONTH).toString() + " " +
-                        startTime.getDisplayName(
-                            Calendar.MONTH,
-                            Calendar.LONG,
-                            Locale.getDefault()
-                        )
-                )
+        return formatDate(_uiState.value.startTime)
     }
 
-
-    /**
-     * This method returns the start time in the format: HH:mm
-     */
     fun getStartTime(): String {
-        val startTime = _uiState.value.startTime
-        val hour = startTime.get(Calendar.HOUR_OF_DAY)
-        val minute = startTime.get(Calendar.MINUTE)
-        // add 0 in front of hour and minute if they are less than 10
-        return format("%02d:%02d", hour, minute)
+        return formatTime(_uiState.value.startTime)
     }
 
-
-    /**
-     * This method returns the duration of the trip. // TODO: remove dummy value
-     */
     private fun getDurationAsString(durationInSek: Long): String {
-        val duration = Duration.ofSeconds(durationInSek)
-        return "Varighet: " + when {
-            duration.toDays() > 0 -> "${duration.toDays()} ${if (duration.toDays() == 1L) "dag" else "dager"}"
-            duration.toHours() > 0 -> "${duration.toHours()} ${if (duration.toHours() == 1L) "time" else "timer"}"
-            duration.toMinutes() > 0 -> "${duration.toMinutes()} min"
-            else -> "$durationInSek sek"
-        }
+        return formatDurationAsTimeString(durationInSek)
     }
 
     private fun getDestinationsCoordinatesAsString(): String {
@@ -183,20 +96,66 @@ class RoutePlannerViewModel : ViewModel() {
         val destinations = currentUiState.destinations
         val coordinates = mutableListOf<String>()
         destinations.forEach {
-            coordinates.add("${it.longitude},${it.latitude}")
+            if (it.latitude != null && it.longitude != null) {
+                val location: Location =
+                    Location.Builder().latitude(it.latitude).longitude(it.longitude).build()
+                coordinates.add("${location.longitude},${location.latitude}")
+            }
         }
         return coordinates.joinToString(";")
     }
 
+    fun updateDestination(index: Int, address: Address) {
+        val newDestinations = _uiState.value.destinations.toMutableList()
+        val destination = newDestinations[index]
+        newDestinations[index] = destination.copy(
+            name = address.addressText,
+            latitude = address.latitude,
+            longitude = address.longitude,
+        )
+        updateUiState { it.copy(destinations = newDestinations) }
+    }
+
+    fun removeDestination(index: Int) {
+        val currentUiState = _uiState.value
+        val newDestinations = currentUiState.destinations.toMutableList()
+        // min 2 destinations
+        if (newDestinations.size > 2) {
+            newDestinations.removeAt(index)
+            updateUiState { it.copy(destinations = newDestinations) }
+        }
+    }
+
+    /**
+     * Adds a new destination to the list of destinations
+     * @param navigateTo The function to call to navigate to the destination editor
+     */
+    fun addDestination(navigateTo: () -> Unit) {
+        val newDestinations = _uiState.value.destinations.toMutableList()
+
+        if (newDestinations.size < 10) {
+            val lastDestinationIndex = newDestinations.lastIndex
+
+            newDestinations.add(lastDestinationIndex, Destination(null, 0.0, 0.0, 0))
+
+            updateUiState { it.copy(destinations = newDestinations) }
+
+            setActiveDestinationIndex(lastDestinationIndex)
+
+            navigateTo()
+        }
+    }
+
+
     /**
      * This function converts the JSON response from the Mapbox Directions API to a GeoJSON string.
      *
-     * @param routeSearchResult the response from the Mapbox Directions API
-     * @return a GeoJSON string
+     * @param directionsDataModel The JSON response from the Mapbox Directions API
+     * @return A GeoJSON string
      */
-    private fun convertRouteSearchResultToGeoJSON(routeSearchResult: RouteSearchResult): String {
+    private fun convertRouteSearchResultToGeoJSON(directionsDataModel: DirectionsDataModel): String {
 
-        val routesArray = routeSearchResult.routes
+        val routesArray = directionsDataModel.routes
         val firstRoute = routesArray[0]
         val legsArray = firstRoute.legs
         val features = mutableListOf<Feature>()
@@ -209,7 +168,8 @@ class RoutePlannerViewModel : ViewModel() {
                 val step = stepsArray[stepIndex]
                 val geometry = step.geometry
                 // Convert the list of coordinates to a list of Point objects
-                val coordinatesList = geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
+                val coordinatesList =
+                    geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
                 // Create a LineString from the list of Point objects
                 val lineString = LineString.fromLngLats(coordinatesList)
 
@@ -221,25 +181,20 @@ class RoutePlannerViewModel : ViewModel() {
         return featureCollection.toJson()
     }
 
-    private fun addGeoJsonDataToUiState(geoJsonData: String) {
-        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
-    }
-
 
     private suspend fun addWaypointsToUiState(
         legs: List<Leg>,
         waypoints: List<Waypoint>,
-        startTime: Calendar
-    ) = coroutineScope {
+        startTime: Calendar,
+    ) {
 
-        val weatherViewModel = WeatherViewModel() // TODO: remove this (should be injected)
         val routeWithWaypoint = createRouteWithWaypoints(waypoints, startTime)
         updateTimeStampForLegs(legs, routeWithWaypoint, startTime)
         val additionalWaypoints = addWaypointsOnLegs(legs)
         routeWithWaypoint.addAll(additionalWaypoints)
 
-        updateRouteTimeStamps( routeWithWaypoint, startTime)
-        updateRouteWeather(routeWithWaypoint, weatherViewModel)
+        updateRouteTimeStamps(routeWithWaypoint, startTime)
+        updateRouteWeather(routeWithWaypoint)
         // sort the routes by start time
         routeWithWaypoint.sortBy {
             it.timeFromStart
@@ -253,6 +208,11 @@ class RoutePlannerViewModel : ViewModel() {
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
+        // Set the first
+        routeWithWaypoint[0] = routeWithWaypoint[0].copy(
+            isInDestination = true,
+        )
+
         // Update the timestamps of the routes
         var timeFromStart = 0.0
         for (legIndex in legs.indices) {
@@ -263,6 +223,7 @@ class RoutePlannerViewModel : ViewModel() {
             time.add(Calendar.SECOND, timeFromStart.toInt())
             val updatedRoute = route.copy(
                 timeFromStart = timeFromStart,
+                isInDestination = true,
             )
             routeWithWaypoint[legIndex + 1] = updatedRoute
         }
@@ -271,19 +232,29 @@ class RoutePlannerViewModel : ViewModel() {
 
     private suspend fun updateRouteWeather(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
-        weatherViewModel: WeatherViewModel
     ) {
-        // Update the weather of the routes
+
         for (routeIndex in routeWithWaypoint.indices) {
             val route = routeWithWaypoint[routeIndex]
-            val weather = getWeatherData(weatherViewModel, route)
-            val updatedRoute = route.copy(
-                weatherUiState = weather
-            )
-            routeWithWaypoint[routeIndex] = updatedRoute
+
+            if (route.latitude != null && route.longitude != null && route.timestamp != null) {
+
+                val weatherData = getWeatherDataUseCase(
+                    route.latitude,
+                    route.longitude,
+                    route.timestamp
+                )
+
+                val updatedRoute = route.copy(
+                    weather = weatherData
+                )
+
+                routeWithWaypoint[routeIndex] = updatedRoute
+            }
         }
     }
-    suspend fun addWaypointsOnLegs(
+
+    private suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
     ): MutableList<RouteWithWaypoint> {
         // Update the timestamps of the routes
@@ -292,22 +263,23 @@ class RoutePlannerViewModel : ViewModel() {
         val hourInSeconds = 3600.0
         val tempRoutes = mutableListOf<RouteWithWaypoint>()
 
-        for (legIndex in legs.indices){
-            for (stepIndex in legs[legIndex].steps.indices){
+        for (legIndex in legs.indices) {
+            for (stepIndex in legs[legIndex].steps.indices) {
                 val step = legs[legIndex].steps[stepIndex]
 
                 timeFromStart += step.duration
                 timeCounter += step.duration
-                if (timeCounter > hourInSeconds){
-                    val name = getReverseGeocodedName(
+                if (timeCounter > hourInSeconds) {
+                    val name = getGeocodedNameUseCase(
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0]
                     )
+
                     timeCounter = 0.0
                     val newRoute = RouteWithWaypoint(
                         name = name,
                         timeFromStart = timeFromStart,
-                        weatherUiState = null,
+                        weather = null,
                         timestamp = null,
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0],
@@ -321,6 +293,30 @@ class RoutePlannerViewModel : ViewModel() {
     }
 
 
+    private suspend fun createRouteWithWaypoints(
+        waypoints: List<Waypoint>,
+        startTime: Calendar,
+    ): MutableList<RouteWithWaypoint> {
+
+        return coroutineScope {
+            val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
+                async {
+
+
+                    val route = RouteWithWaypoint(
+                        name = _uiState.value.destinations[index].name,
+                        longitude = waypoint.location[0],
+                        latitude = waypoint.location[1],
+                        timestamp = if (index == 0) startTime else null,
+                        timeFromStart = 0.0,
+                    )
+
+                    route
+                }
+            }
+            deferredRoutes.awaitAll().toMutableList()
+        }
+    }
 
     private fun updateRouteTimeStamps(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
@@ -333,126 +329,61 @@ class RoutePlannerViewModel : ViewModel() {
             val timestamp = startTime.clone() as Calendar
             timestamp.add(Calendar.SECOND, waypoint.timeFromStart?.toInt() ?: 0)
             val updatedRoute = waypoint.copy(
-                timestamp = timestamp
+                timestamp = timestamp,
             )
             routeWithWaypoint[waypointIndex] = updatedRoute
         }
     }
 
-    private suspend fun createRouteWithWaypoints(
-        waypoints: List<Waypoint>,
-        startTime: Calendar,
-    ): MutableList<RouteWithWaypoint> {
-
-        return coroutineScope {
-            val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
-                async {
-
-                    val route = RouteWithWaypoint(
-                        name = _uiState.value.destinations[index].name,
-                        longitude = waypoint.location[0],
-                        latitude = waypoint.location[1],
-                        timestamp = if (index == 0) startTime else null,
-                        timeFromStart = 0.0
-                    )
-                    route
-                }
-            }
-            deferredRoutes.awaitAll().toMutableList()
-        }
-    }
-
-    private suspend fun getWeatherData(
-        weatherViewModel: WeatherViewModel,
-        route: RouteWithWaypoint
-    ): WeatherUiState? {
-        return if (route.latitude != null && route.longitude != null && route.timestamp != null) {
-            weatherViewModel.getWeatherData(
-                latitude = route.latitude,
-                longitude = route.longitude,
-                timestamp = route.timestamp
-            )
-
-        } else null
-    }
-
-    suspend fun getReverseGeocodedName(longitude: Double, latitude: Double): String? {
-        val nameDeferred = CompletableDeferred<String?>()
-
-        reverseGeocodingDataSource.getReverseGeocodingData(
-            longitude,
-            latitude,
-            onSuccess = { response: ReverseGeocodingResult ->
-                Log.d("RouteViewModel", "Reverse geocoding response: ${response.features}")
-                var name = response.features.firstOrNull()?.placeName
-                name = name?.replace(", Norge", "") ?: name
-                nameDeferred.complete(name)
-            },
-            onError = { error: String ->
-                Log.e("RouteViewModel", error)
-                nameDeferred.complete(null)
-            }
-        )
-
-        return nameDeferred.await()
-    }
-
-
-    /**
-     * Starts the route planning
-     */
-    fun start(navigateTo: () -> Unit, fitCameraToRouteAndWaypoints: () -> Unit) {
+    suspend fun start(
+        navigateTo: () -> Unit,
+        fitCameraToRouteAndWaypoints: () -> Unit,
+    ) {
         _uiState.value = _uiState.value.copy(isLoading = true)
 
-        val directionsDataSource = DirectionsDataSource()
 
-        val currentUiState = _uiState.value
         if (!checkIfAllDestinationsHaveNames()) {
-            _uiState.value = currentUiState.copy(error = "All destinations must have a name")
+            _uiState.value = _uiState.value.copy(error = "All destinations must have a name")
             return
         }
 
-        // removes null to avoid null pointer exception
-        val destinations = currentUiState.destinations
+        if (_uiState.value.destinations.size >= 2) {
 
-        //needs 2 destinations to get a route
-        if (destinations.size >= 2) {
-            directionsDataSource.getDirectionsData(
-                getDestinationsCoordinatesAsString(),
-                onSuccess = { routeSearchResult: RouteSearchResult ->
-                    viewModelScope.launch {
-                        // Set loading to true
-                        val geoJsonData = convertRouteSearchResultToGeoJSON(routeSearchResult)
+            val response = getDirectionsDataUseCase(
+                getDestinationsCoordinatesAsString()
+            )
 
-                        withContext(Dispatchers.Main) {
-                            addGeoJsonDataToUiState(geoJsonData)
-                            fitCameraToRouteAndWaypoints()
+            Log.d("start", "response: $response")
 
-                            val waypoints = routeSearchResult.waypoints
-                            val legs = routeSearchResult.routes[0].legs
-                            val duration = routeSearchResult.routes[0].duration
-                            _uiState.value = _uiState.value.copy(
-                                durationAsString = getDurationAsString(duration.toLong())
-                            )
+            if (response != null) {
 
-                            addWaypointsToUiState(
-                                legs,
-                                waypoints,
-                                startTime = _uiState.value.startTime
-                            )
-                        }
-                    }
-                    _uiState.value = _uiState.value.copy(isLoading = false)
+                val geoJsonData = convertRouteSearchResultToGeoJSON(response)
 
-                },
-                onError = { error: String ->
-                    Log.d("RoutePlannerViewModel", "Error: $error")
-                    _uiState.value = currentUiState.copy(error = error, isLoading = false)
-                })
+                withContext(Dispatchers.Main) {
+                    addGeoJsonDataToUiState(geoJsonData)
+                    fitCameraToRouteAndWaypoints()
 
+                    val waypoints = response.waypoints
+                    val legs = response.routes[0].legs
+                    val duration = response.routes[0].duration
+                    _uiState.value = _uiState.value.copy(
+                        durationAsString = getDurationAsString(duration.toLong())
+                    )
+
+                    addWaypointsToUiState(
+                        legs,
+                        waypoints,
+                        startTime = _uiState.value.startTime,
+                    )
+                }
+            }
+            _uiState.value = _uiState.value.copy(isLoading = false)
+        } else {
+            _uiState.value = _uiState.value.copy(
+                error = "You need at least two destinations",
+                isLoading = false
+            )
         }
-
         navigateTo()
     }
 }
-

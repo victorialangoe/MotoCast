@@ -1,14 +1,14 @@
 import com.google.gson.annotations.SerializedName
 
-data class AddressSearchResult(
+data class AddressDataModel(
     @SerializedName("metadata")
-    val metadata: Metadata,
+    val metadata: AddressMetadata,
 
     @SerializedName("adresser")
     val addresses: List<Address>
 )
 
-data class Metadata(
+data class AddressMetadata(
     @SerializedName("side")
     val page: Int,
 

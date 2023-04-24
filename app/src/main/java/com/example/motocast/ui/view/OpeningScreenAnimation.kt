@@ -17,8 +17,8 @@ import com.example.motocast.R
 fun WordAnimation() {
     val context = LocalContext.current
     val videoUri = Uri.parse("android.resource://${context.packageName}/${R.raw.motocast}")
-    AndroidView(factory = { context ->
-        VideoView(context).apply {
+    AndroidView(factory = { c ->
+        VideoView(c).apply {
             setVideoURI(videoUri)
             start()
         }

@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
-import kotlin.reflect.KFunction2
 
 @Composable
 fun AddDestinationView(
@@ -25,14 +25,16 @@ fun AddDestinationView(
     addFormerAddress: (Address) -> Unit,
     formerAddresses: List<Address>,
     addresses: List<Address>,
-    query: String,
     setQuery: (String) -> Unit,
+    query: String,
     isFetching: Boolean,
     activeDestinationIndex: Int,
-    popBackStack: () -> Unit,
+    navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
-    getCurrentLocation: () -> Location?,
+    getCurrentLocation: (Location?),
 ) {
+    val myLocationString = stringResource(R.string.my_location)
+
 
     Column(
         modifier = Modifier
@@ -41,13 +43,13 @@ fun AddDestinationView(
     ) {
 
         AddDestinationSearchBar(
-            query = query,
             onClear = {
                 clearQuery()
                 clearResults()
             },
+            query = query,
             onBack = {
-                popBackStack()
+                navigateTo("route_planner")
                 clearResults()
                 // Minus 1 before removing the destination, since the active destination is the one we are currently editing
                 val currentDestinations = getTotalDestinations() - 1
@@ -63,10 +65,10 @@ fun AddDestinationView(
                 setQuery(query)
             },
             onSetCurrentLocation = {
-                val location: Location? = getCurrentLocation()
+                val location: Location? = getCurrentLocation
                 location?.let {
                     val address = Address(
-                        addressText = "Min posisjon",
+                        addressText = myLocationString,
                         municipality = null,
                         latitude = location.latitude,
                         longitude = location.longitude
@@ -74,7 +76,7 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
+                    navigateTo("route_planner")
                 }
             }
         )
@@ -88,10 +90,9 @@ fun AddDestinationView(
             // Former searches in the cache
             DestinationResults(
                 addresses = formerAddresses,
-                title = "Tidligere søk",
+                title = stringResource(R.string.former_searches),
                 showTitle = false,
                 row = true,
-                query = query,
                 isLoading = false, //This is never loading
                 onResultClick = { address ->
                     // 1. Update the destination in the route planner
@@ -100,15 +101,14 @@ fun AddDestinationView(
                     updateDestination(activeDestinationIndex, address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
-                }
+                    navigateTo("route_planner")
+                },
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
             // This is current search results
             DestinationResults(
                 addresses = addresses,
-                title = "Søkeresultater",
-                query = query,
+                title = stringResource(R.string.search_results),
                 maxResults = 200,
                 isLoading = isFetching,
                 onResultClick = { address ->
@@ -120,8 +120,8 @@ fun AddDestinationView(
                     addFormerAddress(address)
                     clearResults()
                     clearQuery()
-                    popBackStack()
-                }
+                    navigateTo("route_planner")
+                },
             )
         }
     }

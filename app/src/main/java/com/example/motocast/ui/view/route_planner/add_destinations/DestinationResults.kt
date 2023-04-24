@@ -15,28 +15,26 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.viewmodel.address.Address
 
 /**
- * This is the search results for the destination search
- *
- * @param addresses The list of addresses that matches the search query
+ * Shows the results of a search
+ * @param addresses The list of addresses to show
  * @param title The title of the search results
- * @param query The search query
- * @param showTitle Whether or not to show the title of the search results
- * @param maxResults The maximum number of results to show (default is 5)
+ * @param row Whether or not to show the results in a row
+ * @param showTitle Whether or not to show the title
+ * @param maxResults The maximum number of results to show
  * @param isLoading Whether or not the search is still loading
- * @param onResultClick The function to call when a search result is clicked
+ * @param onResultClick The callback to invoke when a result is clicked
  */
 @Composable
 fun DestinationResults(
     addresses: List<Address>,
     title: String,
-    query: String,
     row: Boolean = false,
     showTitle: Boolean = true,
-    maxResults: Int = 5,
+    maxResults: Int = 10,
     isLoading: Boolean,
     onResultClick: (address: Address) -> Unit,
 ) {
-    // Only show the first 5 results (If maxResults is not specified)
+
     addresses.take(maxResults)
 
     val content: @Composable () -> Unit = {
@@ -47,14 +45,7 @@ fun DestinationResults(
             if (row) {
                 LazyRow {
                     // Search results
-                    items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query
-                        // Then check if the municipality matches the query
-                        // Then by distance
-                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
-                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
-                        { it.distanceFromUser }
-                    ))) {
+                    items(addresses) {
                         AddressResult(it, onResultClick, showInfo = false)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
@@ -63,14 +54,7 @@ fun DestinationResults(
             } else {
                 LazyColumn {
                     // Search results
-                    items(addresses.sortedWith(compareBy(
-                        // Sort first by the address that matches the query
-                        // Then check if the municipality matches the query
-                        // Then by distance
-                        { if (it.addressText.lowercase() == query.lowercase()) 0 else 1 },
-                        { if (it.municipality?.lowercase() == query.lowercase()) 0 else 1 },
-                        { it.distanceFromUser }
-                    ))) {
+                    items(addresses) {
                         if (it != addresses.first()) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }

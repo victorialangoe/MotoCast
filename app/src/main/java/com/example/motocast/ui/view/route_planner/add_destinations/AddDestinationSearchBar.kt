@@ -12,12 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.viewmodel.address.Address
-import com.example.motocast.util.views.buttons.BackButton
-import com.example.motocast.util.views.buttons.CloseButton
+import com.example.motocast.ui.view.utils.buttons.BackButton
+import com.example.motocast.ui.view.utils.buttons.CloseButton
 
 @Composable
 fun AddDestinationSearchBar(
@@ -57,6 +58,7 @@ fun AddDestinationSearchBar(
                 .weight(0.8f, fill = true)
                 .focusRequester(focusRequester),
             shape = MaterialTheme.shapes.small,
+            singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.surface,
@@ -76,7 +78,7 @@ fun AddDestinationSearchBar(
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
-                    contentDescription = "Søk etter adresse icon",
+                    contentDescription = stringResource(R.string.search_for_address_icon),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(24.dp)
@@ -86,10 +88,9 @@ fun AddDestinationSearchBar(
                 if (query != "") {
                     CloseButton { onClear() }
                 } else {
-                    // TODO: Implement search icon
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_location_searching_24),
-                        contentDescription = "Søk etter adresse icon",
+                        contentDescription = stringResource(R.string.search_for_address_icon),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .size(18.dp)

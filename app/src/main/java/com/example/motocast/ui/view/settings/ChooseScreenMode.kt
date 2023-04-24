@@ -1,6 +1,8 @@
 package com.example.motocast.ui.view.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.motocast.R
 
 @Composable
 fun ChooseScreenMode(
@@ -8,7 +10,7 @@ fun ChooseScreenMode(
     setDarkMode: (Boolean) -> Unit
 ) {
     TextAndSwitch(
-        text = "Mørk modus",
+        text = stringResource(R.string.dark_mode),
         checked = darkMode,
         setDarkMode = setDarkMode
     )

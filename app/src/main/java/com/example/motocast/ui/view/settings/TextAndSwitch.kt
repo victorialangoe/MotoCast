@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.motocast.ui.theme.Orange500
+import com.example.motocast.R
+import com.example.motocast.theme.Orange500
 
 @Composable
 fun TextAndSwitch(
@@ -44,7 +46,7 @@ fun TextAndSwitch(
                 if (checked) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Selected screen mode icon",
+                        contentDescription = stringResource(R.string.selected_screen_mode_icon),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(2.dp)
                     )

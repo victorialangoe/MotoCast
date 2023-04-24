@@ -27,7 +27,5 @@ fun MapViewContent(
                 }
                 .padding(bottom = bottomOffset.dp)
         )
-
-
     }
 }

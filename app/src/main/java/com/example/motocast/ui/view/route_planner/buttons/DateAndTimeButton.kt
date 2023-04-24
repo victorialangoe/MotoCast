@@ -12,9 +12,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.motocast.ui.theme.Orange300
-import com.example.motocast.ui.theme.Orange500
-import com.example.motocast.ui.theme.Orange500Transparent
+import com.example.motocast.theme.Orange300
+import com.example.motocast.theme.Orange500
+import com.example.motocast.theme.Orange500Transparent
 
 @Composable
 fun DateAndTimeButton(
@@ -23,6 +23,7 @@ fun DateAndTimeButton(
     onClick: () -> Unit? = {},
     icon: Int,
     iconDescription: String,
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = { onClick() },
@@ -31,6 +32,7 @@ fun DateAndTimeButton(
             containerColor = Orange500Transparent,
             contentColor = Orange500,
         ),
+        enabled = enabled,
         modifier = modifier
     ) {
         Row(

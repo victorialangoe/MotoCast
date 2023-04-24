@@ -58,7 +58,7 @@ fun RouteScaffoldContent(
             color = MaterialTheme.colorScheme.surface,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        DateTimeRow(date, time, duration, isLoading)
+        DateTimeRow(date, time)
         Spacer(modifier = Modifier.height(8.dp))
         Divider(
             modifier = Modifier

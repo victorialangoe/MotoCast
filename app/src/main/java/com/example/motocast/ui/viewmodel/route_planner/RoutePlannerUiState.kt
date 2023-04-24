@@ -1,8 +1,6 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import com.example.motocast.ui.viewmodel.weather.WeatherUiState
-import com.mapbox.geojson.FeatureCollection
-import java.time.Duration
+import com.example.motocast.ui.viewmodel.current_weather.RouteWeatherUiState
 import java.util.*
 
 data class RoutePlannerUiState (
@@ -16,7 +14,6 @@ data class RoutePlannerUiState (
             timestamp = 0
         )
     },
-    // TODO: USE api level 33 ?
     val startTime: Calendar = Calendar.getInstance(),
     val activeDestinationIndex : Int = 0,
     val error: String? = null,
@@ -33,7 +30,8 @@ data class RouteWithWaypoint (
     val longitude: Double?,
     val timeFromStart: Double?,
     val timestamp: Calendar?,
-    val weatherUiState: WeatherUiState? = null,
+    val isInDestination: Boolean = false,
+    val weather: RouteWeatherUiState? = null,
 )
 
 data class Destination (

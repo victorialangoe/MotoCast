@@ -1,7 +1,11 @@
 package com.example.motocast.ui.viewmodel
 
-import android.location.Location
-import com.example.motocast.data.datasource.AddressDataSource
+import com.example.motocast.data_injection.AppModule_ProvideFetchAddressesUseCaseFactory
+import com.example.motocast.data_injection.AppModule_ProvideGetLocationUseCaseFactory
+import com.example.motocast.data_injection.AppModule_ProvideMotoCastRepositoryFactory
+import com.example.motocast.data.repository.MotoCastRepositoryInterface
+import com.example.motocast.domain.use_cases.FetchAddressesUseCase
+import com.example.motocast.domain.use_cases.GetLocationUseCase
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import junit.framework.TestCase.assertEquals
@@ -22,7 +26,9 @@ import org.mockito.MockitoAnnotations
 class TestAddressViewModel {
 
     @Mock
-    private lateinit var addressDataSource: AddressDataSource
+    private lateinit var motoCastRepositoryInterface: MotoCastRepositoryInterface = AppModule_ProvideMotoCastRepositoryFactory().get()
+    private lateinit var getLocationUseCase: GetLocationUseCase = AppModule_ProvideGetLocationUseCaseFactory(motoCastRepositoryInterface).get()
+    private lateinit var fetchAddressesUseCase: FetchAddressesUseCase = AppModule_ProvideFetchAddressesUseCaseFactory(motoCastRepositoryInterface, getLocationUseCase).get()
     private lateinit var addressDataViewModel: AddressDataViewModel
     private val mainThreadSurrogate = newSingleThreadContext("AddressViewModelTest")
 
@@ -78,10 +84,8 @@ class TestAddressViewModel {
 
             // Call fetchAddressData() to add addresses to the list
             addressDataViewModel.fetchAddressData(
-                query = "123 Example Street",
-                getAirDistanceFromLocation = { location: Location -> 1000 },
-
-                )
+                query = "123 Example Street"
+            )
 
 
 
