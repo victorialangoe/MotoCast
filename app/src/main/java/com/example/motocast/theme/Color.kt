@@ -20,6 +20,7 @@ val Yellow700 = Color(0xFFFFD600)
 val Yellow700Transparent = Color(0x30FFD600)
 val Red100 = Color(0xFFFFEBEE)
 val Red700 = Color(0xFFD50000)
+val Blue700 = Color(0xFF1976D2)
 val Red700Transparent = Color(0x30D50000)
 
 val LightPrimary = Color(0xFFF57C00)

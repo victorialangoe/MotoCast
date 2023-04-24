@@ -11,12 +11,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.example.motocast.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -28,6 +33,10 @@ import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.shape.GenericShape
+import com.example.motocast.theme.Blue700
+import com.example.motocast.theme.Red700
 
 
 @Composable
@@ -51,7 +60,13 @@ fun MapView(
     if (mapView != null) {
         MapViewContent(mapView, bottomOffset)
         val viewAnnotationManager = mapView.viewAnnotationManager
-        mapView.viewAnnotationManager.removeAllViewAnnotations()
+        val previousWaypoints = remember { mutableStateOf(emptyList<RouteWithWaypoint>()) }
+
+        if (previousWaypoints.value != waypoints) {
+            viewAnnotationManager.removeAllViewAnnotations()
+            previousWaypoints.value = waypoints
+        }
+
         for (waypoint in waypoints) {
             Log.d("MapViewAnnotation", "waypoint: $waypoint")
             val point = Point.fromLngLat(
@@ -76,10 +91,10 @@ fun addViewAnnotation(
 ) {
     val view = ComposableWrapperView(
         context = context,
-        temperature = (waypoint.weatherUiState?.temperature?.toInt() ?: 0),
+        temperature = (waypoint.weather?.temperature?.toInt() ?: 0),
         location = waypoint.name ?: "Ukjent",
         time = waypoint.timestamp,
-        iconSymbol = waypoint.weatherUiState?.symbolCode ?: ""
+        iconSymbol = waypoint.weather?.symbolCode ?: ""
     )
 
     // Measure the view to get the correct width and height
@@ -89,6 +104,7 @@ fun addViewAnnotation(
         viewAnnotationOptions {
             geometry(point)
             allowOverlap(true) // Allow annotation to overlap with other annotations
+            offsetY(100)
         }
     )
 }
@@ -132,6 +148,11 @@ class ComposableWrapperView @JvmOverloads constructor(
     }
 
 }
+private val ReverseTriangleShape = GenericShape { size, _ ->
+    moveTo(0f, 0f)
+    lineTo(size.width / 2f, size.height)
+    lineTo(size.width, 0f)
+}
 
 @Composable
 fun WeatherCard(
@@ -142,36 +163,39 @@ fun WeatherCard(
     iconSymbol: String,
     context: Context,
 ) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(8.dp)
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-                ){
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.Start
-            ) {
+    Column() {
 
-                Text(
-                    text = "$temperature°",
-                    color = if (temperature < 0) {
-                        Color(0xFF1E90FF)
-                    } else {
-                        Color(0xFFFF4500)
-                    }
-                )
-                if (time != null) {
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start
+                ) {
                     Text(
-                        text = SimpleDateFormat("HH:mm").format(time.time),
-                        fontSize = 12.sp
-                    )
+                        text = "$temperature°",
+                        color = if (temperature < 0) {
+                            Blue700
+                        } else {
+                            Red700
+                        },
+
+                        )
+                    if (time != null) {
+                        Text(
+                            text = SimpleDateFormat("HH:mm").format(time.time),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
                 }
-            }
                 if (iconSymbol.isNotEmpty()) {
                     Image(
                         painter = painterResource(
@@ -183,13 +207,22 @@ fun WeatherCard(
                             )
                         ),
                         contentDescription = iconSymbol,
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(start = 8.dp)
                     )
                 }
+            }
         }
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .background(MaterialTheme.colorScheme.surface, ReverseTriangleShape)
+                .size(20.dp, 10.dp)
+        )
+
     }
 }
-
 
 
 
