@@ -31,7 +31,7 @@ fun AddDestinationView(
     activeDestinationIndex: Int,
     navigateTo: (String) -> Unit,
     fetchAddressData: (String) -> Unit,
-    getCurrentLocation: (Location?),
+    location: Location?,
 ) {
     val myLocationString = stringResource(R.string.my_location)
 
@@ -65,7 +65,6 @@ fun AddDestinationView(
                 setQuery(query)
             },
             onSetCurrentLocation = {
-                val location: Location? = getCurrentLocation
                 location?.let {
                     val address = Address(
                         addressText = myLocationString,

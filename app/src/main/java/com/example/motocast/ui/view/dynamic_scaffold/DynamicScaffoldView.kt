@@ -47,7 +47,7 @@ fun DynamicScaffoldView(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val routeExists = routePlannerViewModel.checkIfAllDestinationsHaveNames()
-    val maxHeight = if (routeExists) 600.dp else 140.dp
+    val maxHeight = if (routeExists) 800.dp else 140.dp
     val minHeight = if (routeExists) 117.dp else 140.dp
     val cornerShape = MaterialTheme.shapes.large
 

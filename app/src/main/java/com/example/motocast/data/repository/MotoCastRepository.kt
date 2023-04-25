@@ -3,9 +3,12 @@ package com.example.motocast.data.repository
 import AddressDataModel
 import LocationForecastDataModel
 import ReverseGeocodingDataModel
+import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.example.motocast.BuildConfig
+import com.example.motocast.MainActivity
 import com.example.motocast.data.api.AddressesApi
 import com.example.motocast.data.api.DirectionsApi
 import com.example.motocast.data.api.ReverseGeocodingApi
@@ -16,6 +19,9 @@ import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
 import com.example.motocast.data.remote.RemoteDataSource
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,10 +36,13 @@ import javax.inject.Inject
  * @param appContext The application context for context-related operations.
  * @see MotoCastRepositoryInterface
  */
+
 class MotoCastRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val appContext: Application
+    @ApplicationContext val appContext: Context,
+
 ) : MotoCastRepositoryInterface {
+
 
     override suspend fun getAddresses(query: String): AddressDataModel? {
         return remoteDataSource.getAddresses(query)
@@ -65,6 +74,7 @@ class MotoCastRepository @Inject constructor(
     }
 
     override suspend fun getAppContext(): Application {
-        return appContext
+        return appContext as Application
     }
+
 }

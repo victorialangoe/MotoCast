@@ -7,8 +7,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
-import com.example.motocast.domain.use_cases.GetLocationUseCase
+import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.LightPrimary
 import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.mapbox.geojson.Point
@@ -30,6 +29,7 @@ import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,11 +41,12 @@ import kotlin.math.min
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val motoCastRepository: MotoCastRepository,
-    private val getLocationUseCase: GetLocationUseCase,
+    private val locationUseCase: LocationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
+
 
     private fun updateUiState(update: (MapUiState) -> MapUiState) {
         try {
@@ -62,7 +63,7 @@ class MapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
 
             val appContext = motoCastRepository.getAppContext()
-            val location = getLocationUseCase()
+            val location = locationUseCase.getCurrentLocation()
 
             if (_uiState.value.mapView == null) {
                 updateUiState {
@@ -89,7 +90,12 @@ class MapViewModel @Inject constructor(
                             if (location != null) {
                                 this.getMapboxMap().easeTo(
                                     CameraOptions.Builder()
-                                        .center(Point.fromLngLat(location.longitude, location.latitude))
+                                        .center(
+                                            Point.fromLngLat(
+                                                location.longitude,
+                                                location.latitude
+                                            )
+                                        )
                                         .zoom(15.0)
                                         .build(),
                                     mapAnimationOptions {
@@ -118,48 +124,50 @@ class MapViewModel @Inject constructor(
             val mapboxMap = _uiState.value.mapView!!.getMapboxMap()
             Log.d("MapActivity", "Camera to user location")
 
-            val location = getCurrentLocation()
+            CoroutineScope(Dispatchers.IO).launch {
+                val location = locationUseCase.getCurrentLocation()
 
 
-            if (location != null) {
-                Log.d("MapActivity", "Location: ${location.latitude}, ${location.longitude}")
-                // Create a CameraOptions object with the user's location as the center
-                val currentCameraPosition = mapboxMap.cameraState
-                val targetCameraPosition = CameraOptions.Builder()
-                    .center(Point.fromLngLat(location.longitude, location.latitude))
-                    .zoom(15.0)
-                    .build()
+                if (location != null) {
+                    Log.d("MapActivity", "Location: ${location.latitude}, ${location.longitude}")
+                    // Create a CameraOptions object with the user's location as the center
+                    val currentCameraPosition = mapboxMap.cameraState
+                    val targetCameraPosition = CameraOptions.Builder()
+                        .center(Point.fromLngLat(location.longitude, location.latitude))
+                        .zoom(15.0)
+                        .build()
 
-                val results = FloatArray(1)
+                    val results = FloatArray(1)
 
-                Location.distanceBetween(
-                    currentCameraPosition.center.latitude(),
-                    currentCameraPosition.center.longitude(),
-                    targetCameraPosition.center?.latitude() ?: 0.0,
-                    targetCameraPosition.center?.longitude() ?: 0.0,
-                    results // distanceBetween needs a float array to store the result
-                )
-                val distance = results[0].toDouble()
+                    Location.distanceBetween(
+                        currentCameraPosition.center.latitude(),
+                        currentCameraPosition.center.longitude(),
+                        targetCameraPosition.center?.latitude() ?: 0.0,
+                        targetCameraPosition.center?.longitude() ?: 0.0,
+                        results // distanceBetween needs a float array to store the result
+                    )
+                    val distance = results[0].toDouble()
 
-                val duration =
-                    min(distance / 1000.0, 10.0).toLong() * 1000L // max duration of 10 seconds
+                    val duration =
+                        min(distance / 1000.0, 10.0).toLong() * 1000L // max duration of 10 seconds
 
-                val cameraOptions = CameraOptions.Builder()
-                    .center(targetCameraPosition.center)
-                    .zoom(targetCameraPosition.zoom)
-                    .build()
+                    val cameraOptions = CameraOptions.Builder()
+                        .center(targetCameraPosition.center)
+                        .zoom(targetCameraPosition.zoom)
+                        .build()
 
-                val mapAnimationOptions = MapAnimationOptions.Builder()
-                    .duration(duration)
-                    .build()
+                    val mapAnimationOptions = MapAnimationOptions.Builder()
+                        .duration(duration)
+                        .build()
 
-                /// stars an animation to smoothly go to the user, easeTo is way to laggy
+                    /// stars an animation to smoothly go to the user, easeTo is way to laggy
 
-                mapboxMap.flyTo(cameraOptions, mapAnimationOptions)
+                    mapboxMap.flyTo(cameraOptions, mapAnimationOptions)
 
+                } else {
+                    Log.d("MapActivity", "Location is null")
+                }
 
-            } else {
-                Log.d("MapActivity", "No location found")
             }
         }
 
@@ -251,14 +259,6 @@ class MapViewModel @Inject constructor(
         } else {
             cameraToUserLocation()
         }
-    }
-
-    fun getCurrentLocation(): Location? {
-        viewModelScope.launch {
-            val location = getLocationUseCase()
-            _uiState.value = _uiState.value.copy(lastLocation = location)
-        }
-        return _uiState.value.lastLocation
     }
 
 

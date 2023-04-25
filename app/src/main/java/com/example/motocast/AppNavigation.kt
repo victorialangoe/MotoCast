@@ -1,12 +1,18 @@
 package com.example.motocast
 
 import android.content.Context
+import android.location.Location
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.AppTheme
 import com.example.motocast.ui.view.dynamic_scaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.map.MapView
@@ -23,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+
 /**
  * The [AppNavigation] handles the navigation of the app.
  *
@@ -36,12 +43,13 @@ import java.util.*
  */
 @Composable
 fun AppNavigation(
-    addressDataViewModel: AddressDataViewModel,
-    settingsViewModel: SettingsViewModel,
-    weatherViewModel: CurrentWeatherViewModel,
-    routePlannerViewModel: RoutePlannerViewModel,
-    mapViewModel: MapViewModel,
+    addressDataViewModel: AddressDataViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    weatherViewModel: CurrentWeatherViewModel = hiltViewModel(),
+    routePlannerViewModel: RoutePlannerViewModel = hiltViewModel(),
+    mapViewModel: MapViewModel = hiltViewModel(),
     context: Context,
+    location: Location? = null,
 ) {
     val navController = rememberNavController()
     val addressViewModelUiState = addressDataViewModel.uiState.collectAsState()
@@ -145,7 +153,7 @@ fun AppNavigation(
                     isFetching = addressViewModelUiState.value.isLoading,
                     getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                     activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
-                    getCurrentLocation = mapViewModel.getCurrentLocation(),
+                    location = location,
                     navigateTo = { screen -> navController.navigate(screen) },
                     fetchAddressData = { query ->
                         CoroutineScope(Dispatchers.IO).launch {
@@ -181,4 +189,10 @@ fun AppNavigation(
             }
         }
     }
+
+
+
+
+
 }
+

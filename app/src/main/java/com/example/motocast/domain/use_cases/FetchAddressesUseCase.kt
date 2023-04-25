@@ -16,7 +16,7 @@ import com.example.motocast.ui.viewmodel.address.Address
  */
 class FetchAddressesUseCase(
     private val repository: MotoCastRepository,
-    private val getLocationUseCase: GetLocationUseCase,
+    private val locationUseCase: LocationUseCase
 ) {
     suspend operator fun invoke(query: String): List<Address> {
         if (query.isEmpty()) return emptyList()
@@ -26,15 +26,17 @@ class FetchAddressesUseCase(
             return emptyList()
         }
 
-        val userLocation = getLocationUseCase()
+        val userLocation = locationUseCase.getCurrentLocation()
 
         val addresses = response.addresses.take(200).map { address ->
 
-            val distanceFromUser = getAirDistanceFromLocation(
-                address.representationPoint.latitude,
-                address.representationPoint.longitude,
-                userLocation
-            )
+            val distanceFromUser = if (userLocation != null) {
+                 getAirDistanceFromLocation(
+                    address.representationPoint.latitude,
+                    address.representationPoint.longitude,
+                    userLocation
+                ) } else { null }
+
 
             Address(
                 addressText = address.addressText,

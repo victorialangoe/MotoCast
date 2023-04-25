@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -36,7 +37,7 @@ object AppModule {
         nowCastApi: NowCastApi,
         reverseGeocodingApi: ReverseGeocodingApi,
         locationForecastApi: LocationForecastApi,
-        @ApplicationContext appContext: Application
+        @ApplicationContext appContext: Context
     ): MotoCastRepository {
         return MotoCastRepository(
             remoteDataSource = RemoteDataSource(
@@ -47,9 +48,16 @@ object AppModule {
                 reverseGeocodingApi = reverseGeocodingApi,
                 locationForecastApi = locationForecastApi
             ),
-            appContext = appContext
+            appContext = appContext,
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideApplication(@ApplicationContext app: Context): Application {
+        return app.applicationContext as Application
+    }
+
 
     @Provides
     @Singleton
@@ -69,14 +77,6 @@ object AppModule {
             reverseGeocodingApi = reverseGeocodingApi,
             locationForecastApi = locationForecastApi
         )
-    }
-
-
-    @Provides
-    @Singleton
-    @ApplicationContext
-    fun provideApplicationContext(app: Application): Application {
-        return app
     }
 
     @Provides
@@ -146,7 +146,7 @@ object AppModule {
     @Singleton
     fun provideFetchAddressesUseCase(
         repository: MotoCastRepository,
-        getLocationUseCase: GetLocationUseCase,
+        getLocationUseCase: LocationUseCase,
     ) = FetchAddressesUseCase(
         repository,
         getLocationUseCase,
@@ -198,16 +198,25 @@ object AppModule {
     )
 
     @Provides
-    fun provideFusedLocationProviderClient(@ApplicationContext context: Context?): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context!!)
+    @Singleton
+    fun provideFusedLocationProviderClient(
+        @ApplicationContext context: Context,
+    ): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
     }
 
     @Provides
     @Singleton
-    fun provideGetLocationUseCase(
+    fun provideLocationUseCase(
         repository: MotoCastRepository,
         fusedLocationProviderClient: FusedLocationProviderClient
-    ) = GetLocationUseCase(repository, fusedLocationProviderClient)
+    ): LocationUseCase {
+        return LocationUseCase(
+            repository,
+            fusedLocationProviderClient
+        )
+    }
+
 
     private val metClientBuilder = OkHttpClient.Builder().addInterceptor { chain ->
         val requestBuilder = chain.request().newBuilder()

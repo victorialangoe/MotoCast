@@ -1,9 +1,10 @@
 package com.example.motocast.ui.viewmodel.current_weather
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.domain.use_cases.FetchNowCastDataUseCase
-import com.example.motocast.domain.use_cases.GetLocationUseCase
+import com.example.motocast.domain.use_cases.LocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,44 +15,31 @@ import javax.inject.Inject
 @HiltViewModel
 class CurrentWeatherViewModel @Inject constructor(
     private val fetchNowCastDataUseCase: FetchNowCastDataUseCase,
-    private val getLocationUseCase: GetLocationUseCase
-) :
-    ViewModel() {
+    private val locationUseCase: LocationUseCase,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
     private var job: Job? = null
 
+
     fun startFetchingNowCastData() {
-        job = CoroutineScope(Dispatchers.IO).launch(){
-            var location = getLocationUseCase()
-            // Location might be null if the user has not granted location permission
-            while (location == null) {
-                Log.d("CurrentWeatherViewModel", "Location is null")
-                delay(2000)
-                location = getLocationUseCase()
-            }
-            fetchNowCastDataEvery5min(
-                location.latitude,
-                location.longitude
-            )
-        }
+
     }
 
     fun stopFetchingNowCastData() {
-        job?.cancel()
     }
 
-    private fun fetchNowCastDataEvery5min(
-        latitude: Double,
-        longitude: Double
-    ) {
+    private fun fetchNowCastDataEvery5min() {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                val weatherData = fetchNowCastDataUseCase(
-                    latitude,
-                    longitude
-                )
+                val location = locationUseCase.getCurrentLocation()
+                Log.d("CurrentWeatherViewModel", "Location: $location")
+                var weatherData: WeatherUiState? = null
+                if (location != null) {
+                    weatherData = fetchNowCastDataUseCase(location.latitude, location.longitude)
+                }
+
                 Log.d("CurrentWeatherViewModel", "Weather data: $weatherData")
                 if (weatherData != null) {
                     _uiState.value = WeatherUiState(

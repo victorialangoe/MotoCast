@@ -1,48 +1,52 @@
 package com.example.motocast
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
+import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
-import com.example.motocast.ui.viewmodel.map.MapViewModel
-import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
-import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    /*
-    We store the weatherViewModel in a mutableStateOf because we need to be able to
-    start and stop the fetching of the now cast data when the app is paused and resumed.
-     */
+    @Inject
+    lateinit var locationUseCase: LocationUseCase
     private val weatherViewModel = mutableStateOf<CurrentWeatherViewModel?>(null)
+    private fun requestSinglePermissionLauncher() =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d("MainActivity", "Location permission granted")
+                requestLocationUpdates()
+            } else {
+                Log.d("MainActivity", "Location permission not granted")
+                Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prepLocationUpdates()
 
         setContent {
-            val addressDataViewModel = hiltViewModel<AddressDataViewModel>()
-            val settingsViewModel = hiltViewModel<SettingsViewModel>()
-            val routePlannerViewModel = hiltViewModel<RoutePlannerViewModel>()
-            val mapViewModel = hiltViewModel<MapViewModel>()
+            val location by locationUseCase.observeAsState()
 
             weatherViewModel.value = hiltViewModel()
-            weatherViewModel.value?.startFetchingNowCastData()
-
             AppNavigation(
-                addressDataViewModel = addressDataViewModel,
-                settingsViewModel = settingsViewModel,
                 weatherViewModel = weatherViewModel.value!!,
-                routePlannerViewModel = routePlannerViewModel,
-                mapViewModel = mapViewModel,
                 context = this,
+                location = location
             )
         }
-
-
     }
 
     override fun onResume() {
@@ -59,4 +63,26 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         weatherViewModel.value?.stopFetchingNowCastData()
     }
+
+    private fun requestLocationUpdates() {
+        Log.d("MainActivity", "Requesting location updates")
+        locationUseCase.startLocationUpdates()
+        Log.d("Location", "Location: $locationUseCase")
+    }
+
+    private fun prepLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("MainActivity", "Location permission granted")
+            requestLocationUpdates()
+        } else {
+            Log.d("MainActivity", "Location permission not granted")
+            requestSinglePermissionLauncher().launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
 }
+
+

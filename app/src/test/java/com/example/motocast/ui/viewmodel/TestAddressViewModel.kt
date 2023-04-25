@@ -5,7 +5,6 @@ import com.example.motocast.data_injection.AppModule_ProvideGetLocationUseCaseFa
 import com.example.motocast.data_injection.AppModule_ProvideMotoCastRepositoryFactory
 import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.use_cases.FetchAddressesUseCase
-import com.example.motocast.domain.use_cases.GetLocationUseCase
 import com.example.motocast.ui.viewmodel.address.Address
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import junit.framework.TestCase.assertEquals
