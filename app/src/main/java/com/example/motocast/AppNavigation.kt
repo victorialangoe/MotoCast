@@ -88,6 +88,8 @@ fun AppNavigation(
                             },
                             geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
                             bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
+                            waypoints = routePlannerViewModelUiState.value.waypoints,
+                            context = context,
                         )
                     },
                 )
