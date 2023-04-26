@@ -124,7 +124,7 @@ class MapViewModel @Inject constructor(
             val mapboxMap = _uiState.value.mapView!!.getMapboxMap()
             Log.d("MapActivity", "Camera to user location")
 
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 val location = locationUseCase.getCurrentLocation()
 
 

@@ -11,10 +11,7 @@ import org.locationtech.jts.geom.GeometryFactory
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.*
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
 object Utils {
 
@@ -126,23 +123,99 @@ object Utils {
     fun filterSearchResults(query: String, addresses: List<Address>): List<Address> {
         if (query.isEmpty()) return emptyList()
 
-        return addresses.sortedWith(searchResultsCompareBy(query))
+        return filterAndSortAddresses(query, addresses)
     }
 
     /**
-     * Compares two addresses by how well they match the query.
-     * First by how well the address matches the query, then by how well the municipality matches the query,
-     * then by the distance from the user
-     * @param query The query to compare by
+     * Filters the search results and sorts them, removes all numbers from the query.
+     * It also creates a new address with the municipality as the addressText if the municipality (Makes it possible to search for municipality)
+     * @param query The query to filter by
+     * @param addresses The addresses to filter
+     * @param maxDistance The maximum distance between the query and the address (in Levenshtein distance)
      */
-    private fun searchResultsCompareBy(query: String): Comparator<Address> {
-        return compareBy<Address> {
-            if (it.addressText == query) 0 else 1
-        }.thenBy {
-            if (it.municipality == query) 0 else 1
-        }.thenBy {
-            it.distanceFromUser
+    private fun filterAndSortAddresses(
+        userInput: String,
+        addresses: List<Address>,
+        maxDistance: Int = when (userInput.length) {
+            in 0..5 -> 1
+            else -> 2
         }
+    ): List<Address> {
+        val inputLowercase = userInput.lowercase()
+
+        val updatedMunicipalities = mutableListOf<String>()
+
+        var updatedAddresses = mutableListOf<Address>()
+
+        addresses.forEach { it ->
+            if(it.municipality != null){
+                if (!updatedMunicipalities.contains(it.municipality.lowercase())) {
+                        updatedAddresses.add(
+                            Address(
+                                it.municipality.lowercase().replaceFirstChar { it.uppercase() },
+                                null,
+                                it.latitude,
+                                it.longitude,
+                                it.distanceFromUser
+                            )
+                        )
+                    updatedMunicipalities.add(it.municipality.lowercase())
+                }
+            }
+            updatedAddresses.add(it)
+
+        }
+
+        updatedAddresses = updatedAddresses
+            .filter {
+                levenshteinDistance(
+                    it.addressText.lowercase(), inputLowercase
+                ) <= maxDistance
+            }
+            .sortedBy {
+
+                    // if under 1000 m from user, sort by distance
+                    if (it.distanceFromUser != null && it.distanceFromUser < 1000) {
+                        it.distanceFromUser
+                    } else {
+                        // if not, sort by levenshtein distance
+                        levenshteinDistance(
+                            it.addressText.lowercase(), inputLowercase
+                        )
+                    }
+
+            }
+            .toMutableList()
+
+        Log.d("filterAndSortAddresses", "updatedAddresses: $updatedAddresses")
+        return updatedAddresses
+    }
+
+
+    /**
+     * This algorithm calculates the Levenshtein distance between two strings
+     * Basicly it calculates the number of changes needed to change one string into another.
+     * Perfect for checking how similar two strings are
+     * @param a The first string
+     * @param b The second string
+     */
+    private fun levenshteinDistance(a: String, b: String): Int {
+        val aLen = a.length
+        val bLen = b.length
+
+        val dp = Array(aLen + 1) { IntArray(bLen + 1) }
+
+        for (i in 0..aLen) dp[i][0] = i
+        for (j in 0..bLen) dp[0][j] = j
+
+        for (i in 1..aLen) {
+            for (j in 1..bLen) {
+                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+                dp[i][j] = min(min(dp[i - 1][j] + 1, dp[i][j - 1] + 1), dp[i - 1][j - 1] + cost)
+            }
+        }
+
+        return dp[aLen][bLen]
     }
 
     /**

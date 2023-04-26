@@ -24,31 +24,8 @@ class LocationUseCase(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     ) : LiveData<Location>() {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { continuation ->
-        if (ActivityCompat.checkSelfPermission(
-                repository.appContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                repository.appContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("LocationUseCase", "getCurrentLocation: no permission")
-            continuation.resume(null, null)
-            return@suspendCancellableCoroutine
-        }
-
-
-        fusedLocationProviderClient.lastLocation.addOnCompleteListener() { task ->
-            if (task.isSuccessful && task.result != null) {
-                Log.d("LocationUseCase", "getCurrentLocation: ${task.result}")
-                continuation.resume(task.result, null)
-            } else {
-                Log.d("LocationUseCase", "getCurrentLocation: ${task.exception}")
-                continuation.resume(null, null)
-            }
-        }
+    fun getCurrentLocation(): Location? {
+        return value
     }
 
     override fun onActive() {
@@ -73,7 +50,6 @@ class LocationUseCase(
         }
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             location.also {
-                Log.d("LocationUseCase", "onActive: $it")
                 setLocationData(it)
             }
         }
@@ -106,13 +82,11 @@ class LocationUseCase(
             Log.d("LocationUseCase", "startLocationUpdates: no permission")
             return
         }
-        Log.d("LocationUseCase", "startLocationUpdates: ")
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
     private fun setLocationData(location: Location?) {
         location?.let {
-            Log.d("LocationUseCase", "setLocationData: $it")
             value = it
         }
     }
@@ -122,7 +96,6 @@ class LocationUseCase(
             super.onLocationResult(locationResult)
             locationResult ?: return
             for (location in locationResult.locations) {
-                Log.d("LocationUseCase", "onLocationResult: $location")
                 setLocationData(location)
             }
         }

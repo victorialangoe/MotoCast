@@ -158,7 +158,7 @@ fun AppNavigation(
                     location = location,
                     navigateTo = { screen -> navController.navigate(screen) },
                     fetchAddressData = { query ->
-                        CoroutineScope(Dispatchers.IO).launch {
+                        CoroutineScope(Dispatchers.Main).launch {
 
                             addressDataViewModel.fetchAddressData(
                                 query
