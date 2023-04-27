@@ -1,0 +1,68 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M28.44,13.56C28.44,9.7 27.33,6.05 25.54,2.93C35.21,4.16 42.79,11.84 43.92,21.53C39.97,23.67 36.52,26.71 33.9,30.4H32.8C27.9,30.4 23.4,32.7 20.7,36.6C16.64,36.84 12.85,38.27 9.69,40.73C7.58,39.05 5.78,36.97 4.41,34.62C5.31,34.77 6.2,34.84 7.17,34.84C18.92,34.84 28.44,25.32 28.44,13.56Z"
+      android:fillType="evenOdd">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:startX="12.91"
+          android:startY="43.46"
+          android:endX="40.26"
+          android:endY="10.88"
+          android:type="linear">
+        <item android:offset="0" android:color="#FF686E73"/>
+        <item android:offset="0.99" android:color="#FF6A7075"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M81.3,42.9C79.4,31.6 69.4,23 57.7,23C48.6,23 40.4,28.1 36.4,36.1C35.2,35.6 34,35.4 32.8,35.4C28.6,35.4 25,37.9 23.6,41.6C23,41.5 22.5,41.5 21.9,41.5C17.8,41.5 14,43.1 11.2,46C8.5,48.8 7,52.4 7,56.2V56.4C7.1,60.5 8.7,64.2 11.6,66.9C14.3,69.6 18,71.1 21.9,71.1H77.6C85.5,71.1 92,64.7 92,56.8C92,50.2 87.5,44.5 81.3,42.9Z"
+      android:fillColor="#B2B2B2"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M81.3,42.9C79.4,31.6 69.4,23 57.7,23C48.6,23 40.4,28.1 36.4,36.1C35.2,35.6 34,35.4 32.8,35.4C28.6,35.4 25,37.9 23.6,41.6C23,41.5 22.5,41.5 21.9,41.5C17.8,41.5 14,43.1 11.2,46C8.5,48.8 7,52.4 7,56.2V56.4C7.1,60.5 8.7,64.2 11.6,66.9C14.3,69.6 18,71.1 21.9,71.1H77.6C85.5,71.1 92,64.7 92,56.8C92,50.2 87.5,44.5 81.3,42.9Z"
+      android:strokeAlpha="0.6"
+      android:fillType="evenOdd"
+      android:fillAlpha="0.6">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:startX="47.5"
+          android:startY="38.5"
+          android:endX="49.5"
+          android:endY="71.1"
+          android:type="linear">
+        <item android:offset="0.48" android:color="#00FFFFFF"/>
+        <item android:offset="1" android:color="#FFB3B2B2"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M29.5,64C31.29,64 54.35,62.73 55.98,62C58.21,61.01 53.59,55.03 55.98,54.53C57.06,54.31 58.65,53.6 58.65,53.6C58.65,53.6 63,52 63.75,52C64.5,52 64.12,49.04 63.89,47.19L63.75,45.87C63.75,45 61.16,43.2 60.75,41C60.47,39.47 61.17,37.42 61.03,37.03C61.03,37.03 60.98,37 60.99,37C61,37 61.02,37.01 61.03,37.03C61.14,37.09 61.95,37.36 61.95,37.36C63.9,38.02 66.98,39.1 69.75,41C71.41,42.14 73.69,44.31 73.69,44.31C73.69,44.31 75.34,45.59 75.75,46C76.75,47 79.75,50 81.75,50H86.75L89,51.59L89.5,54.8C89.5,62.7 83,69.1 75.1,69.1H18.5C18.5,69.1 23,64 29.5,64Z"
+      android:strokeAlpha="0.3"
+      android:fillAlpha="0.3">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:centerX="68"
+          android:centerY="41"
+          android:gradientRadius="23.29"
+          android:type="radial">
+        <item android:offset="0" android:color="#FFD5D5D5"/>
+        <item android:offset="1" android:color="#FFD0D0D0"/>
+        <item android:offset="1" android:color="#009B9B9B"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M35.5,90C35.2,90 34.8,89.9 34.5,89.8C33.2,89.2 32.7,87.8 33.2,86.5L36.7,78.5C37.3,77.2 38.7,76.7 40,77.2C41.3,77.8 41.8,79.2 41.3,80.5L37.8,88.5C37.4,89.5 36.5,90 35.5,90Z"
+      android:fillColor="#006EDB"/>
+  <path
+      android:pathData="M48.5,99C48.2,99 47.8,98.9 47.5,98.8C46.2,98.2 45.7,96.8 46.2,95.5L49.7,87.5C50.3,86.2 51.7,85.7 53,86.2C54.3,86.8 54.8,88.2 54.3,89.5L50.8,97.5C50.4,98.5 49.5,99 48.5,99Z"
+      android:fillColor="#006EDB"/>
+  <path
+      android:pathData="M63.5,90C63.2,90 62.8,89.9 62.5,89.8C61.2,89.2 60.7,87.8 61.2,86.5L64.7,78.5C65.3,77.2 66.7,76.7 68,77.2C69.3,77.8 69.8,79.2 69.3,80.5L65.8,88.5C65.4,89.5 64.5,90 63.5,90Z"
+      android:fillColor="#006EDB"/>
+</vector>
