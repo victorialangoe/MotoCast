@@ -102,19 +102,53 @@ fun Alerts(
     if (isDialogVisible) {
         AlertDialog(
             onDismissRequest = { setDialogVisible(false) },
-            title = { Text(text = selectedAlert?.eventAwarenessName ?: "") },
+            title = {
+                Text(
+                    text = selectedAlert?.eventAwarenessName ?: "",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+
+                )
+            },
             text = {
                 Column {
-                    Text(text = "${selectedAlert?.description ?: ""}")
-                    Text(text = "Anbefalinger:")
-                    BulletPoints(text = selectedAlert?.instruction ?: "")
+                    Text(
+                        text = selectedAlert?.description?.replace("Alert: ", "") ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.recommendations),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+
+                    )
+                    // split the instructions on . selectedAlert?.instruction?
+                    selectedAlert?.instruction?.split(". ")?.map { instruction ->
+                        Row(
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = instruction,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { setDialogVisible(false) }) {
-                    Text("Close")
+                    Text(
+                        text = stringResource(R.string.close),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
         )
     }
 

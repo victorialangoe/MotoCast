@@ -37,4 +37,6 @@
     <string name="active_posstion_icon">Aktiv posisjon ikon</string>
     <string name="inactive_posstion_icon">Inaktiv posisjon ikon</string>
     <string name="settings_button_icon">Innstillinger ikon</string>
+    <string name="recommendations">Anbefalinger:</string>
+    <string name="close">Lukk</string>
 </resources>
