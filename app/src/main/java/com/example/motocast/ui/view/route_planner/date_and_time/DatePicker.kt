@@ -3,6 +3,8 @@ package com.example.motocast.ui.view.route_planner.date_and_time
 import android.app.DatePickerDialog
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.example.motocast.R
@@ -18,48 +20,40 @@ fun DatePicker(
     startTime: Calendar,
     enabled: Boolean = true,
 ) {
+    val calendar = remember { mutableStateOf(startTime) }
+    LaunchedEffect(Unit) {
+        calendar.value = startTime
+    }
+
     val datePicker = remember {
         DatePickerDialog(
             context,
             { _, year, monthOfYear, dayOfMonth ->
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, monthOfYear)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val updatedCalendar = Calendar.getInstance()
+                updatedCalendar.set(Calendar.YEAR, year)
+                updatedCalendar.set(Calendar.MONTH, monthOfYear)
+                updatedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updatedCalendar.set(Calendar.HOUR_OF_DAY, calendar.value.get(Calendar.HOUR_OF_DAY))
+                updatedCalendar.set(Calendar.MINUTE, calendar.value.get(Calendar.MINUTE))
 
-                updateStartTime(calendar)
+                updateStartTime(updatedCalendar)
+                calendar.value = updatedCalendar
             },
-            startTime.get(Calendar.YEAR),
-            startTime.get(Calendar.MONTH),
-            startTime.get(Calendar.DAY_OF_MONTH),
-
+            calendar.value.get(Calendar.YEAR),
+            calendar.value.get(Calendar.MONTH),
+            calendar.value.get(Calendar.DAY_OF_MONTH),
         )
-    }
-
-    datePicker.datePicker.updateDate(
-        startTime.get(Calendar.YEAR),
-        startTime.get(Calendar.MONTH),
-        startTime.get(Calendar.DAY_OF_MONTH),
-    )
-    datePicker.setOnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, monthOfYear)
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        calendar.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
-        calendar.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
-        updateStartTime(calendar)
     }
 
     datePicker.datePicker.minDate = Calendar.getInstance().timeInMillis
 
-    val label = "${startTime.get(Calendar.DAY_OF_MONTH)}. ${startTime.get(Calendar.MONTH) + 1}. ${startTime.get(Calendar.YEAR)}"
+    val label = "${calendar.value.get(Calendar.DAY_OF_MONTH)}. ${calendar.value.get(Calendar.MONTH) + 1}. ${calendar.value.get(Calendar.YEAR)}"
 
     // If the time is now, show "I dag" instead of the date
-    val calendar = Calendar.getInstance()
-    val isToday = calendar.get(Calendar.YEAR) == startTime.get(Calendar.YEAR) &&
-            calendar.get(Calendar.MONTH) == startTime.get(Calendar.MONTH) &&
-            calendar.get(Calendar.DAY_OF_MONTH) == startTime.get(Calendar.DAY_OF_MONTH)
+    val currentCalendar = Calendar.getInstance()
+    val isToday = currentCalendar.get(Calendar.YEAR) == calendar.value.get(Calendar.YEAR) &&
+            currentCalendar.get(Calendar.MONTH) == calendar.value.get(Calendar.MONTH) &&
+            currentCalendar.get(Calendar.DAY_OF_MONTH) == calendar.value.get(Calendar.DAY_OF_MONTH)
     val labelToShow = if (isToday) "I dag" else label
 
     DateAndTimeButton(

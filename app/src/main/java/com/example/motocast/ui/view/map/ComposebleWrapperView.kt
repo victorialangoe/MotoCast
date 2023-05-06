@@ -1,4 +1,47 @@
 package com.example.motocast.ui.view.map
 
-class ComposebleWrapperView {
+import android.content.Context
+import android.util.AttributeSet
+import android.widget.FrameLayout
+import androidx.compose.ui.platform.ComposeView
+import java.util.*
+
+class ComposableWrapperView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    private val temperature: Int,
+    private val location: String,
+    private val time: Calendar?,
+    private val iconSymbol: String
+) : FrameLayout(context, attrs, defStyleAttr) {
+
+    init {
+
+
+        val composeView = ComposeView(context).apply {
+            layoutParams = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+            setContent {
+                WeatherCard(
+                    temperature = temperature,
+                    location = location,
+                    time = time,
+                    iconSymbol = iconSymbol,
+                    fare = true,
+                    context = context
+                )
+            }
+        }
+        addView(composeView)
+
+        // Set the layoutParams for the ComposableWrapperView itself
+        layoutParams = LayoutParams(
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.WRAP_CONTENT
+        )
+    }
+
 }

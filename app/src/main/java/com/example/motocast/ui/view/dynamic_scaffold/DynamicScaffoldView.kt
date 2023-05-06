@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent.DynamicScaffoldContentColum
 import com.example.motocast.ui.view.route_planner.buttons.RouteAndSettingsRow
+import com.example.motocast.ui.view.utils.components.Header
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.route_planner.Destination
@@ -38,8 +39,9 @@ fun DynamicScaffoldView(
     routePlannerViewModel: RoutePlannerViewModel,
     userName: String,
     mapViewModel: MapViewModel,
+    popBackStack: () -> Unit,
     duration: String,
-    content: @Composable (Modifier) -> Unit,
+    content: @Composable () -> Unit,
     onNavigateToScreen: () -> Unit,
     navigateToSettings: () -> Unit,
 ) {
@@ -77,7 +79,7 @@ fun DynamicScaffoldView(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    DynamicScaffoldViewTopBar(
+                    TransparentTopBar(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         context = context,
                         weatherViewModel = weatherViewModel,
@@ -116,7 +118,14 @@ fun DynamicScaffoldView(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    content(Modifier)
+                    content()
+                    // Little header at the top with a back button
+                    Header(
+                        modifier = Modifier
+                            .padding(top = 16.dp),
+                        onClick = { popBackStack() },
+                        text = stringResource(R.string.route_planner)
+                    )
                 }
             }
         )
@@ -124,6 +133,7 @@ fun DynamicScaffoldView(
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 16.dp)
                 .weight(0.1f),
         ) {
             Divider(color = MaterialTheme.colorScheme.surface)

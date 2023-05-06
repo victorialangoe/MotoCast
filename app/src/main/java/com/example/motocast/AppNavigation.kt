@@ -2,28 +2,27 @@ package com.example.motocast
 
 import android.content.Context
 import android.location.Location
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.AppTheme
+import com.example.motocast.ui.home.HomeView
 import com.example.motocast.ui.view.dynamic_scaffold.DynamicScaffoldView
 import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_planner.add_destinations.AddDestinationView
 import com.example.motocast.ui.view.settings.SettingsView
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
+import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import com.example.motocast.ui.viewmodel.map.MapViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
-import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,11 +56,59 @@ fun AppNavigation(
     val mapLocationViewModelUiState = mapViewModel.uiState.collectAsState()
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
 
+
+
     AppTheme(
         darkTheme = settingsViewModelUiState.value.darkMode,
     ) {
         NavHost(navController = navController, startDestination = "home_screen") {
             composable("home_screen") {
+                HomeView(
+                    context = context,
+                    weatherViewModel = weatherViewModel,
+                    settingsNavigateTo = { navController.navigate("settings_screen") },
+                    onCreateNewRouteClick = {
+                        // Nullstill alt
+                        routePlannerViewModel.clear()
+                        navController.navigate("route_planner")
+                    },
+                    onLocateUserClick = {
+                        mapViewModel.trackUserOnMap(
+                            routeExists = routePlannerViewModelUiState.value.destinations.isNotEmpty(),
+                            destinations = routePlannerViewModelUiState.value.destinations,
+                            track = true
+                        )
+                    },
+                    onEditRouteClick = {
+                        navController.navigate("route_planner")
+
+                    },
+                    routeExists = routePlannerViewModel.checkIfSomeDestinationsHaveNames(),
+                    isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
+                    mapView = {
+
+                        MapView(
+                            mapView = mapLocationViewModelUiState.value.mapView,
+                            drawGeoJson = { geoJsonData ->
+                                mapViewModel.drawGeoJson(
+                                    geoJsonData
+                                )
+                            },
+                            onInit = {
+                                mapViewModel.loadMapView()
+                            },
+                            geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
+                            bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
+                            waypoints = routePlannerViewModelUiState.value.waypoints,
+                            context = context,
+                        )
+
+
+                    },
+                )
+            }
+
+            composable("route_screen") {
                 DynamicScaffoldView(
                     context = context,
                     destinations = routePlannerViewModelUiState.value.destinations,
@@ -92,6 +139,13 @@ fun AppNavigation(
                             context = context,
                         )
                     },
+                    popBackStack = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate("home_screen")
+                        }
+                    },
                 )
             }
             composable("route_planner") {
@@ -103,6 +157,14 @@ fun AppNavigation(
                     enabledStartRoute = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
                     routesAdded = routePlannerViewModel.checkIfSomeDestinationsHaveNames(),
                     isLoading = routePlannerViewModelUiState.value.isLoading,
+                    popBackStack = {
+
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate("home_screen")
+                        }
+                    },
                     editDestination = { index ->
                         routePlannerViewModel.editDestination(index) {
                             navController.navigate(
@@ -117,11 +179,10 @@ fun AppNavigation(
                             )
                         }
                     },
-                    navigateTo = { screen -> navController.navigate(screen) },
                     startRoute = {
                         CoroutineScope(Dispatchers.Main).launch {
                             routePlannerViewModel.start(
-                                { navController.navigate("home_screen") },
+                                { navController.navigate("route_screen") },
                                 {
                                     mapViewModel.fitCameraToRouteAndWaypoints(
                                         routePlannerViewModelUiState.value.destinations
@@ -141,6 +202,7 @@ fun AppNavigation(
                             time
                         )
                     },
+                    navigateTo = { screen -> navController.navigate(screen) },
                 )
             }
             composable("add_destination_screen") {
@@ -148,7 +210,11 @@ fun AppNavigation(
                     clearQuery = { addressDataViewModel.clearQuery() },
                     query = addressViewModelUiState.value.query,
                     clearResults = { addressDataViewModel.clearResults() },
-                    addFormerAddress = { address -> addressDataViewModel.addFormerAddress(address) },
+                    addFormerAddress = { address ->
+                        addressDataViewModel.addFormerAddress(
+                            address
+                        )
+                    },
                     formerAddresses = addressViewModelUiState.value.formerAddresses,
                     addresses = addressViewModelUiState.value.addresses,
                     setQuery = { query -> addressDataViewModel.setQuery(query) },
@@ -156,7 +222,13 @@ fun AppNavigation(
                     getTotalDestinations = { routePlannerViewModel.getTotalDestinations() },
                     activeDestinationIndex = routePlannerViewModelUiState.value.activeDestinationIndex,
                     location = location,
-                    navigateTo = { screen -> navController.navigate(screen) },
+                    popBackStack = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate("home_screen")
+                        }
+                    },
                     fetchAddressData = { query ->
                         CoroutineScope(Dispatchers.Main).launch {
 
@@ -178,13 +250,19 @@ fun AppNavigation(
                         )
                     },
 
-                )
+                    )
             }
             composable("settings_screen") {
                 SettingsView(
                     userName = settingsViewModelUiState.value.userName,
                     setUserName = { name -> settingsViewModel.setUserName(name) },
-                    popBackStack = { navController.popBackStack() },
+                    popBackStack = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate("home_screen")
+                        }
+                    },
                     setDarkMode = { settingsViewModel.setDarkMode(it) },
                     darkMode = settingsViewModelUiState.value.darkMode
                 )
@@ -192,9 +270,6 @@ fun AppNavigation(
         }
     }
 
-
-
-
-
 }
+
 

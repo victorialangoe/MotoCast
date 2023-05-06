@@ -16,8 +16,8 @@ import com.example.motocast.ui.view.route_planner.buttons.DestinationButton
 import com.example.motocast.ui.view.route_planner.date_and_time.DateTimePicker
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonType
-import com.example.motocast.ui.viewmodel.route_planner.Destination
 import com.example.motocast.ui.view.utils.components.Header
+import com.example.motocast.ui.viewmodel.route_planner.Destination
 import java.util.*
 
 @Composable
@@ -29,6 +29,7 @@ fun RoutePlannerView(
     removeDestination: (Int) -> Unit,
     updateStartTime: (Calendar) -> Unit,
     enabledStartRoute: Boolean,
+    popBackStack: () -> Unit,
     routesAdded: Boolean,
     destinations: List<Destination>,
     clearAll: () -> Unit,
@@ -48,7 +49,7 @@ fun RoutePlannerView(
     ) {
 
         Header(
-            onClick = { navigateTo("home_screen") },
+            onClick = { popBackStack() },
             text = stringResource(R.string.route_planner)
         )
         // This makes the content scrollable
@@ -62,7 +63,9 @@ fun RoutePlannerView(
                     DestinationButton(
                         destinationIndex = destinationIndex,
                         destinations = destinations,
-                        editDestination = { editDestination(destinationIndex) },
+                        editDestination = {
+                            editDestination(destinationIndex)
+                        },
                         removeDestination = { removeDestination(destinationIndex) },
                         enabledRemove = destinations.size > 2 && !isLoading
                     )
@@ -74,7 +77,6 @@ fun RoutePlannerView(
                 // This is the button that adds a new destination
                 BasicButton(
                     onClick = {
-                        navigateTo("home_screen")
                         addDestination()
                     },
                     text = if (destinations.size < 10) stringResource(R.string.add_stopp)
@@ -122,3 +124,4 @@ fun RoutePlannerView(
         })
     }
 }
+

@@ -124,7 +124,7 @@ class MapViewModel @Inject constructor(
             val mapboxMap = _uiState.value.mapView!!.getMapboxMap()
             Log.d("MapActivity", "Camera to user location")
 
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch(Dispatchers.Main) {
                 val location = locationUseCase.getCurrentLocation()
 
 
@@ -227,8 +227,8 @@ class MapViewModel @Inject constructor(
         // Create a new camera position with a lower zoom level
         val updatedCameraPosition = CameraOptions.Builder()
             .center(cameraPosition.center)
-            .bearing(cameraPosition.bearing)
-            .pitch(cameraPosition.pitch)
+            .bearing(15.0)
+            .pitch(45.0)
             .zoom(cameraPosition.zoom?.minus(0.5)) // Decrease the zoom level by 1
             .build()
 
