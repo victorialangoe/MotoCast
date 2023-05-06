@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.ui.view.utils.badges.WelcomeBadge
 import com.example.motocast.ui.view.utils.components.TransparentTopBar
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonSize
@@ -22,11 +23,23 @@ fun HomeView(
     onLocateUserClick: () -> Unit,
     isTrackUserActive: Boolean,
     mapView: @Composable () -> Unit,
+    username: String,
 ) {
     // Map as background, buttons on bottom of screen
 
     Box(modifier = Modifier.fillMaxSize()) {
         mapView()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            WelcomeBadge(
+                userName = username,
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

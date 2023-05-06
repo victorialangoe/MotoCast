@@ -68,6 +68,7 @@ fun AppNavigation(
         NavHost(navController = navController, startDestination = "home_screen") {
             composable("home_screen") {
                 HomeView(
+                    username = settingsViewModelUiState.value.userName,
                     context = context,
                     weatherViewModel = weatherViewModel,
                     settingsNavigateTo = { navController.navigate("settings_screen") },
