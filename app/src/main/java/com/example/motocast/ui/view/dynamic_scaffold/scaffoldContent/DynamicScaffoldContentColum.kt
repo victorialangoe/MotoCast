@@ -20,7 +20,6 @@ fun DynamicScaffoldContentColum(
     showRoute: Boolean,
     date: String,
     time: String,
-    userName: String,
     duration: String,
     waypoints: List<RouteWithWaypoint>,
     context: Context
@@ -28,15 +27,8 @@ fun DynamicScaffoldContentColum(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
-            .clip(
-                shape = RoundedCornerShape(
-                    18.dp,
-                    18.dp,
-                    0.dp,
-                    0.dp
-                )
-            ),
+            .fillMaxHeight(),
+
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
@@ -61,9 +53,5 @@ fun DynamicScaffoldContentColum(
             waypoints = waypoints,
             context = context,
         )
-        else
-            HomeScaffoldContent(
-                userName = userName,
-            )
     }
 }

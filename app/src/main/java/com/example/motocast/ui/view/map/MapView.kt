@@ -35,9 +35,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.example.motocast.theme.Blue700
 import com.example.motocast.theme.Red700
-
 
 @Composable
 fun MapView(
@@ -45,7 +46,6 @@ fun MapView(
     mapView: MapView? = null,
     drawGeoJson: (String) -> Unit,
     onInit: () -> Unit,
-    bottomOffset: Int = 0,
     waypoints: List<RouteWithWaypoint>,
     context: Context
 ) {
@@ -58,7 +58,7 @@ fun MapView(
     }
 
     if (mapView != null) {
-        MapViewContent(mapView, bottomOffset)
+        MapViewContent(mapView)
         val viewAnnotationManager = mapView.viewAnnotationManager
         val previousWaypoints = remember { mutableStateOf(emptyList<RouteWithWaypoint>()) }
 
@@ -68,7 +68,6 @@ fun MapView(
         }
 
         for (waypoint in waypoints) {
-            Log.d("MapViewAnnotation", "waypoint: $waypoint")
             val point = Point.fromLngLat(
                 waypoint.longitude ?: 0.0,
                 waypoint.latitude ?: 0.0

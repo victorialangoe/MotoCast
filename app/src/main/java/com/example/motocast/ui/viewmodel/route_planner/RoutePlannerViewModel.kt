@@ -367,7 +367,7 @@ class RoutePlannerViewModel @Inject constructor(
                     val legs = response.routes[0].legs
                     val duration = response.routes[0].duration
                     _uiState.value = _uiState.value.copy(
-                        durationAsString = getDurationAsString(duration.toLong())
+                        durationAsString = "Ruten varer i " + getDurationAsString(duration.toLong())
                     )
 
                     addWaypointsToUiState(

@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.theme.Blue700
+import com.example.motocast.theme.Red700
 
 /**
  * Displays the current weather in a card.
@@ -34,11 +36,15 @@ fun DisplayWeather(
         modifier = modifier.padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
 
-        Text(
-            color = MaterialTheme.colorScheme.onSurface,
-            text = "$temperature °C",
-            style = MaterialTheme.typography.bodyMedium
-        )
+            Text(
+                text = "$temperature°",
+                color = if (temperature < 0) {
+                    Blue700
+                } else {
+                    Red700
+                },
+                style = MaterialTheme.typography.bodyMedium
+            )
 
         Spacer(modifier = Modifier.size(8.dp))
 

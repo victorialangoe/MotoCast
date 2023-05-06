@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.theme.Blue700
@@ -35,7 +36,7 @@ fun WeatherCard(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(Color.White)
                 .padding(8.dp)
         ) {
             Row(
@@ -53,8 +54,8 @@ fun WeatherCard(
                         } else {
                             Red700
                         },
-
-                        )
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     if (time != null) {
                         Text(
                             text = SimpleDateFormat("HH:mm").format(time.time),
@@ -83,7 +84,7 @@ fun WeatherCard(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .background(MaterialTheme.colorScheme.surface, ReverseTriangleShape)
+                .background(Color.White, ReverseTriangleShape)
                 .size(20.dp, 10.dp)
         )
 

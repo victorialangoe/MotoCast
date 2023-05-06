@@ -12,7 +12,6 @@ import com.mapbox.maps.MapView
 @Composable
 fun MapViewContent(
     mapView: MapView,
-    bottomOffset: Int = 0,
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val mapboxMap = createRef()
@@ -25,7 +24,6 @@ fun MapViewContent(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 }
-                .padding(bottom = bottomOffset.dp)
         )
     }
 }

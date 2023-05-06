@@ -15,7 +15,7 @@ import com.example.motocast.ui.view.utils.buttons.BackButton
 fun Header(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    text: String?,
+    text: String? = null
 ) {
     Row(
         modifier = modifier,
