@@ -13,7 +13,7 @@ import com.example.motocast.R
 fun LocateUserButton(
     modifier: Modifier = Modifier,
     active: Boolean,
-    buttonSize: ButtonSize = ButtonSize.Small,
+    buttonSize: ButtonSize = ButtonSize.Medium,
     buttonType: ButtonType = ButtonType.White,
     onClick: () -> Unit,
 ) {

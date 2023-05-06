@@ -76,14 +76,14 @@ fun BasicButton(
 
     val buttonHeight: Dp = when (buttonSize) {
         ButtonSize.Small -> 40.dp
-        ButtonSize.Medium -> 55.dp
+        ButtonSize.Medium -> 56.dp
         ButtonSize.Large -> 70.dp
     }
     
     val textStyle = when (buttonSize) {
         ButtonSize.Small -> MaterialTheme.typography.bodySmall
-        ButtonSize.Medium -> MaterialTheme.typography.bodyMedium
-        ButtonSize.Large -> MaterialTheme.typography.bodyLarge
+        ButtonSize.Medium -> MaterialTheme.typography.labelLarge
+        ButtonSize.Large -> MaterialTheme.typography.labelLarge
     }
 
     val buttonModifier = when (circle) {
@@ -96,8 +96,8 @@ fun BasicButton(
     }
 
     val contentPadding: PaddingValues = when (buttonSize) {
-        ButtonSize.Small -> PaddingValues(2.dp)
-        ButtonSize.Medium -> PaddingValues(4.dp)
+        ButtonSize.Small -> PaddingValues(4.dp)
+        ButtonSize.Medium -> PaddingValues(6.dp)
         ButtonSize.Large -> PaddingValues(8.dp)
     }
 

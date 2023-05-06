@@ -43,13 +43,12 @@ fun DateAndTimeButton(
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = iconDescription,
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(16.dp),
                 tint = Orange300,
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                fontSize = 14.sp,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 text = label,
                 color = Orange500,
             )

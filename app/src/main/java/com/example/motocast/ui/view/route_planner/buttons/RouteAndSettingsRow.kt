@@ -19,8 +19,7 @@ fun RouteAndSettingsRow(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 

@@ -35,9 +35,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.example.motocast.theme.Blue700
 import com.example.motocast.theme.Red700
-
 
 @Composable
 fun MapView(
@@ -45,7 +46,6 @@ fun MapView(
     mapView: MapView? = null,
     drawGeoJson: (String) -> Unit,
     onInit: () -> Unit,
-    bottomOffset: Int = 0,
     waypoints: List<RouteWithWaypoint>,
     context: Context
 ) {
@@ -58,7 +58,7 @@ fun MapView(
     }
 
     if (mapView != null) {
-        MapViewContent(mapView, bottomOffset)
+        MapViewContent(mapView)
         val viewAnnotationManager = mapView.viewAnnotationManager
         val previousWaypoints = remember { mutableStateOf(emptyList<RouteWithWaypoint>()) }
 
@@ -68,7 +68,6 @@ fun MapView(
         }
 
         for (waypoint in waypoints) {
-            Log.d("MapViewAnnotation", "waypoint: $waypoint")
             val point = Point.fromLngLat(
                 waypoint.longitude ?: 0.0,
                 waypoint.latitude ?: 0.0
@@ -83,7 +82,7 @@ fun MapView(
         )
     }
 }
-fun addViewAnnotation(
+private fun addViewAnnotation(
     point: Point,
     viewAnnotationManager: ViewAnnotationManager,
     waypoint: RouteWithWaypoint,
@@ -104,125 +103,16 @@ fun addViewAnnotation(
         viewAnnotationOptions {
             geometry(point)
             allowOverlap(true) // Allow annotation to overlap with other annotations
-            offsetY(100)
+            //offsetY(100) WE MAY USE THIS ON ANTHER VIEW
         }
     )
 }
 
-class ComposableWrapperView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    private val temperature: Int,
-    private val location: String,
-    private val time: Calendar?,
-    private val iconSymbol: String
-) : FrameLayout(context, attrs, defStyleAttr) {
-
-    init {
 
 
-        val composeView = ComposeView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
-            setContent {
-                WeatherCard(
-                    temperature = temperature,
-                    location = location,
-                    time = time,
-                    iconSymbol = iconSymbol,
-                    fare = true,
-                    context = context
-                )
-            }
-        }
-        addView(composeView)
-
-        // Set the layoutParams for the ComposableWrapperView itself
-        layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-}
-private val ReverseTriangleShape = GenericShape { size, _ ->
-    moveTo(0f, 0f)
-    lineTo(size.width / 2f, size.height)
-    lineTo(size.width, 0f)
-}
-
-@Composable
-fun WeatherCard(
-    temperature: Int,
-    location: String,
-    time: Calendar?,
-    fare: Boolean = false,
-    iconSymbol: String,
-    context: Context,
-) {
-    Column() {
 
 
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = "$temperature°",
-                        color = if (temperature < 0) {
-                            Blue700
-                        } else {
-                            Red700
-                        },
 
-                        )
-                    if (time != null) {
-                        Text(
-                            text = SimpleDateFormat("HH:mm").format(time.time),
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                }
-                if (iconSymbol.isNotEmpty()) {
-                    Image(
-                        painter = painterResource(
-                            id = context.resources.getIdentifier(
-                                iconSymbol,
-                                "drawable",
-
-                                context.packageName
-                            )
-                        ),
-                        contentDescription = iconSymbol,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .padding(start = 8.dp)
-                    )
-                }
-            }
-        }
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .background(MaterialTheme.colorScheme.surface, ReverseTriangleShape)
-                .size(20.dp, 10.dp)
-        )
-
-    }
-}
 
 
 

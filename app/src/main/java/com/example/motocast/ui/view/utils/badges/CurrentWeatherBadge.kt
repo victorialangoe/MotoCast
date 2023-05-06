@@ -1,4 +1,4 @@
-package com.example.motocast.ui.view.dynamic_scaffold.badges
+package com.example.motocast.ui.view.utils.badges
 
 import android.content.Context
 import androidx.compose.foundation.background

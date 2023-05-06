@@ -13,21 +13,27 @@ import com.example.motocast.ui.view.utils.buttons.BackButton
 
 @Composable
 fun Header(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    text: String,
+    text: String? = null
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically) {
 
         BackButton(onClick = onClick)
-        Text(
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            text = text,
-            modifier = Modifier.weight(0.8f, fill = true),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.weight(0.1f, fill = true))
+        if(text != null) {
+            Text(
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                text = text,
+                modifier = Modifier.weight(0.8f, fill = true),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(0.1f, fill = true))
+        } else {
+            Spacer(modifier = Modifier.weight(0.9f, fill = true))
+        }
     }
 }
