@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.motocast.ui.view.dynamic_scaffold.badges.CurrentWeatherBadge
+import com.example.motocast.ui.view.utils.badges.CurrentWeatherBadge
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import com.example.motocast.ui.view.utils.buttons.LocateUserButton
 
 @Composable
-fun DynamicScaffoldViewTopBar(
+fun TransparentTopBar(
     modifier: Modifier = Modifier,
     context: Context,
     weatherViewModel: CurrentWeatherViewModel,
