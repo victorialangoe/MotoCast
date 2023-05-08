@@ -41,3 +41,7 @@ data class Destination (
     val timestamp: Long,
 )
 
+data class RoutePlannerError(
+    val message: String,
+)
+

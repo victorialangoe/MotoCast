@@ -183,32 +183,38 @@ class MapViewModel @Inject constructor(
      */
     fun drawGeoJson(geoJsonString: String) {
         val mapView = _uiState.value.mapView
-        mapView?.getMapboxMap()?.getStyle { style ->
-            val sourceId = "geojson-source"
-            val layerId = "geojson-layer"
+        if (mapView != null) {
+            mapView.getMapboxMap()?.let { mapboxMap ->
+                mapboxMap.getStyle { style ->
+                    val sourceId = "geojson-source"
+                    val layerId = "geojson-layer"
 
-            // Check if the source exists and update it, otherwise create and add the source
-            if (style.getSource(sourceId) != null) {
-                val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
-                geoJsonSource?.data(geoJsonString)
-            } else {
-                val geoJsonSource = geoJsonSource(sourceId) {
-                    data(geoJsonString)
-                }
-                style.addSource(geoJsonSource)
-            }
+                    // Check if the source exists and update it, otherwise create and add the source
+                    if (style.getSource(sourceId) != null) {
+                        val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
+                        geoJsonSource?.data(geoJsonString)
+                    } else {
+                        val geoJsonSource = geoJsonSource(sourceId) {
+                            data(geoJsonString)
+                        }
+                        style.addSource(geoJsonSource)
+                    }
 
-            // Check if the layer exists, otherwise create and add the layer
-            if (style.getLayer(layerId) == null) {
-                val lineLayer = lineLayer(layerId, sourceId) {
-                    var hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
-                    lineColor(hexColor)
-                    lineWidth(5.0)
+                    // Check if the layer exists, otherwise create and add the layer
+                    if (style.getLayer(layerId) == null) {
+                        val lineLayer = lineLayer(layerId, sourceId) {
+                            var hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
+                            lineColor(hexColor)
+                            lineWidth(5.0)
+                        }
+                        style.addLayerBelow(lineLayer, "road-intersection")
+                    }
                 }
-                style.addLayerBelow(lineLayer, "road-intersection")
             }
         }
     }
+
+
 
     fun fitCameraToRouteAndWaypoints(destinations: List<Destination>) {
         val mapView = _uiState.value.mapView ?: return

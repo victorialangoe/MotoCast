@@ -87,6 +87,10 @@ class RoutePlannerViewModel @Inject constructor(
         return formatTime(_uiState.value.startTime)
     }
 
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = "")
+    }
+
     private fun getDurationAsString(durationInSek: Long): String {
         return formatDurationAsTimeString(durationInSek)
     }
@@ -349,9 +353,17 @@ class RoutePlannerViewModel @Inject constructor(
 
         if (_uiState.value.destinations.size >= 2) {
 
-            val response = getDirectionsDataUseCase(
+            var response = getDirectionsDataUseCase(
+
                 getDestinationsCoordinatesAsString()
             )
+            if (response?.code == "NoRoute") {
+                _uiState.value = _uiState.value.copy(
+                    error = "No route found",
+                    isLoading = false,
+                )
+                return
+            }
 
             Log.d("start", "response: $response")
 
