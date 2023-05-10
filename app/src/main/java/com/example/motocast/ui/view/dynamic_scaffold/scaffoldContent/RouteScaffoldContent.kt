@@ -3,7 +3,6 @@ package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

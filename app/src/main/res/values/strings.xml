@@ -39,4 +39,17 @@
     <string name="settings_button_icon">Innstillinger ikon</string>
     <string name="recommendations">Anbefalinger:</string>
     <string name="close">Lukk</string>
+    <plurals name="days">
+        <item quantity="one">%d dag</item>
+        <item quantity="other">%d dager</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d time</item>
+        <item quantity="other">%d timer</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minutt</item>
+        <item quantity="other">%d minutter</item>
+    </plurals>
+
 </resources>

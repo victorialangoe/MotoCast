@@ -1,44 +1,18 @@
 package com.example.motocast.ui.view.map
 
 import android.content.Context
-import android.util.AttributeSet
-import android.util.Log
-import android.widget.FrameLayout
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.example.motocast.R
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
-import java.text.SimpleDateFormat
-import java.util.*
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import com.example.motocast.theme.Blue700
-import com.example.motocast.theme.Red700
 
 @Composable
 fun MapView(
@@ -91,7 +65,6 @@ private fun addViewAnnotation(
     val view = ComposableWrapperView(
         context = context,
         temperature = (waypoint.weather?.temperature?.toInt() ?: 0),
-        location = waypoint.name ?: "Ukjent",
         time = waypoint.timestamp,
         iconSymbol = waypoint.weather?.symbolCode ?: ""
     )

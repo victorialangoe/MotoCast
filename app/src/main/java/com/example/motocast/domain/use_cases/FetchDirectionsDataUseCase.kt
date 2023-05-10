@@ -3,7 +3,6 @@ package com.example.motocast.domain.use_cases
 import android.util.Log
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 
 /**
  * Fetches directions data from the repository and returns it as a [DirectionsDataModel].

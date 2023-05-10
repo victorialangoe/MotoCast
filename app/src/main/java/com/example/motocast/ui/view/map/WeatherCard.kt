@@ -24,13 +24,11 @@ import java.util.*
 @Composable
 fun WeatherCard(
     temperature: Int,
-    location: String,
     time: Calendar?,
-    fare: Boolean = false,
     iconSymbol: String,
     context: Context,
 ) {
-    Column() {
+    Column {
 
 
         Box(

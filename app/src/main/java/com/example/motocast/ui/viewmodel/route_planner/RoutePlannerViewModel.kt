@@ -7,6 +7,7 @@ import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.Waypoint
 import com.example.motocast.domain.use_cases.FetchDirectionsDataUseCase
 import com.example.motocast.domain.use_cases.GetGeocodedNameUseCase
+import com.example.motocast.domain.use_cases.GetResourcesUseCase
 import com.example.motocast.domain.use_cases.GetWeatherDataUseCase
 import com.example.motocast.domain.utils.Utils
 import com.example.motocast.domain.utils.Utils.checkIfTimeIsMoreThan8DaysInFuture
@@ -32,6 +33,7 @@ class RoutePlannerViewModel @Inject constructor(
     private val getGeocodedNameUseCase: GetGeocodedNameUseCase,
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
     private val getDirectionsDataUseCase: FetchDirectionsDataUseCase,
+    private val getResourcesUseCase: GetResourcesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
@@ -88,7 +90,8 @@ class RoutePlannerViewModel @Inject constructor(
     }
 
     private fun getDurationAsString(durationInSek: Long): String {
-        return formatDurationAsTimeString(durationInSek)
+        val resource = getResourcesUseCase()
+        return formatDurationAsTimeString(durationInSek, resource)
     }
 
     private fun getDestinationsCoordinatesAsString(): String {

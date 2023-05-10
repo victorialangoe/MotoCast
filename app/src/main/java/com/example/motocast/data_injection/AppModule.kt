@@ -13,7 +13,6 @@ import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -58,7 +57,13 @@ object AppModule {
         return app.applicationContext as Application
     }
 
-
+    @Provides
+    @Singleton
+    fun provideGetResoursesUseCase(
+        motoCastRepository: MotoCastRepository
+    ): GetResourcesUseCase {
+        return GetResourcesUseCase(motoCastRepository)
+    }
     @Provides
     @Singleton
     fun provideRemoteDataSource(

@@ -1,23 +1,10 @@
 package com.example.motocast.ui.view.dynamic_scaffold.cards
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.example.motocast.R
 import com.example.motocast.data.model.Properties
 import com.example.motocast.theme.*
@@ -126,17 +112,7 @@ fun Alerts(
 
                     )
                     // split the instructions on . selectedAlert?.instruction?
-                    selectedAlert?.instruction?.split(". ")?.map { instruction ->
-                        Row(
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        ) {
-                            Text(
-                                text = instruction,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+                    BulletPoints(selectedAlert?.instruction ?: "")
                 }
             },
             confirmButton = {

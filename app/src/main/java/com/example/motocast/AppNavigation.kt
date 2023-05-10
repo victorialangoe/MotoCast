@@ -34,7 +34,7 @@ import java.util.*
  * @param weatherViewModel The [CurrentWeatherViewModel] to use for the weather
  * @param routePlannerViewModel The [RoutePlannerViewModel] to use for the route planner
  * @param mapViewModel The [MapViewModel] to use for the map
- * @param context The [Context] to use for the app. This is needed for the [DisplayWeather] composable
+ * @param context The [Context] to use for the app
  *
  */
 @Composable
@@ -73,7 +73,6 @@ fun AppNavigation(
                     weatherViewModel = weatherViewModel,
                     settingsNavigateTo = { navController.navigate("settings_screen") },
                     onCreateNewRouteClick = {
-                        // Nullstill alt
                         routePlannerViewModel.clear()
                         navController.navigate("route_planner")
                     },

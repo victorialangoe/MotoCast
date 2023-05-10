@@ -1,6 +1,5 @@
 package com.example.motocast.ui.viewmodel.current_weather
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.domain.use_cases.FetchNowCastDataUseCase

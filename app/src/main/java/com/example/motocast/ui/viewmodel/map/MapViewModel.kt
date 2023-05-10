@@ -31,7 +31,6 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -209,7 +208,7 @@ class MapViewModel @Inject constructor(
 
             // Check if the source exists and update it, otherwise create and add the source
             if (style.getSource(sourceId) != null) {
-                val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
+                var geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
                 geoJsonSource?.data(geoJsonString)
             } else {
                 val geoJsonSource = geoJsonSource(sourceId) {
@@ -221,7 +220,7 @@ class MapViewModel @Inject constructor(
             // Check if the layer exists, otherwise create and add the layer
             if (style.getLayer(layerId) == null) {
                 val lineLayer = lineLayer(layerId, sourceId) {
-                    var hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
+                    val hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
                     lineColor(hexColor)
                     lineWidth(5.0)
                 }

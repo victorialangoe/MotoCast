@@ -4,11 +4,11 @@ import LocationForecastData
 import LocationForecastDataModel
 import android.util.Log
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.utils.Utils.formatToISO8601
 import com.example.motocast.domain.utils.Utils.getZeroedTimestamp
 import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 import java.util.*
+import kotlin.math.abs
 
 /**
  * Fetches location forecast data from the repository
@@ -56,7 +56,7 @@ class FetchLocationForecastDataUseCase(
         }
         if (timeseries == null) {
             val currentHour = zeroedTimestamp.get(Calendar.HOUR_OF_DAY)
-            val closestHour = listOf(0, 6, 12, 18).minByOrNull { Math.abs(it - currentHour) }
+            val closestHour = listOf(0, 6, 12, 18).minByOrNull { abs(it - currentHour) }
 
             for (hour in closestHour!!..23) {
                 zeroedTimestamp.set(Calendar.HOUR_OF_DAY, hour)

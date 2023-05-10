@@ -2,31 +2,30 @@ package com.example.motocast.domain.use_cases
 
 import android.util.Log
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.ui.viewmodel.current_weather.WeatherUiState
 
 /**
- * Fetches nowcast data from the repository
+ * Fetches nowCast data from the repository
  *
  * @param repository The repository to fetch the nowcast data from, as a [MotoCastRepository]
- * @return nowcast data as a [WeatherUiState] or null
+ * @return nowCast data as a [WeatherUiState] or null
  */
 class FetchNowCastDataUseCase(
-    private val motoCastRepository: MotoCastRepository
+    private val repository: MotoCastRepository
 ) {
 
     suspend operator fun invoke(latitude: Double, longitude: Double): WeatherUiState? {
-        val response = motoCastRepository.getNowCastData(latitude, longitude) ?: run {
+        val response = repository.getNowCastData(latitude, longitude) ?: run {
             Log.d("FetchNowCastDataUseCase", "invoke: null")
             return null
         }
-        val firstTimeseries = response.properties.timeseries.first().data
+        val firstTimeSeries = response.properties.timeseries.first().data
 
         return WeatherUiState(
-            symbolCode = firstTimeseries.next_1_hours.summary.symbol_code,
-            temperature = firstTimeseries.instant.details.air_temperature,
-            windSpeed = firstTimeseries.instant.details.wind_speed,
-            windDirection = firstTimeseries.instant.details.wind_from_direction,
+            symbolCode = firstTimeSeries.next_1_hours.summary.symbol_code,
+            temperature = firstTimeSeries.instant.details.air_temperature,
+            windSpeed = firstTimeSeries.instant.details.wind_speed,
+            windDirection = firstTimeSeries.instant.details.wind_from_direction,
             updatedAt = response.properties.meta.updated_at
         )
     }

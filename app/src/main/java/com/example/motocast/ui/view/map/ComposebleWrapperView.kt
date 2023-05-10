@@ -11,13 +11,11 @@ class ComposableWrapperView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     private val temperature: Int,
-    private val location: String,
     private val time: Calendar?,
     private val iconSymbol: String
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     init {
-
 
         val composeView = ComposeView(context).apply {
             layoutParams = LayoutParams(
@@ -27,10 +25,8 @@ class ComposableWrapperView @JvmOverloads constructor(
             setContent {
                 WeatherCard(
                     temperature = temperature,
-                    location = location,
                     time = time,
                     iconSymbol = iconSymbol,
-                    fare = true,
                     context = context
                 )
             }

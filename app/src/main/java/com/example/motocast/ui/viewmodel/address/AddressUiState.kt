@@ -1,8 +1,5 @@
 package com.example.motocast.ui.viewmodel.address
 
-import android.location.Location
-import com.example.motocast.ui.viewmodel.route_planner.Destination
-
 data class AddressUiState(
     val isLoading: Boolean = false,
     val query: String = "",
