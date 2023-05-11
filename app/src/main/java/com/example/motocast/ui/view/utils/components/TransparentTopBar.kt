@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.motocast.ui.view.utils.badges.CurrentWeatherBadge
-import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 import com.example.motocast.ui.view.utils.buttons.LocateUserButton
 import com.example.motocast.ui.view.utils.buttons.SettingsButton
+import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 
 @Composable
 fun TransparentTopBar(

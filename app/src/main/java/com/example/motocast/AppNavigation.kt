@@ -2,8 +2,16 @@ package com.example.motocast
 
 import android.content.Context
 import android.location.Location
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,6 +60,9 @@ fun AppNavigation(
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
     val mapLocationViewModelUiState = mapViewModel.uiState.collectAsState()
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    //shared flow for error messages
+
 
 
     val onLocateUserClick: () -> Unit =
@@ -65,6 +76,7 @@ fun AppNavigation(
     AppTheme(
         darkTheme = settingsViewModelUiState.value.darkMode,
     ) {
+        Box {
         NavHost(navController = navController, startDestination = "home_screen") {
             composable("home_screen") {
                 HomeView(
@@ -134,6 +146,7 @@ fun AppNavigation(
                         } else {
                             navController.navigate("home_screen")
                         }
+
                     },
                 )
             }
@@ -257,7 +270,31 @@ fun AppNavigation(
                 )
             }
         }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    backgroundColor = MaterialTheme.colors.error,
+                    contentColor = MaterialTheme.colors.onError
+                ) {
+                    Text(text = it.message)
+                }
+            }
+        )
     }
+    }
+    val errorMessageId = routePlannerViewModelUiState.value.error
+    val errorMessage = if (errorMessageId != null) stringResource(id = errorMessageId) else ""
+
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.isNotBlank()){
+            snackbarHostState.showSnackbar(errorMessage)
+            routePlannerViewModel.clearError()
+        }
+    }
+
+
 
 }
 

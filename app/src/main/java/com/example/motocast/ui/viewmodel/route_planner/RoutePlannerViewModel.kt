@@ -2,6 +2,7 @@ package com.example.motocast.ui.viewmodel.route_planner
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.motocast.R
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.Leg
 import com.example.motocast.data.model.Waypoint
@@ -87,6 +88,10 @@ class RoutePlannerViewModel @Inject constructor(
 
     fun getStartTime(): String {
         return formatTime(_uiState.value.startTime)
+    }
+
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = R.string.empty_string)
     }
 
     private fun getDurationAsString(durationInSek: Long): String {
@@ -346,15 +351,23 @@ class RoutePlannerViewModel @Inject constructor(
 
 
         if (!checkIfAllDestinationsHaveNames()) {
-            _uiState.value = _uiState.value.copy(error = "All destinations must have a name")
+            _uiState.value = _uiState.value.copy(error = R.string.all_destinations_must_be_filled_error)
             return
         }
 
         if (_uiState.value.destinations.size >= 2) {
 
-            val response = getDirectionsDataUseCase(
+            var response = getDirectionsDataUseCase(
+
                 getDestinationsCoordinatesAsString()
             )
+            if (response?.code == "NoRoute") {
+                _uiState.value = _uiState.value.copy(
+                    error = R.string.route_not_found_error,
+                    isLoading = false,
+                )
+                return
+            }
 
             Log.d("start", "response: $response")
 
@@ -383,7 +396,7 @@ class RoutePlannerViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = false)
         } else {
             _uiState.value = _uiState.value.copy(
-                error = "You need at least two destinations",
+                error = R.string.need_2_destination_error,
                 isLoading = false
             )
         }

@@ -39,14 +39,13 @@ fun MapView(
         if (previousWaypoints.value != waypoints) {
             viewAnnotationManager.removeAllViewAnnotations()
             previousWaypoints.value = waypoints
-        }
-
-        for (waypoint in waypoints) {
-            val point = Point.fromLngLat(
-                waypoint.longitude ?: 0.0,
-                waypoint.latitude ?: 0.0
-            )
-            addViewAnnotation(context = context, point = point, viewAnnotationManager = viewAnnotationManager, waypoint = waypoint)
+            for (waypoint in waypoints) {
+                val point = Point.fromLngLat(
+                    waypoint.longitude ?: 0.0,
+                    waypoint.latitude ?: 0.0
+                )
+                addViewAnnotation(context = context, point = point, viewAnnotationManager = viewAnnotationManager, waypoint = waypoint)
+            }
         }
     } else {
         Text(
@@ -55,6 +54,7 @@ fun MapView(
             style = MaterialTheme.typography.bodyMedium
         )
     }
+
 }
 private fun addViewAnnotation(
     point: Point,
@@ -71,14 +71,19 @@ private fun addViewAnnotation(
 
     // Measure the view to get the correct width and height
 
-    viewAnnotationManager.addViewAnnotation(
-        view,
-        viewAnnotationOptions {
-            geometry(point)
-            allowOverlap(true) // Allow annotation to overlap with other annotations
-            //offsetY(100) WE MAY USE THIS ON ANTHER VIEW
-        }
-    )
+    if (viewAnnotationManager != null) {
+
+        viewAnnotationManager.addViewAnnotation(
+            view,
+            viewAnnotationOptions {
+                geometry(point)
+                allowOverlap(true) // Allow annotation to overlap with other annotations
+                offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
+            }
+        )
+    }
+
+
 }
 
 
