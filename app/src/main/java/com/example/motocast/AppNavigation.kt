@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 
@@ -295,13 +296,17 @@ fun AppNavigation(
         )
     }
     }
-    LaunchedEffect(routePlannerViewModelUiState.value.error) {
-        val errorMessage = routePlannerViewModelUiState.value.error
-        if (errorMessage != null && errorMessage.isNotBlank()){
+    val errorMessageId = routePlannerViewModelUiState.value.error
+    val errorMessage = if (errorMessageId != null) stringResource(id = errorMessageId) else ""
+
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.isNotBlank()){
             snackbarHostState.showSnackbar(errorMessage)
             routePlannerViewModel.clearError()
         }
     }
+
+
 
 }
 

@@ -76,14 +76,19 @@ private fun addViewAnnotation(
 
     // Measure the view to get the correct width and height
 
-    viewAnnotationManager.addViewAnnotation(
-        view,
-        viewAnnotationOptions {
-            geometry(point)
-            allowOverlap(true) // Allow annotation to overlap with other annotations
-            offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
-        }
-    )
+    if (viewAnnotationManager != null) {
+
+        viewAnnotationManager.addViewAnnotation(
+            view,
+            viewAnnotationOptions {
+                geometry(point)
+                allowOverlap(true) // Allow annotation to overlap with other annotations
+                offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
+            }
+        )
+    }
+
+
 }
 
 

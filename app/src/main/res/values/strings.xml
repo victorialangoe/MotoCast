@@ -37,4 +37,8 @@
     <string name="active_posstion_icon">Aktiv posisjon ikon</string>
     <string name="inactive_posstion_icon">Inaktiv posisjon ikon</string>
     <string name="settings_button_icon">Innstillinger ikon</string>
+    <string name="route_not_found_error">Vi kunne ikke finne en rute mellom disse punktene</string>
+    <string name="need_2_destination_error">Du må ha minst 2 punkter for å lage en rute</string>
+    <string name="all_destinations_must_be_filled_error">Alle punkter må ha et navn</string>
+    <string name="empty_string"></string>
 </resources>
