@@ -3,7 +3,6 @@ package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +19,6 @@ fun DynamicScaffoldContentColum(
     showRoute: Boolean,
     date: String,
     time: String,
-    userName: String,
     duration: String,
     waypoints: List<RouteWithWaypoint>,
     context: Context
@@ -28,15 +26,8 @@ fun DynamicScaffoldContentColum(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
-            .clip(
-                shape = RoundedCornerShape(
-                    18.dp,
-                    18.dp,
-                    0.dp,
-                    0.dp
-                )
-            ),
+            .fillMaxHeight(),
+
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
@@ -61,9 +52,5 @@ fun DynamicScaffoldContentColum(
             waypoints = waypoints,
             context = context,
         )
-        else
-            HomeScaffoldContent(
-                userName = userName,
-            )
     }
 }

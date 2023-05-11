@@ -19,7 +19,7 @@ fun DateTimeRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Row() {
+        Row {
             DateAndTimeButton(
                 label = date,
                 icon = R.drawable.calendar,

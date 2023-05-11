@@ -3,7 +3,6 @@ package com.example.motocast.ui.view.dynamic_scaffold.scaffoldContent
 import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,28 +45,14 @@ fun RouteScaffoldContent(
             } else {
                 Text(
                     text = duration,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp),
-            color = MaterialTheme.colorScheme.surface,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         DateTimeRow(date, time)
-        Spacer(modifier = Modifier.height(8.dp))
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp),
-            color = MaterialTheme.colorScheme.surface,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         CardsColumn(waypoints = waypoints, context = context, isLoading = isLoading)
-
     }
 }

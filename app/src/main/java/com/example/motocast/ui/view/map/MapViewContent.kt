@@ -1,10 +1,8 @@
 package com.example.motocast.ui.view.map
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mapbox.maps.MapView
@@ -12,7 +10,6 @@ import com.mapbox.maps.MapView
 @Composable
 fun MapViewContent(
     mapView: MapView,
-    bottomOffset: Int = 0,
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val mapboxMap = createRef()
@@ -24,8 +21,7 @@ fun MapViewContent(
                 bottom.linkTo(parent.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-            }
-                .padding(bottom = bottomOffset.dp)
+                }
         )
     }
 }

@@ -3,7 +3,7 @@
     <string name="title_activity_locate_user_badge">MotoCast</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiZXNwZW5vcmUiLCJhIjoiY2xmdzl0cnk4MDRpaDNudGFsbnZ4dGJyNyJ9.WPjnzuOjeSWUyHebgEe9bw</string>
     <string name="edit_route">Endre rute</string>
-    <string name="make_new_route">Lag ny rute</string>
+    <string name="make_new_route">Lag en ny rute</string>
     <string name="calendar_icon">Kalender ikon</string>
     <string name="clock_icon">Klokke ikon</string>
     <string name="good_morning">God morgen</string>
@@ -37,6 +37,20 @@
     <string name="active_posstion_icon">Aktiv posisjon ikon</string>
     <string name="inactive_posstion_icon">Inaktiv posisjon ikon</string>
     <string name="settings_button_icon">Innstillinger ikon</string>
+    <string name="recommendations">Anbefalinger:</string>
+    <string name="close">Lukk</string>
+    <plurals name="days">
+        <item quantity="one">%d dag</item>
+        <item quantity="other">%d dager</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d time</item>
+        <item quantity="other">%d timer</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minutt</item>
+        <item quantity="other">%d minutter</item>
+    </plurals>
     <string name="route_not_found_error">Vi kunne ikke finne en rute mellom disse punktene</string>
     <string name="need_2_destination_error">Du må ha minst 2 punkter for å lage en rute</string>
     <string name="all_destinations_must_be_filled_error">Alle punkter må ha et navn</string>

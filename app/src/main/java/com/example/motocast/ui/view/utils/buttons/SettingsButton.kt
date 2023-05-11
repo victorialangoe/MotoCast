@@ -12,6 +12,8 @@ import com.example.motocast.R
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
+    buttonSize: ButtonSize = ButtonSize.Medium,
+    buttonType: ButtonType = ButtonType.Transparent,
     onClick: () -> Unit,
 ) {
     BasicButton(
@@ -25,7 +27,7 @@ fun SettingsButton(
         },
         onClick = onClick,
         circle = true,
-        buttonSize = ButtonSize.Small,
-        buttonType = ButtonType.Transparent,
+        buttonSize = buttonSize,
+        buttonType = buttonType,
     )
 }

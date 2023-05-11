@@ -9,8 +9,6 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import com.example.motocast.data.repository.MotoCastRepository
 import com.google.android.gms.location.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Fetches location from the repository. THIS DOES NOT WORK YET (Hopefully it will in the future)
@@ -94,7 +92,7 @@ class LocationUseCase(
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
-            locationResult ?: return
+            locationResult
             for (location in locationResult.locations) {
                 setLocationData(location)
             }

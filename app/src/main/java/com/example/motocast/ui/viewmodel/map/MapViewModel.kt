@@ -26,11 +26,13 @@ import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
+import com.mapbox.maps.plugin.scalebar.scalebar
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -63,7 +65,15 @@ class MapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
 
             val appContext = motoCastRepository.getAppContext()
-            val location = locationUseCase.getCurrentLocation()
+
+            var location = locationUseCase.getCurrentLocation()
+            var retries = 0
+            while (location == null && retries < 10) {
+                delay(1000) // 1 second
+                location = locationUseCase.getCurrentLocation()
+                retries++
+                Log.d("CurrentWeatherViewModel", "Retry $retries: Location: $location")
+            }
 
             if (_uiState.value.mapView == null) {
                 updateUiState {
@@ -103,9 +113,18 @@ class MapViewModel @Inject constructor(
                                     }
                                 )
                             }
-                            // Add mapbox logo to the map right top corner
+
+
                             this.logo.updateSettings {
                                 position = Gravity.TOP or Gravity.END
+                            }
+
+                            this.attribution.updateSettings {
+                                enabled = false
+                            }
+
+                            this.scalebar.updateSettings {
+                                enabled = false
                             }
                         })
                 }
@@ -191,7 +210,7 @@ class MapViewModel @Inject constructor(
 
                     // Check if the source exists and update it, otherwise create and add the source
                     if (style.getSource(sourceId) != null) {
-                        val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
+                        var geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
                         geoJsonSource?.data(geoJsonString)
                     } else {
                         val geoJsonSource = geoJsonSource(sourceId) {
@@ -203,7 +222,7 @@ class MapViewModel @Inject constructor(
                     // Check if the layer exists, otherwise create and add the layer
                     if (style.getLayer(layerId) == null) {
                         val lineLayer = lineLayer(layerId, sourceId) {
-                            var hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
+                            val hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
                             lineColor(hexColor)
                             lineWidth(5.0)
                         }
@@ -260,9 +279,10 @@ class MapViewModel @Inject constructor(
             trackUserOnMap = track ?: !_uiState.value.trackUserOnMap
         )
 
+        Log.d("MapActivity", "trackUserOnMap: ${_uiState.value.trackUserOnMap}")
         if (!_uiState.value.trackUserOnMap && routeExists) {
             fitCameraToRouteAndWaypoints(destinations)
-        } else {
+        } else if (_uiState.value.trackUserOnMap) {
             cameraToUserLocation()
         }
     }

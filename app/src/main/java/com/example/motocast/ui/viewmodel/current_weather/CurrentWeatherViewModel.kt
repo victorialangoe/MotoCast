@@ -1,6 +1,5 @@
 package com.example.motocast.ui.viewmodel.current_weather
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.domain.use_cases.FetchNowCastDataUseCase
@@ -20,21 +19,38 @@ class CurrentWeatherViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
-    private var job: Job? = null
+    private var fetchNowCastDataJob: Job? = null
 
+    init {
+        startFetchingNowCastData()
+    }
 
     fun startFetchingNowCastData() {
-
+        if (fetchNowCastDataJob == null || fetchNowCastDataJob?.isCancelled == true) {
+            fetchNowCastDataJob = fetchNowCastDataEvery5min()
+        }
     }
 
     fun stopFetchingNowCastData() {
+        fetchNowCastDataJob?.cancel()
     }
 
-    private fun fetchNowCastDataEvery5min() {
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun fetchNowCastDataEvery5min(): Job {
+        return CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                val location = locationUseCase.getCurrentLocation()
+                var location = locationUseCase.getCurrentLocation()
                 Log.d("CurrentWeatherViewModel", "Location: $location")
+
+
+                // Retry fetching the location 10 times if it's null
+                var retries = 0
+                while (location == null && retries < 10) {
+                    delay(1000) // 1 second
+                    location = locationUseCase.getCurrentLocation()
+                    retries++
+                    Log.d("CurrentWeatherViewModel", "Retry $retries: Location: $location")
+                }
+
                 var weatherData: WeatherUiState? = null
                 if (location != null) {
                     weatherData = fetchNowCastDataUseCase(location.latitude, location.longitude)
@@ -55,4 +71,3 @@ class CurrentWeatherViewModel @Inject constructor(
         }
     }
 }
-

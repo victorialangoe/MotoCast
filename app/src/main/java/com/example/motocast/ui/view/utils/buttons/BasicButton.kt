@@ -76,7 +76,7 @@ fun BasicButton(
 
     val buttonHeight: Dp = when (buttonSize) {
         ButtonSize.Small -> 40.dp
-        ButtonSize.Medium -> 60.dp
+        ButtonSize.Medium -> 56.dp
         ButtonSize.Large -> 70.dp
     }
     
@@ -96,8 +96,8 @@ fun BasicButton(
     }
 
     val contentPadding: PaddingValues = when (buttonSize) {
-        ButtonSize.Small -> PaddingValues(2.dp)
-        ButtonSize.Medium -> PaddingValues(4.dp)
+        ButtonSize.Small -> PaddingValues(4.dp)
+        ButtonSize.Medium -> PaddingValues(6.dp)
         ButtonSize.Large -> PaddingValues(8.dp)
     }
 

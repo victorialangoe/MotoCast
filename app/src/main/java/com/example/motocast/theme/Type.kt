@@ -82,14 +82,14 @@ val Typography = Typography(
 
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
         letterSpacing = 0.15.sp
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
         letterSpacing = 0.15.sp
     ),
     labelSmall = TextStyle(

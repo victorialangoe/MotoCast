@@ -15,14 +15,12 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
-
 @Composable
 fun MapView(
     geoJsonData: String? = null,
     mapView: MapView? = null,
     drawGeoJson: (String) -> Unit,
     onInit: () -> Unit,
-    bottomOffset: Int = 0,
     waypoints: List<RouteWithWaypoint>,
     context: Context
 ) {
@@ -35,23 +33,21 @@ fun MapView(
     }
 
     if (mapView != null) {
-        MapViewContent(mapView, bottomOffset)
+        MapViewContent(mapView)
         val viewAnnotationManager = mapView.viewAnnotationManager
         val previousWaypoints = remember { mutableStateOf(emptyList<RouteWithWaypoint>()) }
 
         if (previousWaypoints.value != waypoints) {
             viewAnnotationManager.removeAllViewAnnotations()
             previousWaypoints.value = waypoints
-        for (waypoint in waypoints) {
-            Log.d("MapViewAnnotation", "waypoint: $waypoint")
-            val point = Point.fromLngLat(
-                waypoint.longitude ?: 0.0,
-                waypoint.latitude ?: 0.0
-            )
-            addViewAnnotation(context = context, point = point, viewAnnotationManager = viewAnnotationManager, waypoint = waypoint)
+            for (waypoint in waypoints) {
+                val point = Point.fromLngLat(
+                    waypoint.longitude ?: 0.0,
+                    waypoint.latitude ?: 0.0
+                )
+                addViewAnnotation(context = context, point = point, viewAnnotationManager = viewAnnotationManager, waypoint = waypoint)
+            }
         }
-        }
-
     } else {
         Text(
             text = stringResource(R.string.loading_map),
@@ -59,6 +55,7 @@ fun MapView(
             style = MaterialTheme.typography.bodyMedium
         )
     }
+
 }
 private fun addViewAnnotation(
     point: Point,
@@ -69,7 +66,6 @@ private fun addViewAnnotation(
     val view = ComposableWrapperView(
         context = context,
         temperature = (waypoint.weather?.temperature?.toInt() ?: 0),
-        location = waypoint.name ?: "Ukjent",
         time = waypoint.timestamp,
         iconSymbol = waypoint.weather?.symbolCode ?: ""
     )

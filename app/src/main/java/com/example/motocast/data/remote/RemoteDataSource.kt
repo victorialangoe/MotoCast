@@ -98,7 +98,7 @@ class RemoteDataSource(
                     directionsApi.getDirections(
                         coordinates = coordinates,
                         accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN).execute()
-                Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response}")
+                Log.d("MotoCastRepositoryImp", "getDirectionsData: $response")
                 if (response.isSuccessful) {
                     Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response.body()}")
                     response.body()
@@ -114,7 +114,6 @@ class RemoteDataSource(
             }
         }
     }
-
 
     /**
      * Function that gets the nowcast data from the met API.

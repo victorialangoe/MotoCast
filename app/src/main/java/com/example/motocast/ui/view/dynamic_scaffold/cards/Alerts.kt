@@ -1,19 +1,13 @@
 package com.example.motocast.ui.view.dynamic_scaffold.cards
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,11 +22,18 @@ import com.example.motocast.ui.view.getWeatherIcon
 fun Alerts(
     alerts: List<Properties>,
 ) {
+    val (selectedAlert, setSelectedAlert) = remember { mutableStateOf<Properties?>(null) }
+    val (isDialogVisible, setDialogVisible) = remember { mutableStateOf(false) }
+
     if (alerts.isNotEmpty()) {
         alerts.map { alert ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable {
+                        setSelectedAlert(alert)
+                        setDialogVisible(true)
+                    }
                     .background(
                         color = when (alert.awareness_level) {
                             "2; yellow; Moderate" -> if (isSystemInDarkTheme()) Yellow100 else Yellow700Transparent
@@ -83,4 +84,48 @@ fun Alerts(
             }
         }
     }
+
+    if (isDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { setDialogVisible(false) },
+            title = {
+                Text(
+                    text = selectedAlert?.eventAwarenessName ?: "",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = selectedAlert?.description?.replace("Alert: ", "") ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.recommendations),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+
+                    )
+                    // split the instructions on . selectedAlert?.instruction?
+                    BulletPoints(selectedAlert?.instruction ?: "")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { setDialogVisible(false) }) {
+                    Text(
+                        text = stringResource(R.string.close),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+        )
+    }
+
 }

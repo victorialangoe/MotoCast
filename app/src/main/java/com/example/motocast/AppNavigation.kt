@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,7 +43,7 @@ import androidx.compose.ui.unit.dp
  * @param weatherViewModel The [CurrentWeatherViewModel] to use for the weather
  * @param routePlannerViewModel The [RoutePlannerViewModel] to use for the route planner
  * @param mapViewModel The [MapViewModel] to use for the map
- * @param context The [Context] to use for the app. This is needed for the [DisplayWeather] composable
+ * @param context The [Context] to use for the app
  *
  */
 @Composable
@@ -69,6 +66,13 @@ fun AppNavigation(
 
 
 
+    val onLocateUserClick: () -> Unit =
+        {
+            mapViewModel.trackUserOnMap(
+                routeExists = routePlannerViewModel.checkIfAllDestinationsHaveNames(),
+                destinations = routePlannerViewModelUiState.value.destinations,
+            )
+        }
 
     AppTheme(
         darkTheme = settingsViewModelUiState.value.darkMode,
@@ -77,26 +81,16 @@ fun AppNavigation(
         NavHost(navController = navController, startDestination = "home_screen") {
             composable("home_screen") {
                 HomeView(
+                    username = settingsViewModelUiState.value.userName,
                     context = context,
                     weatherViewModel = weatherViewModel,
                     settingsNavigateTo = { navController.navigate("settings_screen") },
                     onCreateNewRouteClick = {
-                        // Nullstill alt
                         routePlannerViewModel.clear()
                         navController.navigate("route_planner")
                     },
-                    onLocateUserClick = {
-                        mapViewModel.trackUserOnMap(
-                            routeExists = routePlannerViewModelUiState.value.destinations.isNotEmpty(),
-                            destinations = routePlannerViewModelUiState.value.destinations,
-                            track = true
-                        )
-                    },
-                    onEditRouteClick = {
-                        navController.navigate("route_planner")
+                    onLocateUserClick =onLocateUserClick,
 
-                    },
-                    routeExists = routePlannerViewModel.checkIfSomeDestinationsHaveNames(),
                     isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                     mapView = {
 
@@ -111,7 +105,6 @@ fun AppNavigation(
                                 mapViewModel.loadMapView()
                             },
                             geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
-                            bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
                             waypoints = routePlannerViewModelUiState.value.waypoints,
                             context = context,
                         )
@@ -124,17 +117,14 @@ fun AppNavigation(
             composable("route_screen") {
                 DynamicScaffoldView(
                     context = context,
-                    destinations = routePlannerViewModelUiState.value.destinations,
                     isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
-                    weatherViewModel = weatherViewModel,
-                    mapViewModel = mapViewModel,
                     routePlannerViewModel = routePlannerViewModel,
                     navigateToSettings = { navController.navigate("settings_screen") },
                     onNavigateToScreen = { navController.navigate("route_planner") },
                     isRouteLoading = routePlannerViewModelUiState.value.isLoading,
                     duration = routePlannerViewModelUiState.value.durationAsString,
                     waypoints = routePlannerViewModelUiState.value.waypoints,
-                    userName = settingsViewModelUiState.value.userName,
+                    onLocateUserClick = onLocateUserClick,
                     content = {
                         MapView(
                             mapView = mapLocationViewModelUiState.value.mapView,
@@ -147,7 +137,6 @@ fun AppNavigation(
                                 mapViewModel.loadMapView()
                             },
                             geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
-                            bottomOffset = mapLocationViewModelUiState.value.mapBottomOffset,
                             waypoints = routePlannerViewModelUiState.value.waypoints,
                             context = context,
                         )

@@ -1,6 +1,9 @@
 package com.example.motocast.domain.utils
 
+import android.content.res.Resources
+import android.location.Location
 import android.util.Log
+import com.example.motocast.R
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.Properties
 import com.example.motocast.ui.viewmodel.address.Address
@@ -21,12 +24,7 @@ object Utils {
      * @return [Boolean] True if all of the destinations have a name, false otherwise
      */
     fun checkIfAllDestinationsHaveNames(destinations: List<Destination>): Boolean {
-        destinations.forEach {
-            if (it.name == null || it.name == "") {
-                return false
-            }
-        }
-        return true
+        return destinations.all { it.name != null && it.name.isNotEmpty() }
     }
 
     /**
@@ -48,12 +46,7 @@ object Utils {
      * @return [Boolean] True if any of the destinations have a name, false otherwise
      */
     fun checkIfSomeDestinationsHaveNames(destinations: List<Destination>): Boolean {
-        destinations.forEach {
-            if (it.name != null && it.name != "") {
-                return true
-            }
-        }
-        return false
+        return destinations.any { it.name != null && it.name != "" }
     }
 
     /**
@@ -66,7 +59,7 @@ object Utils {
     fun getAirDistanceFromLocation(
         latitude: Double?,
         longitude: Double?,
-        location: android.location.Location?
+        location: Location?
     ): Int? {
 
         if (latitude == null || longitude == null || location == null) return null
@@ -129,7 +122,7 @@ object Utils {
     /**
      * Filters the search results and sorts them, removes all numbers from the query.
      * It also creates a new address with the municipality as the addressText if the municipality (Makes it possible to search for municipality)
-     * @param query The query to filter by
+     * @param userInput The query to filter by
      * @param addresses The addresses to filter
      * @param maxDistance The maximum distance between the query and the address (in Levenshtein distance)
      */
@@ -148,17 +141,17 @@ object Utils {
         var updatedAddresses = mutableListOf<Address>()
 
         addresses.forEach { it ->
-            if(it.municipality != null){
+            if (it.municipality != null) {
                 if (!updatedMunicipalities.contains(it.municipality.lowercase())) {
-                        updatedAddresses.add(
-                            Address(
-                                it.municipality.lowercase().replaceFirstChar { it.uppercase() },
-                                null,
-                                it.latitude,
-                                it.longitude,
-                                it.distanceFromUser
-                            )
+                    updatedAddresses.add(
+                        Address(
+                            it.municipality.lowercase().replaceFirstChar { it.uppercase() },
+                            null,
+                            it.latitude,
+                            it.longitude,
+                            it.distanceFromUser
                         )
+                    )
                     updatedMunicipalities.add(it.municipality.lowercase())
                 }
             }
@@ -174,15 +167,15 @@ object Utils {
             }
             .sortedBy {
 
-                    // if under 1000 m from user, sort by distance
-                    if (it.distanceFromUser != null && it.distanceFromUser < 1000) {
-                        it.distanceFromUser
-                    } else {
-                        // if not, sort by levenshtein distance
-                        levenshteinDistance(
-                            it.addressText.lowercase(), inputLowercase
-                        )
-                    }
+                // if under 1000 m from user, sort by distance
+                if (it.distanceFromUser != null && it.distanceFromUser < 1000) {
+                    it.distanceFromUser
+                } else {
+                    // if not, sort by levenshtein distance
+                    levenshteinDistance(
+                        it.addressText.lowercase(), inputLowercase
+                    )
+                }
 
             }
             .toMutableList()
@@ -194,7 +187,7 @@ object Utils {
 
     /**
      * This algorithm calculates the Levenshtein distance between two strings
-     * Basicly it calculates the number of changes needed to change one string into another.
+     * Basically it calculates the number of changes needed to change one string into another.
      * Perfect for checking how similar two strings are
      * @param a The first string
      * @param b The second string
@@ -252,26 +245,35 @@ object Utils {
      * @param duration The duration to format
      * @return The duration formatted to a string in the format "1 dag og 2 timer, 3 minutter og 4 sekunder"
      */
-    fun formatDurationAsTimeString(duration: Long): String {
+    fun formatDurationAsTimeString(duration: Long, resources: Resources): String {
         val durationAsDuration = Duration.ofSeconds(duration)
 
         val days = durationAsDuration.toDays()
         val hours = durationAsDuration.toHours() % 24
         val minutes = durationAsDuration.toMinutes() % 60
 
-        return if (days > 0) {
-            days.toString() + " dag" + (if (days > 1) "er" else "") + " og " +
-                    hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
-                    minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
-        } else {
-            if (hours > 0) {
-                hours.toString() + " time" + (if (hours > 1) "r" else "") + " og " +
-                        minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
-            } else {
-                minutes.toString() + " minutt" + (if (minutes > 1) "er" else "")
+        return when {
+            days > 0 -> {
+                val daysString = resources.getQuantityString(R.plurals.days, days.toInt(), days)
+                val hoursString = resources.getQuantityString(R.plurals.hours, hours.toInt(), hours)
+                val minutesString =
+                    resources.getQuantityString(R.plurals.minutes, minutes.toInt(), minutes)
+
+                "$daysString og $hoursString og $minutesString"
+            }
+            hours > 0 -> {
+                val hoursString = resources.getQuantityString(R.plurals.hours, hours.toInt(), hours)
+                val minutesString =
+                    resources.getQuantityString(R.plurals.minutes, minutes.toInt(), minutes)
+
+                "$hoursString og $minutesString"
+            }
+            else -> {
+                resources.getQuantityString(R.plurals.minutes, minutes.toInt(), minutes)
             }
         }
     }
+
 
     /**
      * This gets the correct alerts from the alerts
@@ -289,12 +291,12 @@ object Utils {
         val alertsFound = mutableListOf<Properties>()
         if (alerts != null) {
             for (alert in alerts.features) {
-                // Check if the timestamp is between the start and end time interval
+
                 val interval = alert.`when`.interval
                 val startTime = stringToCalendar(interval.first())
                 val endTime = stringToCalendar(interval.last())
+
                 if (timestamp.before(endTime) && timestamp.after(startTime)) {
-                    // The timestamp is not between the start and end time interval
 
                     alert.geometry.coordinates.map { coordinates ->
                         val jtsCoordinates = coordinates.map { coordinate ->

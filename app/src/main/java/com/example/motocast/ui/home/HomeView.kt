@@ -1,22 +1,17 @@
 package com.example.motocast.ui.home
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
-import com.example.motocast.ui.view.dynamic_scaffold.TransparentTopBar
-import com.example.motocast.ui.view.route_planner.buttons.RouteAndSettingsRow
-import com.example.motocast.ui.view.settings.ChooseScreenMode
-import com.example.motocast.ui.view.settings.ChooseUserName
+import com.example.motocast.ui.view.utils.badges.WelcomeBadge
+import com.example.motocast.ui.view.utils.components.TransparentTopBar
 import com.example.motocast.ui.view.utils.buttons.BasicButton
-import com.example.motocast.ui.view.utils.components.Header
+import com.example.motocast.ui.view.utils.buttons.ButtonSize
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 
 @Composable
@@ -26,15 +21,25 @@ fun HomeView(
     settingsNavigateTo: () -> Unit,
     onCreateNewRouteClick: () -> Unit,
     onLocateUserClick: () -> Unit,
-    onEditRouteClick: () -> Unit,
-    routeExists: Boolean,
     isTrackUserActive: Boolean,
     mapView: @Composable () -> Unit,
+    username: String,
 ) {
     // Map as background, buttons on bottom of screen
 
     Box(modifier = Modifier.fillMaxSize()) {
         mapView()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            WelcomeBadge(
+                userName = username,
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -47,22 +52,16 @@ fun HomeView(
                 weatherViewModel = weatherViewModel,
                 onLocateUserClick = onLocateUserClick,
                 isTrackUserActive = isTrackUserActive,
+                onSettingsClick = settingsNavigateTo,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if(routeExists){
-                BasicButton(
-                    text = stringResource(id = R.string.edit_route),
-                    onClick = onEditRouteClick,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            RouteAndSettingsRow(
-                onButtonClick = onCreateNewRouteClick,
-                settingsNavigateTo = settingsNavigateTo,
-                buttonText = stringResource(id = R.string.make_new_route),
+            BasicButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onCreateNewRouteClick() },
+                buttonSize = ButtonSize.Large,
+                text = stringResource(id = R.string.make_new_route),
             )
         }
     }

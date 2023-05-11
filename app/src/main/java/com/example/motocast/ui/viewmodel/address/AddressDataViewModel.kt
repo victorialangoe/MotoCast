@@ -38,6 +38,5 @@ class AddressDataViewModel @Inject constructor(
 
     fun clearResults() = updateUiState { it.copy(addresses = emptyList()) }
 
-    fun getQuery(): String = _uiState.value.query
 }
 

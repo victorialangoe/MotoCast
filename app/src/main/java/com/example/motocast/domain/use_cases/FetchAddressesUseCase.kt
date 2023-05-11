@@ -2,7 +2,6 @@ package com.example.motocast.domain.use_cases
 
 import android.util.Log
 import com.example.motocast.data.repository.MotoCastRepository
-import com.example.motocast.data.repository.MotoCastRepositoryInterface
 import com.example.motocast.domain.utils.Utils.filterSearchResults
 import com.example.motocast.domain.utils.Utils.getAirDistanceFromLocation
 import com.example.motocast.ui.viewmodel.address.Address
@@ -11,7 +10,7 @@ import com.example.motocast.ui.viewmodel.address.Address
  * Fetches addresses from the [repository] and returns them as a list of [Address].
  *
  * @param repository The repository to fetch the addresses from, as a [MotoCastRepository]
- * @param getLocationUseCase The use case to get the user's location, as a [GetLocationUseCase]
+ * @param locationUseCase The use case to get the current location, as a [LocationUseCase]
  * @return addresses as a list of [Address] or empty list
  */
 class FetchAddressesUseCase(
