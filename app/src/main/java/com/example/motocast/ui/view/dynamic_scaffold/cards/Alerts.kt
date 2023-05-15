@@ -30,6 +30,7 @@ fun Alerts(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+
                     .clickable {
                         setSelectedAlert(alert)
                         setDialogVisible(true)
@@ -81,6 +82,9 @@ fun Alerts(
                     },
                     modifier = Modifier.padding(16.dp)
                 )
+            }
+            if (alerts.indexOf(alert) != alerts.lastIndex) {
+                Spacer(modifier = Modifier.padding(8.dp))
             }
         }
     }

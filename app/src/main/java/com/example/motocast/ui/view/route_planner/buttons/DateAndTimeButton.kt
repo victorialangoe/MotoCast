@@ -7,9 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.motocast.theme.Orange300
-import com.example.motocast.theme.Orange500
-import com.example.motocast.theme.Orange500Transparent
+import com.example.motocast.theme.*
 
 @Composable
 fun DateAndTimeButton(
@@ -24,8 +22,8 @@ fun DateAndTimeButton(
         onClick = { onClick() },
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Orange500Transparent,
-            contentColor = Orange500,
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onTertiary,
         ),
         enabled = enabled,
         modifier = modifier
@@ -39,13 +37,13 @@ fun DateAndTimeButton(
                 painter = painterResource(id = icon),
                 contentDescription = iconDescription,
                 modifier = Modifier.size(16.dp),
-                tint = Orange300,
+                tint = MaterialTheme.colorScheme.onTertiary,
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 style = MaterialTheme.typography.bodyMedium,
                 text = label,
-                color = Orange500,
+                color = MaterialTheme.colorScheme.onTertiary,
             )
         }
     }

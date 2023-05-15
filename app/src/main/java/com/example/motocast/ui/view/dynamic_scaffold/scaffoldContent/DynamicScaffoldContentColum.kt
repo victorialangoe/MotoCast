@@ -32,7 +32,6 @@ fun DynamicScaffoldContentColum(
 
         ) {
         if (showScroll) {
-            // Little box
             Box(
                 modifier = Modifier
                     .width(40.dp)

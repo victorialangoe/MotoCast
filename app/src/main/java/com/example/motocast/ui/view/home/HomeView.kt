@@ -1,4 +1,4 @@
-package com.example.motocast.ui.home
+package com.example.motocast.ui.view.home
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
@@ -22,24 +22,10 @@ fun HomeView(
     onCreateNewRouteClick: () -> Unit,
     onLocateUserClick: () -> Unit,
     isTrackUserActive: Boolean,
-    mapView: @Composable () -> Unit,
-    username: String,
 ) {
     // Map as background, buttons on bottom of screen
 
     Box(modifier = Modifier.fillMaxSize()) {
-        mapView()
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            WelcomeBadge(
-                userName = username,
-            )
-        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

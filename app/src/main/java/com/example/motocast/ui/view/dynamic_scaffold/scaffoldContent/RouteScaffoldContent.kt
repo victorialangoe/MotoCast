@@ -27,7 +27,6 @@ fun RouteScaffoldContent(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // TODO: Make this a composable
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -36,7 +35,6 @@ fun RouteScaffoldContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (isLoading) {
-                // Material3 ProgressIndicator
                 CircularProgressIndicator(
                     modifier = Modifier.size(14.dp),
                     color = MaterialTheme.colorScheme.surface,
