@@ -6,9 +6,8 @@ import androidx.compose.ui.graphics.Color
  * Color palette for the app.
  * We have both dark and light color palettes.
  */
-
-val Orange300 = Color(0xFFFF8A65)
-val Orange500 = Color(0xFFFF7043)
+val Blue800 = Color(0xFF085195)
+val Blue200 = Color(0xFFDCEEFF)
 val Orange500Transparent = Color(0x30FF7043)
 
 val Orange700 = Color(0xFFF4511E)

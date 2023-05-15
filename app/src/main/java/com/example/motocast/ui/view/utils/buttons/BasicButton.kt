@@ -1,6 +1,7 @@
 package com.example.motocast.ui.view.utils.buttons
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -47,7 +48,8 @@ fun BasicButton(
     buttonSize: ButtonSize = ButtonSize.Medium,
     circle: Boolean = false,
 ) {
-    val buttonShape =MaterialTheme.shapes.extraLarge
+    // shape circle
+    val buttonShape = RoundedCornerShape(100)
 
     val buttonColors: ButtonColors = when (buttonType) {
         ButtonType.Filled -> ButtonDefaults.buttonColors(
