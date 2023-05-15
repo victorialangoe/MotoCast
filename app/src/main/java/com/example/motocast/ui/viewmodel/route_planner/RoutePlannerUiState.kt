@@ -3,7 +3,7 @@ package com.example.motocast.ui.viewmodel.route_planner
 import com.example.motocast.ui.viewmodel.current_weather.RouteWeatherUiState
 import java.util.*
 
-data class RoutePlannerUiState (
+data class RoutePlannerUiState(
     val isLoading: Boolean = false,
     // Every route must have at least two destinations
     val destinations: List<Destination> = List(2) {
@@ -15,8 +15,8 @@ data class RoutePlannerUiState (
         )
     },
     val startTime: Calendar = Calendar.getInstance(),
-    val activeDestinationIndex : Int = 0,
-    val error: String? = null,
+    val activeDestinationIndex: Int = 0,
+    val error: Int? = null,
     val geoJsonData: String? = null,
     val duration: Double = 0.0, // in seconds
     val durationAsString: String = "",
@@ -39,5 +39,9 @@ data class Destination (
     val latitude: Double?,
     val longitude: Double?,
     val timestamp: Long,
+)
+
+data class RoutePlannerError(
+    val message: String,
 )
 

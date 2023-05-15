@@ -10,7 +10,8 @@ data class DirectionsDataModel(
     val routes: List<Route>,
     val waypoints: List<Waypoint>,
     val code: String,
-    val uuid: String
+    val uuid: String,
+    val message: String? = null,
 )
 
 data class Route(

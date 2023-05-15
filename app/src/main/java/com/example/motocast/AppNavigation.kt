@@ -6,12 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -64,8 +63,10 @@ fun AppNavigation(
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
     val mapLocationViewModelUiState = mapViewModel.uiState.collectAsState()
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
-    // current screen
     val currentScreen = remember { mutableStateOf(currentScreen) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    //shared flow for error messages
+
 
 
     val onLocateUserClick: () -> Unit =
@@ -304,6 +305,15 @@ fun AppNavigation(
             }
         )
 
+        val errorMessageId = routePlannerViewModelUiState.value.error
+        val errorMessage = if (errorMessageId != null) stringResource(id = errorMessageId) else ""
+
+        LaunchedEffect(errorMessage) {
+            if (errorMessage.isNotBlank()){
+                snackbarHostState.showSnackbar(errorMessage)
+                routePlannerViewModel.clearError()
+            }
+        }
 
     }
 

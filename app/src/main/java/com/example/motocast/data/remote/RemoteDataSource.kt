@@ -9,6 +9,7 @@ import com.example.motocast.data.api.*
 import com.example.motocast.data.model.DirectionsDataModel
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.NowCastDataModel
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -102,8 +103,10 @@ class RemoteDataSource(
                     Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response.body()}")
                     response.body()
                 } else {
-                    Log.d("MotoCastRepositoryImp", "getDirectionsData: $response")
-                    null
+                    val errorBody = response.errorBody()?.string()
+                    val errorModel = Gson().fromJson(errorBody, DirectionsDataModel::class.java)
+                    Log.d("MotoCastRepositoryImp", "getDirectionsData: Error: $errorModel")
+                    errorModel
                 }
             } catch (e: Exception) {
                 Log.d("MotoCastRepositoryImp", "getDirectionsData: ${e.message}")

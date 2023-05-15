@@ -35,8 +35,9 @@ fun RoutePlannerView(
     clearAll: () -> Unit,
     startTime: Calendar,
     context: Context,
-    isLoading: Boolean
+    isLoading: Boolean,
 ) {
+
 
     Column(
         modifier = Modifier

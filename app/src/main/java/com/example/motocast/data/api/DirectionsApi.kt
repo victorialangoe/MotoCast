@@ -2,10 +2,10 @@ package com.example.motocast.data.api
 
 
 import com.example.motocast.data.model.DirectionsDataModel
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import retrofit2.Call
 
 /**
  * Interface for the Mapbox API for directions data.

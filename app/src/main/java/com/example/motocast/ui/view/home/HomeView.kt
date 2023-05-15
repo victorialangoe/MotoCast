@@ -8,10 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
-import com.example.motocast.ui.view.utils.badges.WelcomeBadge
-import com.example.motocast.ui.view.utils.components.TransparentTopBar
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonSize
+import com.example.motocast.ui.view.utils.components.TransparentTopBar
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
 
 @Composable
