@@ -136,7 +136,6 @@ class MapViewModel @Inject constructor(
      * This function centers the camera to the user's location.
      */
     private fun cameraToUserLocation() {
-        // set Loading to true
         updateUiState { it.copy(isLoading = true) }
 
         if (_uiState.value.mapView != null) {
@@ -149,7 +148,6 @@ class MapViewModel @Inject constructor(
 
                 if (location != null) {
                     Log.d("MapActivity", "Location: ${location.latitude}, ${location.longitude}")
-                    // Create a CameraOptions object with the user's location as the center
                     val currentCameraPosition = mapboxMap.cameraState
                     val targetCameraPosition = CameraOptions.Builder()
                         .center(Point.fromLngLat(location.longitude, location.latitude))
@@ -163,7 +161,7 @@ class MapViewModel @Inject constructor(
                         currentCameraPosition.center.longitude(),
                         targetCameraPosition.center?.latitude() ?: 0.0,
                         targetCameraPosition.center?.longitude() ?: 0.0,
-                        results // distanceBetween needs a float array to store the result
+                        results
                     )
                     val distance = results[0].toDouble()
 
@@ -178,8 +176,6 @@ class MapViewModel @Inject constructor(
                     val mapAnimationOptions = MapAnimationOptions.Builder()
                         .duration(duration)
                         .build()
-
-                    /// stars an animation to smoothly go to the user, easeTo is way to laggy
 
                     mapboxMap.flyTo(cameraOptions, mapAnimationOptions)
 
@@ -208,7 +204,6 @@ class MapViewModel @Inject constructor(
                     val sourceId = "geojson-source"
                     val layerId = "geojson-layer"
 
-                    // Check if the source exists and update it, otherwise create and add the source
                     if (style.getSource(sourceId) != null) {
                         var geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
                         geoJsonSource?.data(geoJsonString)
@@ -219,7 +214,6 @@ class MapViewModel @Inject constructor(
                         style.addSource(geoJsonSource)
                     }
 
-                    // Check if the layer exists, otherwise create and add the layer
                     if (style.getLayer(layerId) == null) {
                         val lineLayer = lineLayer(layerId, sourceId) {
                             val hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
