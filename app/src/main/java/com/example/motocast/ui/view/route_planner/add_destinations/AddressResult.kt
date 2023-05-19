@@ -34,9 +34,9 @@ fun AddressResult(
 {
     val distance = address.distanceFromUser?.let {
         if (it < 1000) {
-            " - $it m"
+            "$it m"
         } else {
-            " - ${(it / 1000)} km"
+            "${(it / 1000)} km"
         }
     } ?: ""
 
@@ -46,6 +46,11 @@ fun AddressResult(
         }
     } ?: ""
 
+    val distanceAndMunicipality = if (municipality.isNotEmpty()) {
+        "$municipality - $distance"
+    } else {
+        distance
+    }
 
     Button(
         shape = MaterialTheme.shapes.small,
@@ -83,7 +88,7 @@ fun AddressResult(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "$municipality$distance",
+                        text = distanceAndMunicipality,
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Light

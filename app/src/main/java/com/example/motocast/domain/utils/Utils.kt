@@ -126,7 +126,30 @@ object Utils {
 
         val (municipalQuery, addressQuery) = splitUserQuery(userQuery, allAddresses)
 
-        return allAddresses
+        val updatedMunicipalities = mutableListOf<String>()
+
+        var updatedAddresses = mutableListOf<Address>()
+
+        allAddresses.forEach { it ->
+            if (it.municipality != null) {
+                if (!updatedMunicipalities.contains(it.municipality.lowercase())) {
+                    updatedAddresses.add(
+                        Address(
+                            it.municipality.lowercase().replaceFirstChar { it.uppercase() },
+                            null,
+                            it.latitude,
+                            it.longitude,
+                            it.distanceFromUser
+                        )
+                    )
+                    updatedMunicipalities.add(it.municipality.lowercase())
+                }
+            }
+            updatedAddresses.add(it)
+
+        }
+
+        return updatedAddresses
             .map { address ->
                 Pair(
                     address,
