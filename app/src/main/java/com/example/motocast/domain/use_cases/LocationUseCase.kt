@@ -11,12 +11,13 @@ import com.example.motocast.data.repository.MotoCastRepository
 import com.google.android.gms.location.*
 
 /**
- * Fetches location from the repository. THIS DOES NOT WORK YET (Hopefully it will in the future)
+ * Fetches location from the repository.
  *
  * @param repository The repository to fetch the location from, as a [MotoCastRepository]
  * @fuseLocationProviderClient The [fusedLocationProviderClient] to get the location from
  * @return location as a [Location] or null
  */
+
 class LocationUseCase(
     private val repository: MotoCastRepository,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
@@ -100,7 +101,7 @@ class LocationUseCase(
     }
 
     companion object {
-        private const val timeInterval = 1000L // 1 second
+        private const val timeInterval = 1000L
         private const val minimalDistance = 0f
 
         val locationRequest: LocationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, timeInterval).apply {
