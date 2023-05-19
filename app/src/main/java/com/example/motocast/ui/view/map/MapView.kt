@@ -77,7 +77,7 @@ private fun addViewAnnotation(
             view,
             viewAnnotationOptions {
                 geometry(point)
-                allowOverlap(true) // Allow annotation to overlap with other annotations
+                allowOverlap(true)
                 offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
             }
         )

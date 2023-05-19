@@ -203,7 +203,7 @@ class RoutePlannerViewModel @Inject constructor(
 
         updateRouteTimeStamps(routeWithWaypoint, startTime)
         updateRouteWeather(routeWithWaypoint)
-        // sort the routes by start time
+
         routeWithWaypoint.sortBy {
             it.timeFromStart
         }
@@ -216,12 +216,10 @@ class RoutePlannerViewModel @Inject constructor(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
-        // Set the first
         routeWithWaypoint[0] = routeWithWaypoint[0].copy(
             isInDestination = true,
         )
 
-        // Update the timestamps of the routes
         var timeFromStart = 0.0
         for (legIndex in legs.indices) {
             val leg = legs[legIndex]
@@ -265,7 +263,7 @@ class RoutePlannerViewModel @Inject constructor(
     private suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
     ): MutableList<RouteWithWaypoint> {
-        // Update the timestamps of the routes
+
         var timeFromStart = 0.0
         var timeCounter = 0.0
         val hourInSeconds = 3600.0
@@ -330,7 +328,6 @@ class RoutePlannerViewModel @Inject constructor(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
-        // Update the timestamps of the routes
         for (waypointIndex in routeWithWaypoint.indices) {
             val waypoint = routeWithWaypoint[waypointIndex]
 
