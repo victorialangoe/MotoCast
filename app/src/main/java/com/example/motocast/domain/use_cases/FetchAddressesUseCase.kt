@@ -27,7 +27,7 @@ class FetchAddressesUseCase(
 
         val userLocation = locationUseCase.getCurrentLocation()
 
-        val addresses = response.addresses.take(200).map { address ->
+        val addresses = response.addresses.map { address ->
 
             val distanceFromUser = if (userLocation != null) {
                  getAirDistanceFromLocation(
@@ -45,6 +45,8 @@ class FetchAddressesUseCase(
                 distanceFromUser = distanceFromUser
             )
         }
+
+
 
         return filterSearchResults(query, addresses)
     }

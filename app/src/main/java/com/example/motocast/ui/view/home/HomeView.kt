@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
+import com.example.motocast.ui.view.utils.badges.WelcomeBadge
 import com.example.motocast.ui.view.utils.buttons.BasicButton
 import com.example.motocast.ui.view.utils.buttons.ButtonSize
 import com.example.motocast.ui.view.utils.components.TransparentTopBar
@@ -21,8 +22,8 @@ fun HomeView(
     onCreateNewRouteClick: () -> Unit,
     onLocateUserClick: () -> Unit,
     isTrackUserActive: Boolean,
+    userName: String,
 ) {
-    // Map as background, buttons on bottom of screen
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -30,24 +31,38 @@ fun HomeView(
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            TransparentTopBar(
-                context =  context,
-                weatherViewModel = weatherViewModel,
-                onLocateUserClick = onLocateUserClick,
-                isTrackUserActive = isTrackUserActive,
-                onSettingsClick = settingsNavigateTo,
-            )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+                WelcomeBadge(
+                    userName = userName,
+                )
+            }
 
-            BasicButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { onCreateNewRouteClick() },
-                buttonSize = ButtonSize.Large,
-                text = stringResource(id = R.string.make_new_route),
-            )
+            Column {
+                TransparentTopBar(
+                    context = context,
+                    weatherViewModel = weatherViewModel,
+                    onLocateUserClick = onLocateUserClick,
+                    isTrackUserActive = isTrackUserActive,
+                    onSettingsClick = settingsNavigateTo,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                BasicButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onCreateNewRouteClick() },
+                    buttonSize = ButtonSize.Large,
+                    text = stringResource(id = R.string.make_new_route),
+                )
+            }
         }
     }
 }

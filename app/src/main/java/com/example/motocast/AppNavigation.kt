@@ -127,7 +127,7 @@ fun AppNavigation(
                                 onLocateUserClick = onLocateUserClick,
 
                                 isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
-
+                                userName = settingsViewModelUiState.value.userName,
                                 )
                         }
 
@@ -292,19 +292,6 @@ fun AppNavigation(
                                 }
                             })
 
-                    } else if (currentScreen.value == 0) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-
-                            WelcomeBadge(
-                                userName = settingsViewModelUiState.value.userName,
-                            )
-                        }
                     }
                 }
             )

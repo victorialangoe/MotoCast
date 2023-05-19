@@ -26,8 +26,12 @@ import java.util.*
 fun AddressResult(
     address: Address,
     onClick: (address: Address) -> Unit,
-    showInfo: Boolean = true
-) {
+    showInfo: Boolean = true,
+    modifier: Modifier = Modifier,
+    trailingIcon : @Composable () -> Unit = {}
+)
+
+{
     val distance = address.distanceFromUser?.let {
         if (it < 1000) {
             " - $it m"
@@ -45,7 +49,7 @@ fun AddressResult(
 
     Button(
         shape = MaterialTheme.shapes.small,
-        modifier = Modifier
+        modifier = modifier
             .height(64.dp)
             .fillMaxWidth(),
         onClick = { onClick(address) },
@@ -57,11 +61,19 @@ fun AddressResult(
         Column(
             modifier = Modifier.semantics(mergeDescendants = true) { },
         ) {
-            Text(
-                text = address.addressText,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = address.addressText,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                trailingIcon()
+            }
             if (showInfo) {
                 Spacer(modifier = Modifier.height(4.dp))
 

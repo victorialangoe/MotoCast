@@ -60,7 +60,7 @@ fun RoutePlannerView(
 
                 // This is where all the added destinations will be shown (if any)
                 destinations.forEachIndexed { destinationIndex, _ ->
-                    Spacer(modifier = Modifier.height(8.dp)) // Add a gap between the items
+                    Spacer(modifier = Modifier.height(8.dp))
                     DestinationButton(
                         destinationIndex = destinationIndex,
                         destinations = destinations,

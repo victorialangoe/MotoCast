@@ -93,6 +93,7 @@ fun AddDestinationView(
                 showTitle = false,
                 row = true,
                 isLoading = false, //This is never loading
+                userLocation = location,
                 onResultClick = { address ->
                     // 1. Update the destination in the route planner
                     // 2. Clear the search results
