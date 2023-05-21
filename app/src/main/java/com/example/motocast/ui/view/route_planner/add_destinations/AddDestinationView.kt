@@ -51,16 +51,16 @@ fun AddDestinationView(
             onBack = {
                 popBackStack()
                 clearResults()
-                // Minus 1 before removing the destination, since the active destination is the one we are currently editing
+
                 val currentDestinations = getTotalDestinations() - 1
                 setActiveDestinationIndex(1)
-                // If no edits have been made, remove the destination
+
                 if (currentDestinations == getTotalDestinations()) {
                     removeDestination(activeDestinationIndex)
                 }
             },
             onValueChange = { query, address ->
-                updateDestination(activeDestinationIndex, address)
+
                 fetchAddressData(query)
                 setQuery(query)
             },
