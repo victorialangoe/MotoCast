@@ -159,6 +159,14 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideGetAppContextUseCase(
+        repository: MotoCastRepository,
+    ) = GetAppContextUseCase(
+        repository
+    )
+
+    @Provides
+    @Singleton
     fun provideGetGeocodedNameUseCase(
         repository: MotoCastRepository,
     ) = GetGeocodedNameUseCase(

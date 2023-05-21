@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.motocast.data.repository.MotoCastRepository
+import com.example.motocast.domain.use_cases.GetAppContextUseCase
 import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.LightPrimary
 import com.example.motocast.ui.viewmodel.route_planner.Destination
@@ -42,7 +43,7 @@ import kotlin.math.min
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val motoCastRepository: MotoCastRepository,
+    private val getAppContextUseCase: GetAppContextUseCase,
     private val locationUseCase: LocationUseCase
 ) : ViewModel() {
 
@@ -64,7 +65,7 @@ class MapViewModel @Inject constructor(
     fun loadMapView() {
         viewModelScope.launch(Dispatchers.Main) {
 
-            val appContext = motoCastRepository.getAppContext()
+            val appContext = getAppContextUseCase()
 
             var location = locationUseCase.getCurrentLocation()
             var retries = 0
