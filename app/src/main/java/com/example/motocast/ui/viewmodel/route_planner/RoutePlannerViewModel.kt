@@ -343,6 +343,13 @@ class RoutePlannerViewModel @Inject constructor(
         }
     }
 
+    fun clearWaypointsAndGeoJson() {
+        _uiState.value = _uiState.value.copy(
+            waypoints = emptyList(),
+            geoJsonData = null,
+        )
+    }
+
     suspend fun start(
         navigateTo: () -> Unit,
         fitCameraToRouteAndWaypoints: () -> Unit,

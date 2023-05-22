@@ -37,9 +37,9 @@ fun Alerts(
                     }
                     .background(
                         color = when (alert.awareness_level) {
-                            "2; yellow; Moderate" -> if (isSystemInDarkTheme()) Yellow100 else Yellow700Transparent
-                            "3; orange; Severe" -> if (isSystemInDarkTheme()) Orange100 else Orange500Transparent
-                            else -> if (isSystemInDarkTheme()) Red100 else Red700Transparent
+                            "2; yellow; Moderate" -> Yellow700Transparent
+                            "3; orange; Severe" -> Orange500Transparent
+                            else -> Red700Transparent
                         },
                         shape = MaterialTheme.shapes.medium,
                     )

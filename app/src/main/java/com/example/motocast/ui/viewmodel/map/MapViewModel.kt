@@ -1,8 +1,11 @@
 package com.example.motocast.ui.viewmodel.map
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import android.view.Gravity
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +13,9 @@ import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.domain.use_cases.GetAppContextUseCase
 import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.LightPrimary
+import com.example.motocast.ui.view.map.ComposableWrapperView
 import com.example.motocast.ui.viewmodel.route_planner.Destination
+import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
@@ -31,6 +36,8 @@ import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
+import com.mapbox.maps.viewannotation.ViewAnnotationManager
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -44,7 +51,7 @@ import kotlin.math.min
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val getAppContextUseCase: GetAppContextUseCase,
-    private val locationUseCase: LocationUseCase
+    private val locationUseCase: LocationUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MapUiState())
@@ -197,38 +204,89 @@ class MapViewModel @Inject constructor(
      * Uses convert to geoJSON to convert the JSON response from the Mapbox Directions API to a GeoJSON string.
      * @param geoJsonString the JSON response from the Mapbox Directions API
      */
-    fun drawGeoJson(geoJsonString: String) {
+    fun drawGeoJson(geoJsonString: String, waypoints: List<RouteWithWaypoint>) {
         val mapView = _uiState.value.mapView
+
         if (mapView != null) {
-            mapView.getMapboxMap()?.let { mapboxMap ->
-                mapboxMap.getStyle { style ->
-                    val sourceId = "geojson-source"
-                    val layerId = "geojson-layer"
+            // coroutine
+            viewModelScope.launch(Dispatchers.Main) {
+                val viewAnnotationManager = mapView.viewAnnotationManager
+                val context = getAppContextUseCase()
 
-                    if (style.getSource(sourceId) != null) {
-                        var geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
-                        geoJsonSource?.data(geoJsonString)
-                    } else {
-                        val geoJsonSource = geoJsonSource(sourceId) {
-                            data(geoJsonString)
+
+                mapView.getMapboxMap().let { mapboxMap ->
+                    mapboxMap.getStyle { style ->
+                        val sourceId = "geojson-source"
+                        val layerId = "geojson-layer"
+
+                        if (style.getSource(sourceId) != null) {
+                            val geoJsonSource = style.getSourceAs<GeoJsonSource>(sourceId)
+                            geoJsonSource?.data(geoJsonString)
+                        } else {
+                            val geoJsonSource = geoJsonSource(sourceId) {
+                                data(geoJsonString)
+                            }
+                            style.addSource(geoJsonSource)
                         }
-                        style.addSource(geoJsonSource)
+
+                        if (style.getLayer(layerId) == null) {
+                            val lineLayer = lineLayer(layerId, sourceId) {
+                                val hexColor =
+                                    String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
+                                lineColor(hexColor)
+                                lineWidth(5.0)
+                            }
+                            style.addLayerBelow(lineLayer, "road-intersection")
+                        }
                     }
-
-                    if (style.getLayer(layerId) == null) {
-                        val lineLayer = lineLayer(layerId, sourceId) {
-                            val hexColor = String.format("#%06X", 0xFFFFFF and LightPrimary.toArgb())
-                            lineColor(hexColor)
-                            lineWidth(5.0)
+                    if (_uiState.value.previousWaypoints != waypoints) {
+                        viewAnnotationManager.removeAllViewAnnotations()
+                        _uiState.value.previousWaypoints = waypoints
+                        for (waypoint in waypoints) {
+                            Log.d("MapView", "drawGeoJson: ${waypoint.weather?.temperature?.toInt() ?: 0}")
+                            val point = Point.fromLngLat(
+                                waypoint.longitude ?: 0.0,
+                                waypoint.latitude ?: 0.0
+                            )
+                            addViewAnnotation(
+                                context = context,
+                                point = point,
+                                viewAnnotationManager = viewAnnotationManager,
+                                waypoint = waypoint
+                            )
                         }
-                        style.addLayerBelow(lineLayer, "road-intersection")
                     }
                 }
             }
         }
     }
 
+    private fun addViewAnnotation(
+        point: Point,
+        viewAnnotationManager: ViewAnnotationManager,
+        waypoint: RouteWithWaypoint,
+        context: Context
+    ) {
+        val view = ComposableWrapperView(
+            context = context,
+            temperature = (waypoint.weather?.temperature?.toInt() ?: 0),
+            time = waypoint.timestamp,
+            iconSymbol = waypoint.weather?.symbolCode ?: ""
+        )
 
+        // Measure the view to get the correct width and height
+        Log.d("MapView", "addViewAnnotation: ${waypoint.weather?.temperature?.toInt() ?: 0}")
+        viewAnnotationManager.addViewAnnotation(
+            view,
+            viewAnnotationOptions {
+                geometry(point)
+                allowOverlap(true) // Allow annotation to overlap with other annotations
+                offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
+            }
+        )
+
+
+    }
 
     fun fitCameraToRouteAndWaypoints(destinations: List<Destination>) {
         val mapView = _uiState.value.mapView ?: return
@@ -247,8 +305,6 @@ class MapViewModel @Inject constructor(
         // Create a new camera position with a lower zoom level
         val updatedCameraPosition = CameraOptions.Builder()
             .center(cameraPosition.center)
-            .bearing(15.0)
-            .pitch(45.0)
             .zoom(cameraPosition.zoom?.minus(0.5)) // Decrease the zoom level by 1
             .build()
 

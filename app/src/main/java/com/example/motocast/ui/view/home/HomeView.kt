@@ -23,8 +23,12 @@ fun HomeView(
     onLocateUserClick: () -> Unit,
     isTrackUserActive: Boolean,
     userName: String,
+    clearWaypointsAndGeoJson: () -> Unit,
+    drawGeoJson: (String) -> Unit,
 ) {
 
+    clearWaypointsAndGeoJson()
+    drawGeoJson(null.toString())
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
