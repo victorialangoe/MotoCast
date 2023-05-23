@@ -97,18 +97,9 @@ fun AppNavigation(
                 content = {
                     MapView(
                         mapView = mapLocationViewModelUiState.value.mapView,
-                        drawGeoJson = { geoJsonData, waypoints ->
-                            mapViewModel.drawGeoJson(
-                                geoJsonData,
-                                waypoints = routePlannerViewModelUiState.value.waypoints,
-                            )
-                        },
-                        onInit = {
-                            mapViewModel.loadMapView()
-                        },
-                        geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
-                        waypoints = routePlannerViewModelUiState.value.waypoints,
-                    )
+                    ) {
+                        mapViewModel.loadMapView()
+                    }
 
                     NavHost(navController = navController, startDestination = "home_screen") {
                         currentScreen.value = 0
@@ -176,7 +167,12 @@ fun AppNavigation(
                                                 mapViewModel.fitCameraToRouteAndWaypoints(
                                                     routePlannerViewModelUiState.value.destinations
                                                 )
+                                            },
+                                            // Passing drawGeoJson function to start
+                                            { geoJson, waypoints ->
+                                                mapViewModel.drawGeoJson(geoJson, waypoints)
                                             }
+
                                         )
                                         mapViewModel.trackUserOnMap(
                                             routeExists = true,

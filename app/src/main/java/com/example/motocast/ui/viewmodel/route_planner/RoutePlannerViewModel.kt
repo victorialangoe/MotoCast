@@ -353,7 +353,9 @@ class RoutePlannerViewModel @Inject constructor(
     suspend fun start(
         navigateTo: () -> Unit,
         fitCameraToRouteAndWaypoints: () -> Unit,
-    ) {
+        drawGeoJson: (String, List<RouteWithWaypoint>) -> Unit
+    )
+        {
         _uiState.value = _uiState.value.copy(isLoading = true)
 
 
@@ -364,7 +366,7 @@ class RoutePlannerViewModel @Inject constructor(
 
         if (_uiState.value.destinations.size >= 2) {
 
-            var response = getDirectionsDataUseCase(
+            val response = getDirectionsDataUseCase(
 
                 getDestinationsCoordinatesAsString()
             )
@@ -407,6 +409,11 @@ class RoutePlannerViewModel @Inject constructor(
                 isLoading = false
             )
         }
+
+            drawGeoJson(
+                _uiState.value.geoJsonData ?: "",
+                _uiState.value.waypoints
+            )
         navigateTo()
     }
 }

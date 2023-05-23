@@ -248,6 +248,7 @@ class MapViewModel @Inject constructor(
                                 waypoint.longitude ?: 0.0,
                                 waypoint.latitude ?: 0.0
                             )
+                            Log.d("MapView", "drawGeoJson: ${point.latitude()}, ${point.longitude()}")
                             addViewAnnotation(
                                 context = context,
                                 point = point,
