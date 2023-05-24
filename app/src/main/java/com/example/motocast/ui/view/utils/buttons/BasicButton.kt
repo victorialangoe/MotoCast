@@ -34,6 +34,7 @@ enum class ButtonSize {
  */
 @Composable
 fun BasicButton(
+    modifier: Modifier = Modifier,
     text: String? = null,
     content: @Composable (
         textStyle: TextStyle,
@@ -42,13 +43,11 @@ fun BasicButton(
         textColor: Color,
     ) -> Unit = { _, _, _, _ -> },
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     buttonType: ButtonType = ButtonType.Filled,
     buttonSize: ButtonSize = ButtonSize.Medium,
     circle: Boolean = false,
 ) {
-    // shape circle
     val buttonShape = RoundedCornerShape(100)
 
     val buttonColors: ButtonColors = when (buttonType) {
@@ -148,7 +147,6 @@ fun BasicButton(
             }
         },
     )
-
 }
 
 

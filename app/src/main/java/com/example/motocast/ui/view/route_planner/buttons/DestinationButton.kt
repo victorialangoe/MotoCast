@@ -52,7 +52,6 @@ fun DestinationButton(
 
             ) {
 
-                // this is the left side
                 Text(
                     modifier = Modifier.weight(0.1f),
                     text = when (destinationIndex) {
@@ -71,10 +70,12 @@ fun DestinationButton(
                         fontWeight = FontWeight.Light,
                     ),
                     text = when (destinationIndex) {
-                        0 -> destinations[destinationIndex].name ?: stringResource(R.string.add_start_point)
+                        0 -> destinations[destinationIndex].name
+                            ?: stringResource(R.string.add_start_point)
                         destinations.size - 1 -> destinations[destinationIndex].name
                             ?: stringResource(R.string.add_end_point)
-                        else -> destinations[destinationIndex].name ?: stringResource(R.string.add_via_point)
+                        else -> destinations[destinationIndex].name
+                            ?: stringResource(R.string.add_via_point)
                     },
                 )
                 if (destinations.size > 2) {

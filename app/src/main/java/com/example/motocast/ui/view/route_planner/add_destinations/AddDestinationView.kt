@@ -35,7 +35,6 @@ fun AddDestinationView(
 ) {
     val myLocationString = stringResource(R.string.my_location)
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,8 +58,7 @@ fun AddDestinationView(
                     removeDestination(activeDestinationIndex)
                 }
             },
-            onValueChange = { query, address ->
-
+            onValueChange = { query, _ ->
                 fetchAddressData(query)
                 setQuery(query)
             },
@@ -92,7 +90,7 @@ fun AddDestinationView(
                 title = stringResource(R.string.former_searches),
                 showTitle = false,
                 row = true,
-                isLoading = false, //This is never loading
+                isLoading = false,
                 userLocation = location,
                 onResultClick = { address ->
                     // 1. Update the destination in the route planner
@@ -102,7 +100,6 @@ fun AddDestinationView(
                     clearResults()
                     clearQuery()
                     popBackStack()
-
                 },
             )
             Spacer(modifier = Modifier.padding(vertical = 8.dp))

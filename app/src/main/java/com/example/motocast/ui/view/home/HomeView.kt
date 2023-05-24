@@ -26,8 +26,11 @@ fun HomeView(
     clearWaypointsAndGeoJson: () -> Unit,
     drawGeoJson: (String) -> Unit,
 ) {
+    // When we enter home screen we want to remove route and waypoints from map
+    // removes and draws a null string to clear the map
     clearWaypointsAndGeoJson()
     drawGeoJson(null.toString())
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier

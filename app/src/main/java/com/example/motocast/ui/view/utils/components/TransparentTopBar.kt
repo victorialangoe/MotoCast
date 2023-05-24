@@ -32,12 +32,13 @@ fun TransparentTopBar(
     ) {
 
         if (weatherUiState.value.temperature != null && weatherUiState.value.symbolCode != null) {
-            Box(modifier = Modifier
-                .height(56.dp)
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
             ) {
                 CurrentWeatherBadge(
                     context = context,
-                    temperature =  weatherUiState.value.temperature!!.toInt(),
+                    temperature = weatherUiState.value.temperature!!.toInt(),
                     iconSymbol = weatherUiState.value.symbolCode!!
                 )
             }
@@ -46,15 +47,15 @@ fun TransparentTopBar(
         Spacer(modifier = Modifier.weight(1f))
         Column(
             modifier = Modifier
-                // round corners
                 .clip(MaterialTheme.shapes.extraLarge)
                 .background(color = MaterialTheme.colorScheme.surface),
             horizontalAlignment = Alignment.End
         ) {
             LocateUserButton(active = isTrackUserActive) { onLocateUserClick() }
-            Box(modifier = Modifier
-                .height(1.dp)
-                .background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
             )
 
             SettingsButton { onSettingsClick() }

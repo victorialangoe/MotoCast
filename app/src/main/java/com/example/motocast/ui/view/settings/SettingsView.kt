@@ -43,10 +43,7 @@ fun SettingsView(
                 .padding(16.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            ChooseScreenMode(
-                darkMode = darkMode,
-                setDarkMode = setDarkMode
-            )
+            ChooseScreenMode(darkMode = darkMode, setDarkMode = setDarkMode)
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
@@ -58,10 +55,7 @@ fun SettingsView(
                 .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.CenterStart
         ) {
-            ChooseUserName(
-                userName = userName,
-                setUserName = setUserName
-            )
+            ChooseUserName(userName = userName, setUserName = setUserName)
         }
     }
 }

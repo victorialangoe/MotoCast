@@ -28,9 +28,13 @@ fun TextAndSwitch(
         modifier = Modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-    ){
-        Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
-        Spacer(modifier = Modifier.weight(1f)) // Spacer to push the switch to the right
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = checked,
             onCheckedChange = { setDarkMode(it) },

@@ -24,13 +24,12 @@ import java.util.*
 
 @Composable
 fun AddressResult(
+    modifier: Modifier = Modifier,
     address: Address,
     onClick: (address: Address) -> Unit,
     showInfo: Boolean = true,
-    modifier: Modifier = Modifier,
     trailingIcon : @Composable () -> Unit = {}
 )
-
 {
     val distance = address.distanceFromUser?.let {
         if (it < 1000) {

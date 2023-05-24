@@ -17,12 +17,12 @@ import java.util.*
 fun WelcomeBadge(
     userName: String,
 ) {
-
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
         in 0..11 -> "${stringResource(R.string.good_morning)} $userName"
         in 12..17 -> "${stringResource(R.string.good_afternoon)} $userName"
         else -> "${stringResource(R.string.good_evening)} $userName"
     }
+
     Box(
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraLarge)
@@ -35,6 +35,4 @@ fun WelcomeBadge(
             color = MaterialTheme.colorScheme.onBackground
         )
     }
-
-
 }

@@ -3,6 +3,8 @@ package com.example.motocast.domain.utils
 import android.content.res.Resources
 import android.location.Location
 import android.util.Log
+import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.ui.graphics.Shape
 import com.example.motocast.R
 import com.example.motocast.data.model.MetAlertsDataModel
 import com.example.motocast.data.model.Properties
@@ -128,7 +130,7 @@ object Utils {
 
         val updatedMunicipalities = mutableListOf<String>()
 
-        var updatedAddresses = mutableListOf<Address>()
+        val updatedAddresses = mutableListOf<Address>()
 
         allAddresses.forEach { it ->
             if (it.municipality != null) {
@@ -162,6 +164,14 @@ object Utils {
 
     }
 
+    /**
+     * Splits the user query into a municipal query and an address query
+     *
+     * @param userQuery The query to split
+     * @param allAddresses The addresses to compare the query to
+     *
+     * @return A [Pair] containing the municipal query and the address query
+     */
     private fun splitUserQuery(
         userQuery: String,
         allAddresses: List<Address>
@@ -191,7 +201,16 @@ object Utils {
         return Pair(municipalQuery.trim(), addressQuery.trim())
     }
 
-
+    /**
+     * Calculates the match score for an address, which is the sum of the match scores for the
+     * municipal query and the address query. A match score is described as the ratio of the
+     * similarity between the query and the address, using the fuzzy search algorithm (Based on Levenshtein distance)
+     *
+     * @param municipalQuery The municipal query
+     * @param addressQuery The address query
+     * @param address The address to calculate the match score for
+     * @param minimumMatchScore This is the minimum match score for the municipal query and the address query
+     */
     private fun calculateMatchScore(
         municipalQuery: String,
         addressQuery: String,
@@ -212,6 +231,13 @@ object Utils {
         }
     }
 
+    /**
+     * Checks if both the municipal query and the address query match (above the minimum match score)
+     *
+     * @param minimumMatchScore This is the minimum match score for the municipal query and the address query
+     * @param municipalMatchScore The match score for the municipal query
+     * @param addressMatchScore The match score for the address query
+     */
     private fun bothPartsMatch(
         minimumMatchScore: Int,
         municipalMatchScore: Int,
@@ -345,5 +371,58 @@ object Utils {
             time = date
         }
     }
+
+    /**
+     * Creates a triangle shape, which is used in the weather cards on the route screen.
+     *
+     * @return The triangle shape as a [Shape]
+     */
+    fun createReverseTriangleShape(): Shape {
+        return GenericShape { size, _ ->
+            moveTo(0f, 0f)
+            lineTo(size.width / 2f, size.height)
+            lineTo(size.width, 0f)
+        }
+    }
+
+    fun getWeatherIcon(event: String, awarenessLevel: String): Int {
+        val eventIconMap = mapOf(
+            "blowingSnow" to "icon_warning_snow_",
+            "avalances" to "icon_warning_avalanches_",
+            "drivingConditions" to "icon_warning_drivingconditions_",
+            "flood" to "icon_warning_flood_",
+            "forestFire" to "icon_warning_forestfire_",
+            "gale" to "icon_warning_wind_",
+            "ice" to "icon_warning_ice_",
+            "icing" to "icon_warning_generic_",
+            "landslide" to "icon_warning_landslide_",
+            "polarLow" to "icon_warning_polarlow_",
+            "rain" to "icon_warning_rain_",
+            "rainFlood" to "icon_warning_rainflood_",
+            "snow" to "icon_warning_snow_",
+            "stormSurge" to "icon_warning_stormsurge_",
+            "lightning" to "icon_warning_lightning_",
+            "wind" to "icon_warning_wind_",
+            "unknown" to "icon_warning_generic_"
+        )
+
+        val awarenessLevelIconMap = mapOf(
+            "2; yellow; Moderate" to "yellow",
+            "3; orange; Severe" to "orange"
+        )
+
+        val eventIcon = eventIconMap[event] ?: "icon_warning_generic_"
+        val awarenessLevelIcon = awarenessLevelIconMap[awarenessLevel] ?: ""
+
+        val resourceName = "$eventIcon$awarenessLevelIcon"
+
+        return try {
+            val resourceId = R.drawable::class.java.getField(resourceName).getInt(null)
+            resourceId
+        } catch (e: Exception) {
+            throw Exception("Resource not found: $resourceName")
+        }
+    }
+
 
 }

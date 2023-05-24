@@ -20,10 +20,12 @@ fun Header(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically) {
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
         BackButton(onClick = onClick)
-        if(text != null) {
+
+        if (text != null) {
             Text(
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,

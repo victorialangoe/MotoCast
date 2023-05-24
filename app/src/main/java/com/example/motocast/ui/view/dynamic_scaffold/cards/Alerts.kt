@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 import com.example.motocast.data.model.Properties
+import com.example.motocast.domain.utils.Utils.getWeatherIcon
 import com.example.motocast.theme.*
-import com.example.motocast.ui.view.getWeatherIcon
 
 @Composable
 fun Alerts(
@@ -115,7 +115,6 @@ fun Alerts(
                         color = MaterialTheme.colorScheme.onSurface
 
                     )
-                    // split the instructions on . selectedAlert?.instruction?
                     BulletPoints(selectedAlert?.instruction ?: "")
                 }
             },

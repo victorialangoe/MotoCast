@@ -76,8 +76,7 @@ fun AddDestinationSearchBar(
                 focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                 unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
 
-            )
-            ,
+                ),
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),

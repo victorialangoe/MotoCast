@@ -27,6 +27,8 @@ import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.route_planner.RouteWithWaypoint
 import kotlinx.coroutines.launch
 
+// Here we are using a ExperimentalMaterialApi annotation to suppress the warning, since the
+// BottomSheetScaffold is experimental.
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DynamicScaffoldView(
@@ -36,7 +38,6 @@ fun DynamicScaffoldView(
     isRouteLoading: Boolean,
     routePlannerViewModel: RoutePlannerViewModel,
     onLocateUserClick: () -> Unit,
-    popBackStack: () -> Unit,
     duration: String,
     content: @Composable () -> Unit,
     onNavigateToScreen: () -> Unit,
@@ -46,11 +47,9 @@ fun DynamicScaffoldView(
     editRoute: Boolean = false,
     header: @Composable () -> Unit,
 ) {
-    // TODO: Edit this to be a dynamic scaffold
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val routeExists = routePlannerViewModel.checkIfAllDestinationsHaveNames()
-
     val cornerShape = MaterialTheme.shapes.large
 
     LaunchedEffect(routeExists) {
@@ -77,7 +76,7 @@ fun DynamicScaffoldView(
                         .heightIn(min = minHeight, max = maxHeight),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
 
-                ) {
+                    ) {
 
                     Box(
                         modifier = Modifier
@@ -91,7 +90,12 @@ fun DynamicScaffoldView(
                     }
                     DynamicScaffoldContentColum(
                         modifier = Modifier
-                            .clip(cornerShape.copy(bottomEnd = CornerSize(0.dp), bottomStart = CornerSize(0.dp)))
+                            .clip(
+                                cornerShape.copy(
+                                    bottomEnd = CornerSize(0.dp),
+                                    bottomStart = CornerSize(0.dp)
+                                )
+                            )
                             .background(color = MaterialTheme.colorScheme.background)
                             .fillMaxSize()
                             .padding(16.dp),
@@ -113,14 +117,14 @@ fun DynamicScaffoldView(
                         .fillMaxSize()
                 ) {
                     content()
-                   if (routeExists) {
-                       header()
-                   }
+                    if (routeExists) {
+                        header()
+                    }
                 }
             }
         )
 
-        if (editRoute){
+        if (editRoute) {
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)

@@ -22,7 +22,6 @@ import java.util.*
 
 @Composable
 fun RoutePlannerView(
-    navigateTo: (screen: String) -> Unit,
     startRoute: () -> Unit,
     editDestination: (Int) -> Unit,
     addDestination: () -> Unit,
@@ -38,7 +37,6 @@ fun RoutePlannerView(
     isLoading: Boolean,
 ) {
 
-
     Column(
         modifier = Modifier
             .background(
@@ -53,12 +51,11 @@ fun RoutePlannerView(
             onClick = { popBackStack() },
             text = stringResource(R.string.route_planner)
         )
-        // This makes the content scrollable
+
         LazyColumn(content = {
             item {
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // This is where all the added destinations will be shown (if any)
                 destinations.forEachIndexed { destinationIndex, _ ->
                     Spacer(modifier = Modifier.height(8.dp))
                     DestinationButton(
@@ -72,14 +69,10 @@ fun RoutePlannerView(
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // This is the button that adds a new destination
                 BasicButton(
-                    onClick = {
-                        addDestination()
-                    },
+                    onClick = { addDestination() },
                     text = if (destinations.size < 10) stringResource(R.string.add_stopp)
                     else stringResource(R.string.max_stops_reached),
                     enabled = destinations.size < 10
@@ -94,9 +87,10 @@ fun RoutePlannerView(
                     enabled = !isLoading
                 )
 
-                // Button for clearing all destinations
                 if (routesAdded) {
+
                     Spacer(modifier = Modifier.height(16.dp))
+
                     BasicButton(
                         buttonType = ButtonType.Transparent,
                         onClick = { clearAll() },
@@ -120,7 +114,6 @@ fun RoutePlannerView(
                         }
                     }
                 )
-
             }
         })
     }

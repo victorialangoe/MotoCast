@@ -1,5 +1,6 @@
 package com.example.motocast.ui.view.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,12 +16,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.motocast.domain.utils.Utils.createReverseTriangleShape
 import com.example.motocast.theme.Blue700
 import com.example.motocast.theme.Red700
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+// As already mentioned in the DisplayWeather.kt file, we suppress the warning here as well
+// for the same reason.
+@SuppressLint("DiscouragedApi")
 @Composable
 fun WeatherCard(
     temperature: Int,
@@ -29,8 +33,6 @@ fun WeatherCard(
     context: Context,
 ) {
     Column {
-
-
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -56,7 +58,7 @@ fun WeatherCard(
                     )
                     if (time != null) {
                         Text(
-                            text = SimpleDateFormat("HH:mm").format(time.time),
+                            text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(time.time),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
@@ -82,15 +84,9 @@ fun WeatherCard(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .background(Color.White, ReverseTriangleShape)
+                .background(Color.White, createReverseTriangleShape())
                 .size(20.dp, 10.dp)
         )
-
     }
 }
 
-private val ReverseTriangleShape = GenericShape { size, _ ->
-    moveTo(0f, 0f)
-    lineTo(size.width / 2f, size.height)
-    lineTo(size.width, 0f)
-}

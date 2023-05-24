@@ -194,7 +194,6 @@ fun AppNavigation(
                                         time
                                     )
                                 },
-                                navigateTo = { screen -> navController.navigate(screen) },
                             )
                         }
                         composable("add_destination_screen") {
@@ -272,14 +271,6 @@ fun AppNavigation(
                     }
 
 
-                },
-                popBackStack = {
-                    if (navController.previousBackStackEntry != null) {
-                        navController.popBackStack()
-                    } else {
-
-                        navController.navigate("home_screen")
-                    }
                 },
                 minHeight = if (currentScreen.value != 4) 0.dp else 200.dp,
                 maxHeight = if (currentScreen.value != 4) 0.dp else 800.dp,

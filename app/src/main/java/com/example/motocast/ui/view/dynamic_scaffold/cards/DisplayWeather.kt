@@ -14,13 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.example.motocast.theme.Blue700
 import com.example.motocast.theme.Red700
 
-/**
- * Displays the current weather in a card.
- * @param modifier Modifier to be applied to the card.
- * @param temperature The temperature to be displayed.
- * @param symbolCode The symbol code of the weather icon.
- * @param context The context of the application. (Hack to get the symbol code from the string resource)
- */
+// We need to suppress this warning because this was the only way we managed to get the
+// symbolCode to be displayed in the UI. This technical debt should be fixed in the future.
 @SuppressLint("DiscouragedApi")
 @Composable
 fun DisplayWeather(

@@ -28,7 +28,7 @@ fun ChooseUserName(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(modifier = Modifier.weight(1f)) // Spacer to push the switch to the right
+        Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.width(16.dp))
         TextField(
             modifier = Modifier.fillMaxWidth(),
@@ -37,6 +37,8 @@ fun ChooseUserName(
             textStyle = MaterialTheme.typography.bodyMedium,
             value = userName,
             onValueChange = { setUserName(it) },
+            // This is probably not the right way to do this, but it works for now
+            // Technically debt, for sure, and not good for accessibility
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = MaterialTheme.colorScheme.background,
                 focusedIndicatorColor = MaterialTheme.colorScheme.surface,

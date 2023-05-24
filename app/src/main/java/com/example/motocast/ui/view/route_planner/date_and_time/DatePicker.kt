@@ -47,9 +47,11 @@ fun DatePicker(
 
     datePicker.datePicker.minDate = Calendar.getInstance().timeInMillis
 
-    val label = "${calendar.value.get(Calendar.DAY_OF_MONTH)}. ${calendar.value.get(Calendar.MONTH) + 1}. ${calendar.value.get(Calendar.YEAR)}"
+    val label =
+        "${calendar.value.get(Calendar.DAY_OF_MONTH)}. ${calendar.value.get(Calendar.MONTH) + 1}. ${
+            calendar.value.get(Calendar.YEAR)
+        }"
 
-    // If the time is now, show "I dag" instead of the date
     val currentCalendar = Calendar.getInstance()
     val isToday = currentCalendar.get(Calendar.YEAR) == calendar.value.get(Calendar.YEAR) &&
             currentCalendar.get(Calendar.MONTH) == calendar.value.get(Calendar.MONTH) &&

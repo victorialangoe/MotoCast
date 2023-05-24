@@ -2,7 +2,6 @@ package com.example.motocast.ui.view.route_planner.add_destinations
 
 import android.location.Location
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -55,14 +54,15 @@ fun DestinationResults(
                     if (userLocation != null) {
                         item {
                             AddressResult(
-                                Address(
+                                address = Address(
+
                                     addressText = stringResource(R.string.your_possition),
                                     municipality = "",
                                     distanceFromUser = 0,
                                     latitude = userLocation.latitude,
                                     longitude = userLocation.longitude
                                 ),
-                                onResultClick,
+                                onClick = onResultClick,
                                 showInfo = false,
                                 trailingIcon = {
                                     Icon(
@@ -74,12 +74,15 @@ fun DestinationResults(
                                     )
                                 }
 
-                                )
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
                     }
                     items(addresses) {
-                        AddressResult(it, onResultClick, showInfo = false)
+                        AddressResult(
+                            address = it,
+                            onClick = onResultClick, showInfo = false
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
@@ -90,7 +93,10 @@ fun DestinationResults(
                         if (it != addresses.first()) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        AddressResult(it, onResultClick)
+                        AddressResult(
+                            address = it,
+                            onClick = onResultClick
+                        )
                     }
                 }
             }
