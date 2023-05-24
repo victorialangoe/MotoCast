@@ -27,6 +27,7 @@ import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -100,7 +101,6 @@ fun AppNavigation(
                     ) {
                         mapViewModel.loadMapView()
                     }
-
                     NavHost(navController = navController, startDestination = "home_screen") {
                         currentScreen.value = 0
                         composable("home_screen") {
@@ -179,6 +179,11 @@ fun AppNavigation(
                                             destinations = routePlannerViewModelUiState.value.destinations,
                                             track = false
                                         )
+                                        // This is a hack for the emulator, because the cards
+                                        // did not render on first try on emulator
+                                        navController.navigate("settings_screen")
+                                        delay(100)
+                                        navController.navigate("route_screen")
                                     }
                                 },
                                 removeDestination = { index ->

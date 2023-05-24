@@ -208,11 +208,9 @@ class MapViewModel @Inject constructor(
         val mapView = _uiState.value.mapView
 
         if (mapView != null) {
-            // coroutine
             viewModelScope.launch(Dispatchers.Main) {
                 val viewAnnotationManager = mapView.viewAnnotationManager
                 val context = getAppContextUseCase()
-
 
                 mapView.getMapboxMap().let { mapboxMap ->
                     mapboxMap.getStyle { style ->

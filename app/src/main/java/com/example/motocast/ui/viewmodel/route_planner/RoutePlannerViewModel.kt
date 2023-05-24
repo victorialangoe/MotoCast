@@ -354,13 +354,13 @@ class RoutePlannerViewModel @Inject constructor(
         navigateTo: () -> Unit,
         fitCameraToRouteAndWaypoints: () -> Unit,
         drawGeoJson: (String, List<RouteWithWaypoint>) -> Unit
-    )
-        {
+    ) {
         _uiState.value = _uiState.value.copy(isLoading = true)
 
 
         if (!checkIfAllDestinationsHaveNames()) {
-            _uiState.value = _uiState.value.copy(error = R.string.all_destinations_must_be_filled_error)
+            _uiState.value =
+                _uiState.value.copy(error = R.string.all_destinations_must_be_filled_error)
             return
         }
 
@@ -410,10 +410,10 @@ class RoutePlannerViewModel @Inject constructor(
             )
         }
 
-            drawGeoJson(
-                _uiState.value.geoJsonData ?: "",
-                _uiState.value.waypoints
-            )
+        drawGeoJson(
+            _uiState.value.geoJsonData ?: "",
+            _uiState.value.waypoints
+        )
         navigateTo()
     }
 }
