@@ -343,21 +343,30 @@ class RoutePlannerViewModel @Inject constructor(
         }
     }
 
+    fun clearWaypointsAndGeoJson() {
+        _uiState.value = _uiState.value.copy(
+            waypoints = emptyList(),
+            geoJsonData = null,
+        )
+    }
+
     suspend fun start(
         navigateTo: () -> Unit,
         fitCameraToRouteAndWaypoints: () -> Unit,
+        drawGeoJson: (String, List<RouteWithWaypoint>) -> Unit
     ) {
         _uiState.value = _uiState.value.copy(isLoading = true)
 
 
         if (!checkIfAllDestinationsHaveNames()) {
-            _uiState.value = _uiState.value.copy(error = R.string.all_destinations_must_be_filled_error)
+            _uiState.value =
+                _uiState.value.copy(error = R.string.all_destinations_must_be_filled_error)
             return
         }
 
         if (_uiState.value.destinations.size >= 2) {
 
-            var response = getDirectionsDataUseCase(
+            val response = getDirectionsDataUseCase(
 
                 getDestinationsCoordinatesAsString()
             )
@@ -400,6 +409,11 @@ class RoutePlannerViewModel @Inject constructor(
                 isLoading = false
             )
         }
+
+        drawGeoJson(
+            _uiState.value.geoJsonData ?: "",
+            _uiState.value.waypoints
+        )
         navigateTo()
     }
 }

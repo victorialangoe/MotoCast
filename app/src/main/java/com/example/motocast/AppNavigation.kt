@@ -5,7 +5,6 @@ import android.location.Location
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -20,7 +19,6 @@ import com.example.motocast.ui.view.map.MapView
 import com.example.motocast.ui.view.route_planner.RoutePlannerView
 import com.example.motocast.ui.view.route_planner.add_destinations.AddDestinationView
 import com.example.motocast.ui.view.settings.SettingsView
-import com.example.motocast.ui.view.utils.badges.WelcomeBadge
 import com.example.motocast.ui.view.utils.components.Header
 import com.example.motocast.ui.viewmodel.address.AddressDataViewModel
 import com.example.motocast.ui.viewmodel.current_weather.CurrentWeatherViewModel
@@ -29,6 +27,7 @@ import com.example.motocast.ui.viewmodel.route_planner.RoutePlannerViewModel
 import com.example.motocast.ui.viewmodel.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -99,19 +98,9 @@ fun AppNavigation(
                 content = {
                     MapView(
                         mapView = mapLocationViewModelUiState.value.mapView,
-                        drawGeoJson = { geoJsonData ->
-                            mapViewModel.drawGeoJson(
-                                geoJsonData
-                            )
-                        },
-                        onInit = {
-                            mapViewModel.loadMapView()
-                        },
-                        geoJsonData = routePlannerViewModelUiState.value.geoJsonData,
-                        waypoints = routePlannerViewModelUiState.value.waypoints,
-                        context = context,
-                    )
-
+                    ) {
+                        mapViewModel.loadMapView()
+                    }
                     NavHost(navController = navController, startDestination = "home_screen") {
                         currentScreen.value = 0
                         composable("home_screen") {
@@ -128,7 +117,13 @@ fun AppNavigation(
 
                                 isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                                 userName = settingsViewModelUiState.value.userName,
+                                clearWaypointsAndGeoJson = { routePlannerViewModel.clearWaypointsAndGeoJson() },
+                            ) { geoJsonData ->
+                                mapViewModel.drawGeoJson(
+                                    geoJsonData,
+                                    waypoints = routePlannerViewModelUiState.value.waypoints,
                                 )
+                            }
                         }
 
                         composable("route_planner") {
@@ -165,19 +160,30 @@ fun AppNavigation(
                                 },
                                 startRoute = {
                                     CoroutineScope(Dispatchers.Main).launch {
-                                        routePlannerViewModel.start(
+                                        routePlannerViewModel.
+                                        start(
                                             { navController.navigate("route_screen") },
                                             {
                                                 mapViewModel.fitCameraToRouteAndWaypoints(
                                                     routePlannerViewModelUiState.value.destinations
                                                 )
+                                            },
+                                            // Passing drawGeoJson function to start
+                                            { geoJson, waypoints ->
+                                                mapViewModel.drawGeoJson(geoJson, waypoints)
                                             }
+
                                         )
                                         mapViewModel.trackUserOnMap(
                                             routeExists = true,
                                             destinations = routePlannerViewModelUiState.value.destinations,
                                             track = false
                                         )
+                                        // This is a hack for the emulator, because the cards
+                                        // did not render on first try on emulator
+                                        navController.navigate("settings_screen")
+                                        delay(100)
+                                        navController.navigate("route_screen")
                                     }
                                 },
                                 removeDestination = { index ->
@@ -273,6 +279,7 @@ fun AppNavigation(
                     if (navController.previousBackStackEntry != null) {
                         navController.popBackStack()
                     } else {
+
                         navController.navigate("home_screen")
                     }
                 },
