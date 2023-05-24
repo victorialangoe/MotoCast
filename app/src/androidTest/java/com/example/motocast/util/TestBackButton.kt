@@ -20,7 +20,7 @@ class TestBackButton {
             BackButton(onClick = {})
         }
 
-        composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Tilbake knapp ikon").assertIsDisplayed()
     }
 
     @Test
@@ -31,7 +31,7 @@ class TestBackButton {
             BackButton(onClick = { clicked = true })
         }
 
-        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        composeTestRule.onNodeWithContentDescription("Tilbake knapp ikon").performClick()
 
         assert(clicked)
     }
