@@ -17,6 +17,13 @@ class FetchAddressesUseCase(
     private val repository: MotoCastRepository,
     private val locationUseCase: LocationUseCase
 ) {
+
+    /**
+     * Fetches addresses from the [repository] and returns them as a list of [Address].
+     * The addresses are sorted and filtered with the [filterSearchResults] function.
+     * @param query The query to search for, as a [String]
+     * @return addresses as a list of [Address] or empty list
+     */
     suspend operator fun invoke(query: String): List<Address> {
         if (query.isEmpty()) return emptyList()
 

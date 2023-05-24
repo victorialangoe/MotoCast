@@ -26,7 +26,6 @@ fun HomeView(
     clearWaypointsAndGeoJson: () -> Unit,
     drawGeoJson: (String) -> Unit,
 ) {
-
     clearWaypointsAndGeoJson()
     drawGeoJson(null.toString())
     Box(modifier = Modifier.fillMaxSize()) {

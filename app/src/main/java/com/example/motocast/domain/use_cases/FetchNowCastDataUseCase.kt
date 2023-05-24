@@ -14,6 +14,13 @@ class FetchNowCastDataUseCase(
     private val repository: MotoCastRepository
 ) {
 
+    /**
+     * Fetches nowCast data from the repository and returns it as a [WeatherUiState].
+     *
+     * @param latitude The latitude to search for, as a [Double]
+     * @param longitude The longitude to search for, as a [Double]
+     * @return nowCast data as a [WeatherUiState] or null
+     */
     suspend operator fun invoke(latitude: Double, longitude: Double): WeatherUiState? {
         val response = repository.getNowCastData(latitude, longitude) ?: run {
             Log.d("FetchNowCastDataUseCase", "invoke: null")

@@ -98,9 +98,7 @@ class RemoteDataSource(
                     directionsApi.getDirections(
                         coordinates = coordinates,
                         accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN).execute()
-                Log.d("MotoCastRepositoryImp", "getDirectionsData: $response")
                 if (response.isSuccessful) {
-                    Log.d("MotoCastRepositoryImp", "getDirectionsData: ${response.body()}")
                     response.body()
                 } else {
                     val errorBody = response.errorBody()?.string()

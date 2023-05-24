@@ -14,9 +14,15 @@ class FetchDirectionsDataUseCase(
     private val repository: MotoCastRepository
 )
 {
+
+    /**
+     * Fetches directions data from the repository and returns it as a [DirectionsDataModel].
+     * @param coordinates The coordinates to search for, as a [String]
+     * @return directions data as a [DirectionsDataModel] or null
+     */
     suspend operator fun invoke(coordinates: String): DirectionsDataModel? {
-        Log.d("FetchDirectionsDataUseCase", "invoke: $coordinates")
         val response = repository.getDirectionsData(coordinates) ?: run {
+            Log.d("FetchDirectionsDataUseCase", "invoke: null")
             return null
         }
         return response

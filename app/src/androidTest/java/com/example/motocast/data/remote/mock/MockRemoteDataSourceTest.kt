@@ -12,8 +12,6 @@ import org.junit.runners.JUnit4
 class MockRemoteDataSourceTest {
 
     private val mockRemoteDataSource = MockRemoteDataSource()
-
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testGetAddressesShouldNotReturnNull() = runTest {

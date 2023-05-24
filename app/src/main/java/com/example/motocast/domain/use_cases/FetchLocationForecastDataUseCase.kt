@@ -18,6 +18,16 @@ import kotlin.math.abs
 class FetchLocationForecastDataUseCase(
     private val repository: MotoCastRepository
 ) {
+
+    /**
+     * Fetches the closest weather data from the LocationForecastDataModel data
+     * based on the timestamp.
+     *
+     * @param longitude The longitude of the location, as a [Double]
+     * @param latitude The latitude of the location, as a [Double]
+     * @param timestamp The timestamp to search for, as a [Calendar]
+     * @return the closest weather data as a [WeatherUiState] or null
+     */
     suspend operator fun invoke(
         latitude: Double,
         longitude: Double,
@@ -47,6 +57,13 @@ class FetchLocationForecastDataUseCase(
 
     }
 
+    /**
+     * Finds the closest weather data from the LocationForecastDataModel data
+     * based on the timestamp.
+     *
+     * @param response The response from the repository, as a [LocationForecastDataModel]
+     * @param zeroedTimestamp The timestamp to find the closest weather data for, as a [Calendar]
+     */
     private fun findClosestWeatherData(
         response: LocationForecastDataModel,
         zeroedTimestamp: Calendar

@@ -11,6 +11,16 @@ import com.example.motocast.data.repository.MotoCastRepository
 class GetGeocodedNameUseCase(
     private val repository: MotoCastRepository
 ) {
+
+    /**
+     * Fetches geocoded name from the repository, which is the human readable name of a coordinate.
+     * It also removes ", Norge" from the name, since it is not needed.
+     *
+     * @param longitude The longitude of the coordinate, as a [Double]
+     * @param latitude The latitude of the coordinate, as a [Double]
+     *
+     * @return geocoded name as a [String] or null
+     */
     suspend operator fun invoke(longitude: Double, latitude: Double): String? {
         val response = repository.getReverseGeocoding(
             longitude = longitude,

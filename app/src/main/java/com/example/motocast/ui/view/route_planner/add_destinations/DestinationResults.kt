@@ -102,7 +102,6 @@ fun DestinationResults(
             .fillMaxWidth()
     ) {
         if (isLoading) {
-            // Show a loading indicator
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -119,7 +118,6 @@ fun DestinationResults(
             }
         }
 
-        // This is the title of the search results
         if (showTitle && !isLoading) {
             Text(
                 text = if (addresses.isEmpty()) {
@@ -135,7 +133,6 @@ fun DestinationResults(
             )
         }
 
-        // This is where all the search results will be shown (if any)
         if (!isLoading) {
             content()
         }

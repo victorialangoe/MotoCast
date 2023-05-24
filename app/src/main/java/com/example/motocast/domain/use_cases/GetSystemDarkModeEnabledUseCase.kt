@@ -12,6 +12,11 @@ import com.example.motocast.data.repository.MotoCastRepository
 class GetSystemDarkModeEnabledUseCase(
     private val repository: MotoCastRepository
 ) {
+    /**
+     * This function checks if the system dark mode is enabled.
+     *
+     * @return system dark mode enabled as a [Boolean]
+     */
     suspend operator fun invoke(): Boolean {
         val appContext = repository.getAppContext()
         return when (appContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {

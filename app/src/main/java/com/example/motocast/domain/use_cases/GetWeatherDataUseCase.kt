@@ -20,6 +20,17 @@ class GetWeatherDataUseCase(
     private val fetchLocationForecastDataUseCase: FetchLocationForecastDataUseCase,
     private val fetchNowCastDataUseCase: FetchNowCastDataUseCase,
 ) {
+
+    /**
+     * Fetches weather data from the repository, which can be either nowcast or location forecast.
+     * Then it creates a [RouteWeatherUiState] object from the data and returns it.
+     *
+     * @param latitude The latitude to search for, as a [Double]
+     * @param longitude The longitude to search for, as a [Double]
+     * @param timestamp The timestamp to search for, as a [Calendar]
+     *
+     * @return weather data as a [RouteWeatherUiState] or null
+     */
     suspend operator fun invoke(
         latitude: Double,
         longitude: Double,
@@ -34,7 +45,6 @@ class GetWeatherDataUseCase(
         } else {
             fetchLocationForecastDataUseCase(latitude, longitude, timestamp)
         }
-        Log.d("GetWeatherDataUseCase", "Weather data: $weatherData")
         return if (weatherData != null) {
             RouteWeatherUiState(
                 symbolCode = weatherData.symbolCode,
@@ -45,10 +55,14 @@ class GetWeatherDataUseCase(
                 alerts = getCorrectAlertsFromAlerts(latitude, longitude, timestamp, alerts)
             )
         }
-        else null
+        else {
+            Log.d("GetWeatherDataUseCase", "invoke: null")
+            null
+        }
     }
 
     /** Helper function to calculate the hours from now to the given timestamp
+     *
      * @param timestamp The timestamp to calculate the hours from now to, as a [Calendar]
      * @return The hours from now to the given timestamp, as a [Double]
      */

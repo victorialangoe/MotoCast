@@ -27,7 +27,6 @@ class MotoCastRepository @Inject constructor(
 
 ) : MotoCastRepositoryInterface {
 
-
     override suspend fun getAddresses(query: String): AddressDataModel? {
         return remoteDataSource.getAddresses(query)
     }

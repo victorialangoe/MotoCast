@@ -23,10 +23,19 @@ class LocationUseCase(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     ) : LiveData<Location>() {
 
+    /**
+     * Fetches the user's current location, which is saved in a [Location] LiveData object.
+     *
+     * @return location as a [Location] or null
+     */
     fun getCurrentLocation(): Location? {
         return value
     }
 
+    /**
+     * Sets the user's current location, which is saved in a [Location] LiveData object.
+     * If permissions are not granted, it will just return, else it will set the location.
+     */
     override fun onActive() {
         super.onActive()
         if (ActivityCompat.checkSelfPermission(
@@ -56,11 +65,18 @@ class LocationUseCase(
         startLocationUpdates()
     }
 
+    /**
+     * Removes the location updates.
+     */
+
     override fun onInactive() {
         super.onInactive()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
+    /**
+     * Sets the location request and starts the location updates.
+     */
     fun startLocationUpdates(){
 
         if (ActivityCompat.checkSelfPermission(
@@ -93,7 +109,6 @@ class LocationUseCase(
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
-            locationResult
             for (location in locationResult.locations) {
                 setLocationData(location)
             }

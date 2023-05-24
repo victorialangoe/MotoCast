@@ -114,7 +114,6 @@ fun AppNavigation(
                                     navController.navigate("route_planner")
                                 },
                                 onLocateUserClick = onLocateUserClick,
-
                                 isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                                 userName = settingsViewModelUiState.value.userName,
                                 clearWaypointsAndGeoJson = { routePlannerViewModel.clearWaypointsAndGeoJson() },
@@ -168,7 +167,6 @@ fun AppNavigation(
                                                     routePlannerViewModelUiState.value.destinations
                                                 )
                                             },
-                                            // Passing drawGeoJson function to start
                                             { geoJson, waypoints ->
                                                 mapViewModel.drawGeoJson(geoJson, waypoints)
                                             }
