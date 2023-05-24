@@ -183,7 +183,7 @@ fun AppNavigation(
                                         // did not render on first try on emulator
                                         navController.navigate("settings_screen")
                                         delay(100)
-                                        navController.navigate("route_screen")
+                                        navController.popBackStack()
                                     }
                                 },
                                 removeDestination = { index ->

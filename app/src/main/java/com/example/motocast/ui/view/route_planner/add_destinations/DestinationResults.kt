@@ -136,7 +136,7 @@ fun DestinationResults(
         }
 
         // This is where all the search results will be shown (if any)
-        if (addresses.isNotEmpty() && !isLoading) {
+        if (!isLoading) {
             content()
         }
     }
