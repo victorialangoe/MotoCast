@@ -1,10 +1,7 @@
 package com.example.motocast.ui.view.settings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.motocast.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseUserName(
     userName: String,
@@ -39,19 +37,16 @@ fun ChooseUserName(
             onValueChange = { setUserName(it) },
             // This is probably not the right way to do this, but it works for now
             // Technically debt, for sure, and not good for accessibility
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.background,
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = MaterialTheme.colorScheme.surface,
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
                 disabledIndicatorColor = MaterialTheme.colorScheme.surface,
                 errorIndicatorColor = MaterialTheme.colorScheme.surface,
-                textColor = MaterialTheme.colorScheme.onSurface,
                 focusedLabelColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
                 disabledLabelColor = MaterialTheme.colorScheme.onSurface,
                 errorLabelColor = MaterialTheme.colorScheme.onSurface,
                 cursorColor = MaterialTheme.colorScheme.onSurface,
-                placeholderColor = MaterialTheme.colorScheme.onSurface,
                 disabledTextColor = MaterialTheme.colorScheme.onSurface,
                 focusedLeadingIconColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurface,

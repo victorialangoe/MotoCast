@@ -14,7 +14,6 @@ class TestBackButton {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-
     @Test
     fun backButton_isDisplayed() {
         composeTestRule.setContent {

@@ -18,9 +18,9 @@ fun WelcomeBadge(
     userName: String,
 ) {
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-        in 0..11 -> "${stringResource(R.string.good_morning)} $userName"
-        in 12..17 -> "${stringResource(R.string.good_afternoon)} $userName"
-        else -> "${stringResource(R.string.good_evening)} $userName"
+        in 0..11 -> stringResource(R.string.good_morning)
+        in 12..17 -> stringResource(R.string.good_afternoon)
+        else -> stringResource(R.string.good_evening)
     }
 
     Box(
@@ -30,7 +30,7 @@ fun WelcomeBadge(
     ) {
         Text(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-            text = greeting,
+            text = if (userName.isNotEmpty()) "$greeting, $userName" else greeting,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )

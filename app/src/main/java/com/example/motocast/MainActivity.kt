@@ -20,18 +20,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
+
     lateinit var locationUseCase: LocationUseCase
     private val weatherViewModel = mutableStateOf<CurrentWeatherViewModel?>(null)
-    private fun requestSinglePermissionLauncher() =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.d("MainActivity", "Location permission granted")
-                requestLocationUpdates()
-            } else {
-                Log.d("MainActivity", "Location permission not granted")
-                Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show()
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +61,17 @@ class MainActivity : ComponentActivity() {
         locationUseCase.startLocationUpdates()
         Log.d("Location", "Location: $locationUseCase")
     }
+
+    private fun requestSinglePermissionLauncher() =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d("MainActivity", "Location permission granted")
+                requestLocationUpdates()
+            } else {
+                Log.d("MainActivity", "Location permission not granted")
+                Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     private fun prepLocationUpdates() {
         if (ContextCompat.checkSelfPermission(

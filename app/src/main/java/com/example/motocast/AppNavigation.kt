@@ -2,7 +2,8 @@ package com.example.motocast
 
 import android.content.Context
 import android.location.Location
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -41,7 +42,7 @@ import java.util.*
  * @param routePlannerViewModel The [RoutePlannerViewModel] to use for the route planner
  * @param mapViewModel The [MapViewModel] to use for the map
  * @param context The [Context] to use for the app
- *
+ * @param location The [Location] to use for the app
  */
 @Composable
 fun AppNavigation(
@@ -52,19 +53,16 @@ fun AppNavigation(
     mapViewModel: MapViewModel = hiltViewModel(),
     context: Context,
     location: Location? = null,
-    currentScreen: Int = 0,
 ) {
     val navController = rememberNavController()
     val addressViewModelUiState = addressDataViewModel.uiState.collectAsState()
     val routePlannerViewModelUiState = routePlannerViewModel.uiState.collectAsState()
     val mapLocationViewModelUiState = mapViewModel.uiState.collectAsState()
     val settingsViewModelUiState = settingsViewModel.uiState.collectAsState()
-    val currentScreen = remember { mutableStateOf(currentScreen) }
-    val snackbarHostState = remember { SnackbarHostState() }
+    val currentScreen = remember { mutableStateOf(0) }
+    val snackBarHostState = remember { SnackbarHostState() }
     val errorMessageId = routePlannerViewModelUiState.value.error
     val errorMessage = if (errorMessageId != null) stringResource(id = errorMessageId) else ""
-
-
     val onLocateUserClick: () -> Unit =
         {
             mapViewModel.trackUserOnMap(
@@ -74,8 +72,8 @@ fun AppNavigation(
         }
 
     LaunchedEffect(errorMessage) {
-        if (errorMessage.isNotBlank()){
-            snackbarHostState.showSnackbar(errorMessage)
+        if (errorMessage.isNotBlank()) {
+            snackBarHostState.showSnackbar(errorMessage)
             routePlannerViewModel.clearError()
         }
     }
@@ -159,8 +157,7 @@ fun AppNavigation(
                                 },
                                 startRoute = {
                                     CoroutineScope(Dispatchers.Main).launch {
-                                        routePlannerViewModel.
-                                        start(
+                                        routePlannerViewModel.start(
                                             { navController.navigate("route_screen") },
                                             {
                                                 mapViewModel.fitCameraToRouteAndWaypoints(
@@ -178,7 +175,8 @@ fun AppNavigation(
                                             track = false
                                         )
                                         // This is a hack for the emulator, because the cards
-                                        // did not render on first try on emulator
+                                        // did not render on first try on emulator. Technically
+                                        // debt, for sure.
                                         navController.navigate("settings_screen")
                                         delay(100)
                                         navController.popBackStack()
@@ -293,7 +291,7 @@ fun AppNavigation(
             )
 
             SnackbarHost(
-                hostState = snackbarHostState,
+                hostState = snackBarHostState,
                 snackbar = {
                     Snackbar(
                         modifier = Modifier.padding(16.dp),
@@ -304,12 +302,8 @@ fun AppNavigation(
                     }
                 }
             )
-
-
         }
-
     }
-
 }
 
 

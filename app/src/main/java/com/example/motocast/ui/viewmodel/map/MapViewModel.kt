@@ -4,12 +4,9 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import android.view.Gravity
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.motocast.data.repository.MotoCastRepository
 import com.example.motocast.domain.use_cases.GetAppContextUseCase
 import com.example.motocast.domain.use_cases.LocationUseCase
 import com.example.motocast.theme.LightPrimary
@@ -66,9 +63,6 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    /**
-     * This function creates the map view and loads the map style.
-     */
     fun loadMapView() {
         viewModelScope.launch(Dispatchers.Main) {
 
@@ -77,7 +71,10 @@ class MapViewModel @Inject constructor(
             var location = locationUseCase.getCurrentLocation()
             var retries = 0
             while (location == null && retries < 10) {
-                delay(1000) // 1 second
+                /**
+                 * Why we do this is described in fetchNowCastDataEvery5min in CurrentWeatherViewModel
+                 */
+                delay(1000)
                 location = locationUseCase.getCurrentLocation()
                 retries++
                 Log.d("CurrentWeatherViewModel", "Retry $retries: Location: $location")
@@ -104,7 +101,7 @@ class MapViewModel @Inject constructor(
                                     }
 
                                 }
-                            //Set initial camera position
+
                             if (location != null) {
                                 this.getMapboxMap().easeTo(
                                     CameraOptions.Builder()
@@ -121,7 +118,6 @@ class MapViewModel @Inject constructor(
                                     }
                                 )
                             }
-
 
                             this.logo.updateSettings {
                                 position = Gravity.TOP or Gravity.END
@@ -140,22 +136,17 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    /**
-     * This function centers the camera to the user's location.
-     */
     private fun cameraToUserLocation() {
         updateUiState { it.copy(isLoading = true) }
 
         if (_uiState.value.mapView != null) {
             val mapboxMap = _uiState.value.mapView!!.getMapboxMap()
-            Log.d("MapActivity", "Camera to user location")
 
             viewModelScope.launch(Dispatchers.Main) {
                 val location = locationUseCase.getCurrentLocation()
 
 
                 if (location != null) {
-                    Log.d("MapActivity", "Location: ${location.latitude}, ${location.longitude}")
                     val currentCameraPosition = mapboxMap.cameraState
                     val targetCameraPosition = CameraOptions.Builder()
                         .center(Point.fromLngLat(location.longitude, location.latitude))
@@ -194,7 +185,6 @@ class MapViewModel @Inject constructor(
             }
         }
 
-        // set Loading to false
         updateUiState { it.copy(isLoading = false) }
     }
 
@@ -202,7 +192,10 @@ class MapViewModel @Inject constructor(
     /**
      * This function draws the route on the map.
      * Uses convert to geoJSON to convert the JSON response from the Mapbox Directions API to a GeoJSON string.
+     * It also draws the view annotations for the waypoints.
+     *
      * @param geoJsonString the JSON response from the Mapbox Directions API
+     * @param waypoints the waypoints to draw on the map
      */
     fun drawGeoJson(geoJsonString: String, waypoints: List<RouteWithWaypoint>) {
         val mapView = _uiState.value.mapView
@@ -241,12 +234,12 @@ class MapViewModel @Inject constructor(
                         viewAnnotationManager.removeAllViewAnnotations()
                         _uiState.value.previousWaypoints = waypoints
                         for (waypoint in waypoints) {
-                            Log.d("MapView", "drawGeoJson: ${waypoint.weather?.temperature?.toInt() ?: 0}")
+
                             val point = Point.fromLngLat(
                                 waypoint.longitude ?: 0.0,
                                 waypoint.latitude ?: 0.0
                             )
-                            Log.d("MapView", "drawGeoJson: ${point.latitude()}, ${point.longitude()}")
+
                             addViewAnnotation(
                                 context = context,
                                 point = point,
@@ -260,6 +253,15 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    /**
+     * This function adds a view annotation to the map, which are the cards with the weather information for the
+     * waypoints on the map.
+     *
+     * @param point the point to add the view annotation to
+     * @param viewAnnotationManager the view annotation manager of the map
+     * @param waypoint the waypoint to add the view annotation for
+     * @param context the context of the application
+     */
     private fun addViewAnnotation(
         point: Point,
         viewAnnotationManager: ViewAnnotationManager,
@@ -273,18 +275,14 @@ class MapViewModel @Inject constructor(
             iconSymbol = waypoint.weather?.symbolCode ?: ""
         )
 
-        // Measure the view to get the correct width and height
-        Log.d("MapView", "addViewAnnotation: ${waypoint.weather?.temperature?.toInt() ?: 0}")
         viewAnnotationManager.addViewAnnotation(
             view,
             viewAnnotationOptions {
                 geometry(point)
-                allowOverlap(true) // Allow annotation to overlap with other annotations
-                offsetY(100) // WE MAY USE THIS ON ANTHER VIEW
+                allowOverlap(true)
+                offsetY(100)
             }
         )
-
-
     }
 
     fun fitCameraToRouteAndWaypoints(destinations: List<Destination>) {
@@ -301,16 +299,16 @@ class MapViewModel @Inject constructor(
             waypoints,
             EdgeInsets(10.0, 100.0, 200.0, 100.0),
         )
-        // Create a new camera position with a lower zoom level
+
         val updatedCameraPosition = CameraOptions.Builder()
             .center(cameraPosition.center)
-            .zoom(cameraPosition.zoom?.minus(0.5)) // Decrease the zoom level by 1
+            .zoom(cameraPosition.zoom?.minus(0.5))
             .build()
 
         mapView.getMapboxMap().easeTo(
             updatedCameraPosition,
             mapAnimationOptions {
-                duration(1000L) // Set the duration of the animation in milliseconds
+                duration(1000L)
             }
         )
     }
@@ -329,14 +327,12 @@ class MapViewModel @Inject constructor(
             trackUserOnMap = track ?: !_uiState.value.trackUserOnMap
         )
 
-        Log.d("MapActivity", "trackUserOnMap: ${_uiState.value.trackUserOnMap}")
         if (!_uiState.value.trackUserOnMap && routeExists) {
             fitCameraToRouteAndWaypoints(destinations)
         } else if (_uiState.value.trackUserOnMap) {
             cameraToUserLocation()
         }
     }
-
 
 }
 

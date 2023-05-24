@@ -1,6 +1,5 @@
 package com.example.motocast.ui.viewmodel.route_planner
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.motocast.R
 import com.example.motocast.data.model.DirectionsDataModel
@@ -40,12 +39,16 @@ class RoutePlannerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RoutePlannerUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun getTotalDestinations(): Int {
-        return _uiState.value.destinations.size
-    }
-
     private fun updateUiState(update: (RoutePlannerUiState) -> RoutePlannerUiState) {
         _uiState.value = update(_uiState.value)
+    }
+
+    private fun addGeoJsonDataToUiState(geoJsonData: String) {
+        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
+    }
+
+    fun getTotalDestinations(): Int {
+        return _uiState.value.destinations.size
     }
 
     fun editDestination(index: Int, navigateTo: () -> Unit) {
@@ -70,10 +73,6 @@ class RoutePlannerViewModel @Inject constructor(
         updateUiState { it.copy(startTime = Calendar.getInstance()) }
     }
 
-    private fun addGeoJsonDataToUiState(geoJsonData: String) {
-        _uiState.value = _uiState.value.copy(geoJsonData = geoJsonData)
-    }
-
     fun checkIfAllDestinationsHaveNames(): Boolean {
         return Utils.checkIfAllDestinationsHaveNames(_uiState.value.destinations)
     }
@@ -91,7 +90,7 @@ class RoutePlannerViewModel @Inject constructor(
     }
 
     fun clearError() {
-        _uiState.value = _uiState.value.copy(error = R.string.empty_string)
+        _uiState.value = _uiState.value.copy(error = null)
     }
 
     private fun getDurationAsString(durationInSek: Long): String {
@@ -127,17 +126,14 @@ class RoutePlannerViewModel @Inject constructor(
     fun removeDestination(index: Int) {
         val currentUiState = _uiState.value
         val newDestinations = currentUiState.destinations.toMutableList()
-        // min 2 destinations
+
         if (newDestinations.size > 2) {
             newDestinations.removeAt(index)
             updateUiState { it.copy(destinations = newDestinations) }
         }
     }
 
-    /**
-     * Adds a new destination to the list of destinations
-     * @param navigateTo The function to call to navigate to the destination editor
-     */
+
     fun addDestination(navigateTo: () -> Unit) {
         val newDestinations = _uiState.value.destinations.toMutableList()
 
@@ -175,10 +171,10 @@ class RoutePlannerViewModel @Inject constructor(
             for (stepIndex in stepsArray.indices) {
                 val step = stepsArray[stepIndex]
                 val geometry = step.geometry
-                // Convert the list of coordinates to a list of Point objects
+
                 val coordinatesList =
                     geometry.coordinates.map { Point.fromLngLat(it[0], it[1]) }
-                // Create a LineString from the list of Point objects
+
                 val lineString = LineString.fromLngLats(coordinatesList)
 
                 features.add(Feature.fromGeometry(lineString))
@@ -203,7 +199,7 @@ class RoutePlannerViewModel @Inject constructor(
 
         updateRouteTimeStamps(routeWithWaypoint, startTime)
         updateRouteWeather(routeWithWaypoint)
-        // sort the routes by start time
+
         routeWithWaypoint.sortBy {
             it.timeFromStart
         }
@@ -216,12 +212,11 @@ class RoutePlannerViewModel @Inject constructor(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
-        // Set the first
+        // The first route is not updated before, so we need to update it here
         routeWithWaypoint[0] = routeWithWaypoint[0].copy(
             isInDestination = true,
         )
 
-        // Update the timestamps of the routes
         var timeFromStart = 0.0
         for (legIndex in legs.indices) {
             val leg = legs[legIndex]
@@ -265,7 +260,7 @@ class RoutePlannerViewModel @Inject constructor(
     private suspend fun addWaypointsOnLegs(
         legs: List<Leg>,
     ): MutableList<RouteWithWaypoint> {
-        // Update the timestamps of the routes
+
         var timeFromStart = 0.0
         var timeCounter = 0.0
         val hourInSeconds = 3600.0
@@ -292,7 +287,6 @@ class RoutePlannerViewModel @Inject constructor(
                         latitude = step.maneuver.location[1],
                         longitude = step.maneuver.location[0],
                     )
-                    Log.d("addWaypointsOnLegs", "newRoute: $newRoute")
                     tempRoutes.add(newRoute)
                 }
             }
@@ -309,8 +303,6 @@ class RoutePlannerViewModel @Inject constructor(
         return coroutineScope {
             val deferredRoutes = waypoints.mapIndexed { index, waypoint ->
                 async {
-
-
                     val route = RouteWithWaypoint(
                         name = _uiState.value.destinations[index].name,
                         longitude = waypoint.location[0],
@@ -318,7 +310,6 @@ class RoutePlannerViewModel @Inject constructor(
                         timestamp = if (index == 0) startTime else null,
                         timeFromStart = 0.0,
                     )
-
                     route
                 }
             }
@@ -330,7 +321,6 @@ class RoutePlannerViewModel @Inject constructor(
         routeWithWaypoint: MutableList<RouteWithWaypoint>,
         startTime: Calendar
     ) {
-        // Update the timestamps of the routes
         for (waypointIndex in routeWithWaypoint.indices) {
             val waypoint = routeWithWaypoint[waypointIndex]
 
@@ -378,7 +368,6 @@ class RoutePlannerViewModel @Inject constructor(
                 return
             }
 
-            Log.d("start", "response: $response")
 
             if (response != null) {
 

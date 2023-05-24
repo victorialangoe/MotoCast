@@ -2,7 +2,6 @@ package com.example.motocast.domain.utils
 
 import android.content.res.Resources
 import android.location.Location
-import android.util.Log
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.ui.graphics.Shape
 import com.example.motocast.R
@@ -350,8 +349,6 @@ object Utils {
                         }
                     }
 
-                } else {
-                    Log.d("WeatherViewModel - Check", "Alert: ${alert.properties.title}")
                 }
             }
         }

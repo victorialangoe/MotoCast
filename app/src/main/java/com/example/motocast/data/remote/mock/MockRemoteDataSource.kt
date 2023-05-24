@@ -1,6 +1,6 @@
 package com.example.motocast.data.remote.mock
 
-import AddressDataModel
+import com.example.motocast.data.model.AddressDataModel
 import LocationForecastDataModel
 import ReverseGeocodingDataModel
 import com.example.motocast.data.model.DirectionsDataModel

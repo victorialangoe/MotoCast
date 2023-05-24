@@ -15,12 +15,12 @@ import javax.inject.Inject
 class AddressDataViewModel @Inject constructor(
     private val fetchAddressesUseCase: FetchAddressesUseCase,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AddressUiState())
-    val uiState = _uiState.asStateFlow()
     private var searchJob: Job? = null
 
-    suspend fun fetchAddressData(query: String){
+    val uiState = _uiState.asStateFlow()
+
+    suspend fun fetchAddressData(query: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             updateUiState { it.copy(isLoading = true, query = query) }
@@ -32,6 +32,7 @@ class AddressDataViewModel @Inject constructor(
             updateUiState { it.copy(addresses = addresses, isLoading = false) }
         }
     }
+
     private fun updateUiState(update: (AddressUiState) -> AddressUiState) {
         _uiState.value = update(_uiState.value)
     }

@@ -5,7 +5,7 @@ import java.util.*
 
 data class RoutePlannerUiState(
     val isLoading: Boolean = false,
-    // Every route must have at least two destinations
+    // Needed, because every route must have at least two destinations
     val destinations: List<Destination> = List(2) {
         Destination(
             name = null,
@@ -18,13 +18,13 @@ data class RoutePlannerUiState(
     val activeDestinationIndex: Int = 0,
     val error: Int? = null,
     val geoJsonData: String? = null,
-    val duration: Double = 0.0, // in seconds
+    val duration: Double = 0.0,
     val durationAsString: String = "",
-    val distance: Double = 0.0, // in meters
+    val distance: Double = 0.0,
     val waypoints: List<RouteWithWaypoint> = listOf(),
 )
 
-data class RouteWithWaypoint (
+data class RouteWithWaypoint(
     val name: String?,
     val latitude: Double?,
     val longitude: Double?,
@@ -34,7 +34,7 @@ data class RouteWithWaypoint (
     val weather: RouteWeatherUiState? = null,
 )
 
-data class Destination (
+data class Destination(
     val name: String?,
     val latitude: Double?,
     val longitude: Double?,

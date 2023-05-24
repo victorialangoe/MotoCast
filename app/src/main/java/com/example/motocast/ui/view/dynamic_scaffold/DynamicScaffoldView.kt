@@ -131,10 +131,6 @@ fun DynamicScaffoldView(
                     .padding(horizontal = 16.dp)
                     .weight(0.1f),
             ) {
-                Divider(color = MaterialTheme.colorScheme.surface)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 RouteAndSettingsRow(
                     buttonText = stringResource(R.string.edit_route),
                     onButtonClick = onNavigateToScreen,

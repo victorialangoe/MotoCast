@@ -17,9 +17,9 @@ class CurrentWeatherViewModel @Inject constructor(
     private val locationUseCase: LocationUseCase,
 ) : ViewModel() {
 
+    private var fetchNowCastDataJob: Job? = null
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
-    private var fetchNowCastDataJob: Job? = null
 
     init {
         startFetchingNowCastData()
@@ -39,13 +39,16 @@ class CurrentWeatherViewModel @Inject constructor(
         return CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 var location = locationUseCase.getCurrentLocation()
-                Log.d("CurrentWeatherViewModel", "Location: $location")
-
-
-                // Retry fetching the location 10 times if it's null
                 var retries = 0
+
                 while (location == null && retries < 10) {
-                    delay(1000) // 1 second
+                    /** This is a hack to get the location if it is null. Sometimes it is null
+                     * when the app first starts. Technically debt, for sure.
+                     *
+                     * A potential fix would be to add this in the LocationUseCase, because then
+                     * we could use the same logic in other places where we need to get the location.
+                     * */
+                    delay(1000)
                     location = locationUseCase.getCurrentLocation()
                     retries++
                     Log.d("CurrentWeatherViewModel", "Retry $retries: Location: $location")
@@ -56,7 +59,6 @@ class CurrentWeatherViewModel @Inject constructor(
                     weatherData = fetchNowCastDataUseCase(location.latitude, location.longitude)
                 }
 
-                Log.d("CurrentWeatherViewModel", "Weather data: $weatherData")
                 if (weatherData != null) {
                     _uiState.value = WeatherUiState(
                         symbolCode = weatherData.symbolCode,
