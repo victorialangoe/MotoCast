@@ -88,7 +88,7 @@ fun AppNavigation(
                 isTrackUserActive = mapLocationViewModelUiState.value.trackUserOnMap,
                 routePlannerViewModel = routePlannerViewModel,
                 navigateToSettings = { navController.navigate("settings_screen") },
-                onNavigateToScreen = { navController.navigate("route_planner") },
+                popBackStack = { navController.popBackStack() },
                 isRouteLoading = routePlannerViewModelUiState.value.isLoading,
                 duration = routePlannerViewModelUiState.value.durationAsString,
                 waypoints = routePlannerViewModelUiState.value.waypoints,

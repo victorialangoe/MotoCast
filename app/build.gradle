@@ -24,14 +24,12 @@ android {
             useSupportLibrary true
         }
         // This is for easy access to the API key in the code
-        buildConfigField("String", "MET_API_KEY", "\"" + localProperties['met_api_key'] + "\"")
-        buildConfigField("String", "MET_API_BASE_URL", "\"" + localProperties['met_api_base_url'] + "\"")
-        buildConfigField("String", "TEST_KEYSTORE_PASSWORD", "\"" + localProperties['test_keystore_password'] + "\"")
-        buildConfigField("String", "MAPBOX_DOWNLOADS_TOKEN", "\"" + localProperties['mapbox_downloads_token'] + "\"")
-        buildConfigField("String", "ADDRESS_API_BASE_URL", "\"" + localProperties['address_api_base_url'] + "\"")
-        buildConfigField("String", "DIRECTIONS_API_BASE_URL", "\"" + localProperties['directions_api_base_url'] + "\"")
-        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"" + localProperties['mapbox_access_token'] + "\"")
-        buildConfigField("String", "MAPBOX_API_BASE_URL", "\"" + localProperties['mapbox_api_base_url'] + "\"")
+        buildConfigField("String", "MET_API_KEY", "\"0152ec2c-2942-4c9d-97d4-acd9ba1f1e43\"")
+        buildConfigField("String", "MET_API_BASE_URL", "\"https://gw-uio.intark.uh-it.no/in2000/weatherapi/\"")
+        buildConfigField("String", "ADDRESS_API_BASE_URL", "\"https://ws.geonorge.no/adresser/v1/\"")
+        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"pk.eyJ1IjoiZXNwZW5vcmUiLCJhIjoiY2xmdzl0cnk4MDRpaDNudGFsbnZ4dGJyNyJ9.WPjnzuOjeSWUyHebgEe9bw\"")
+        buildConfigField("String", "MAPBOX_API_BASE_URL", "\"https://api.mapbox.com/\"")
+
     }
 
     buildTypes {

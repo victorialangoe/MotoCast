@@ -39,7 +39,7 @@ fun DynamicScaffoldView(
     onLocateUserClick: () -> Unit,
     duration: String,
     content: @Composable () -> Unit,
-    onNavigateToScreen: () -> Unit,
+    popBackStack: () -> Unit,
     navigateToSettings: () -> Unit,
     maxHeight: Dp = 500.dp,
     minHeight: Dp = 0.dp,
@@ -132,7 +132,7 @@ fun DynamicScaffoldView(
             ) {
                 RouteAndSettingsRow(
                     buttonText = stringResource(R.string.edit_route),
-                    onButtonClick = onNavigateToScreen,
+                    onButtonClick = popBackStack,
                     settingsNavigateTo = navigateToSettings,
                 )
             }
