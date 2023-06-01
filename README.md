@@ -1,8 +1,8 @@
 ## MotoCast
 
 <p float="left">
-  <img src="/path/to/demo1.gif" width="100" />
-  <img src="/path/to/demo2.gif" width="100" /> 
+  <img src="./demo1.gif" width="100" />
+  <img src="./demo2.gif" width="100" /> 
 </p>
 
 MotoCast is an app specially developed for motorcyclists who wish to plan their trips around the weather. 
