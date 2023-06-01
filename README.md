@@ -1,7 +1,9 @@
 ## MotoCast
 
-![Demo](./demo.gif)
-
+<p float="left">
+  <img src="/path/to/demo1.gif" width="100" />
+  <img src="/path/to/demo2.gif" width="100" /> 
+</p>
 
 MotoCast is an app specially developed for motorcyclists who wish to plan their trips around the weather. 
 The app allows users to check the weather for their current location, create routes, and get weather information
