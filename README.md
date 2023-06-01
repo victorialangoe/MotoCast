@@ -10,13 +10,13 @@ The app allows users to check the weather for their current location, create rou
 for the entire route. MotoCast makes it easy to see the weather along the route and in advance, allowing 
 motorcyclists to adjust their trips for the best riding experience.
 
-## Funksjoner
+## Functionality
 * Check the weather for your location: MotoCast provides accurate weather information for your current position.
 * Create a route: You can easily create your own routes by plotting start and endpoints, as well as any waypoints on the map.
 * Check the weather for your route: MotoCast gives you a detailed weather report for the entire route, so you know what to expect on the road.
 * Check the weather along the route and in advance: The app allows you to see the weather for specific points along the route and in advance, so you can plan stops and rest breaks based on the weather conditions.
 
-## Installasjon
+## Installation
 
 1. Download and install Android Studio: To get started, download and install the latest version of Android Studio.
 2. Clone the repository: Clone the MotoCast repo to your local machine using Git.
