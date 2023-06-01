@@ -1,12 +1,12 @@
 ## MotoCast
 
-![Demo](./demo.gif)
-
-
 MotoCast is an app specially developed for motorcyclists who wish to plan their trips around the weather. 
 The app allows users to check the weather for their current location, create routes, and get weather information
 for the entire route. MotoCast makes it easy to see the weather along the route and in advance, allowing 
 motorcyclists to adjust their trips for the best riding experience.
+
+![Demo](./demo.gif)
+
 
 ## Funksjoner
 * Check the weather for your location: MotoCast provides accurate weather information for your current position.
